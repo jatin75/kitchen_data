@@ -1,10 +1,10 @@
 <nav class="navbar navbar-default navbar-static-top m-b-0">
     <div class="navbar-header"> <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse" data-target=".navbar-collapse"><i class="ti-menu"></i></a>
-        <div class="top-left-part">
+        <div class="top-left-part logo_wrapper">
             <a class="logo hidden-xs hidden-sm hidden-md" href="">
-                <img src="{{asset('plugins/images/kitchen/A&S.jpg')}}" width="150" height="70" />
+                <img src="{{asset('plugins/images/kitchen/A&S.jpg')}}" width="60" height="60" />
             </a>
-            <a class="logo hidden-lg" href="">
+            <a class="logo hidden-lg" href="" style="display: none !important;">
                 <img src="{{asset('plugins/images/kitchen/A&S.jpg')}}" width="40"/>
             </a>
         </div>

@@ -60,10 +60,10 @@ $(document).ready(function() {
 					notEmpty: {
 						message: 'Current password is required and can\'t be empty'
 					},
-					stringLength: {
+					/*stringLength: {
 						min: 6,
 						message: 'Current password should be of 6 digits.'
-					},
+					},*/
 				}
 			},
 			newPassword: {

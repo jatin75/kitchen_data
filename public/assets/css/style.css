@@ -14753,6 +14753,13 @@ ul.pro-amenities li span i{
     display:block;
     margin:20px 0 10px
 }
+a.logo.hidden-xs.hidden-sm.hidden-md{
+    position: absolute;
+    right: 3px;
+    top: -3px;
+    display: block !important;
+}
+
 @media (max-width:1350px){
     .carousel .item h3{
         font-size:17px;
@@ -14784,11 +14791,12 @@ ul.pro-amenities li span i{
         margin-top:60px
     }
     .sidebar{
-        z-index:10;
-        position:absolute;
-        width:220px;
-        padding-top:60px;
-        height:100%
+       z-index: 10;
+    position: absolute;
+    width: 220px;
+    padding-top: 0px;
+    height: 100%;
+    z-index: 9999;
     }
     .fix-sidebar .sidebar{
         position:fixed;
@@ -15020,6 +15028,22 @@ ul.pro-amenities li span i{
     }
     #msform fieldset,.login-register,.step-register{
         position:relative
+    }
+
+
+    /*images_logo*/
+    a.logo.hidden-xs.hidden-sm.hidden-md{
+    position: relative;
+    right: 0px;
+    top: 0px;
+    display: block !important;
+    }
+    .logo_wrapper{
+        position: absolute;
+        right: 3px;
+        top: -3px;
+        display: block !important;
+        background: transparent !important; 
     }
 }
 @media (max-width:480px){

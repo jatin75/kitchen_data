@@ -43,7 +43,7 @@
         <form class="form-horizontal form-material" id="loginForm" method="POST" action="{{ route('login.submit') }}">
           {{ csrf_field() }}
           <a href="javascript:void(0)" class="text-center db">
-            <img src="{{asset('plugins/images/kitchen/A&S.jpg')}}" width="200" height="100" />
+            <img src="{{asset('plugins/images/kitchen/A&S.jpg')}}" width="100" height="100" />
           </a>
           <div class="form-group m-t-20">
             <div class="col-xs-12">

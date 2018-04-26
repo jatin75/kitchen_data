@@ -11,7 +11,7 @@
   |
  */
 
-   Route::get('/','admin\AdminHomeController@showLogin');
+  Route::get('/','admin\AdminHomeController@showLogin');
   Route::get('login','admin\AdminHomeController@showLogin')->name('login');
   Route::post('dologin','admin\AdminHomeController@doLogin')->name('login.submit');
   Route::get('forgotpassword', 'admin\AdminHomeController@showForgotPassword')->name('forgotpassword');
@@ -27,6 +27,7 @@
     /*Admin*/
     Route::get('profile/{email}','admin\AdminHomeController@editMyProfile')->name('profile');
     Route::post('storeadmin','admin\AdminHomeController@store')->name('storeadmin');
+    Route::post('profile/adminchangepassword','admin\AdminHomeController@changePassword')->name('adminchangepassword');
 
     /*Jobs*/
     Route::get('jobs/activejobs','admin\JobsController@index')->name('activejobs');

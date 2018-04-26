@@ -11,6 +11,7 @@ use Session;
 use Mail;
 use Validator;
 use App\Admin;
+
 class AdminHomeController extends Controller
 {
 	/*show login*/
@@ -119,7 +120,7 @@ class AdminHomeController extends Controller
 		}
 	}
 
-	public function store(Request $request){
+	public function store(Request $request) {
 		$hidden_adminID = $request->get('hidden_adminId');
 		$admin_firstName = $request->get('admin_firstName');
 		$admin_lastName = $request->get('admin_lastName');
@@ -132,6 +133,12 @@ class AdminHomeController extends Controller
 			echo json_encode($response);
 		} else {
 			$getDetail = Admin::where('id',$hidden_adminID)->first();
+			$getSessionEmail = Session::get('email');
+			if($getSessionEmail == $getDetail->email) {
+				Session::pull('name');
+				Session::put('name',$admin_firstName.' '.$admin_lastName);
+				$response['name'] = $admin_firstName.' '.$admin_lastName;
+			}
 			$getDetail->first_name = $admin_firstName;
 			$getDetail->last_name = $admin_lastName;
 			$getDetail->phone_number = (new AdminHomeController)->replacePhoneNumber($admin_contactNo);
@@ -139,8 +146,25 @@ class AdminHomeController extends Controller
 			$getDetail->save();
 
 			$response['key'] = 1;
-			Session::put('successMessage', 'Admin detail has been updated successfully.');
+			//Session::put('successMessage', 'Admin detail has been updated successfully.');
 			echo json_encode($response);
+		}
+	}
+
+	public function changePassword(Request $request) {
+
+		$current_password = $request->get('current_password');
+		$new_password = $request->get('new_password');
+		$hidden_email = $request->get('hidden_email');
+		$checkPassword = Admin::where('email',$hidden_email)->first();
+		if(!empty($checkPassword)) {
+			if(Hash::check($current_password,$checkPassword->password)) {
+				$checkPassword->password = Hash::make($new_password);
+				$checkPassword->save();
+				return 1;
+			}else {
+				return 2;
+			}
 		}
 	}
 }
