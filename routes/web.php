@@ -23,6 +23,10 @@
   Route::group(array('middleware'=>'CheckUser'),function(){
     /*Dashboard*/
     Route::get('dashboard','admin\AdminHomeController@showDashboard')->name('dashboard');
+    
+    /*Admin*/
+    Route::get('profile/{email}','admin\AdminHomeController@editMyProfile')->name('profile');
+    Route::post('storeadmin','admin\AdminHomeController@store')->name('storeadmin');
 
     /*Jobs*/
     Route::get('jobs/activejobs','admin\JobsController@index')->name('activejobs');

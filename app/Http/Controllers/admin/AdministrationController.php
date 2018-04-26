@@ -53,7 +53,9 @@ class AdministrationController extends Controller
 		}
 		else
 		{
+			$companyId = $this->getCompanyId();
 			$objCompany = new Company();
+			$objCompany->company_id = $companyId;
 			$objCompany->name = $company_name;
 			$objCompany->phone_number = (new AdminHomeController)->replacePhoneNumber($company_contactNo);
 			$objCompany->email = $company_email;
@@ -71,19 +73,36 @@ class AdministrationController extends Controller
 	}
 
 	public function destroy($company_id)
-    {
-        Company::where('id',$company_id)->update(['is_deleted' => 1]);
-        $msg = 'Company deleted successfully.';
-        Session::flash('successMessage',$msg);
-        return back();
-    }
+	{
+		Company::where('id',$company_id)->update(['is_deleted' => 1]);
+		$msg = 'Company deleted successfully.';
+		Session::flash('successMessage',$msg);
+		return back();
+	}
 
-    public function edit($company_id) {
-    	$getCompanyDetail = Company::selectRaw('name,phone_number,address_1,address_2,city,state,zipcode,email,created_at,id')->where('id',$company_id)->get();
-    	if(sizeof($getCompanyDetail) > 0)
-        {
-        	$getCompanyDetail = $getCompanyDetail[0];
+	public function edit($company_id) {
+		$getCompanyDetail = Company::selectRaw('name,phone_number,address_1,address_2,city,state,zipcode,email,created_at,id')->where('id',$company_id)->get();
+		if(sizeof($getCompanyDetail) > 0)
+		{
+			$getCompanyDetail = $getCompanyDetail[0];
+		}
+		return view('admin.addclientcompany')->with('companyDetail',$getCompanyDetail);
+	}
+
+	function getCompanyId()
+    {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < 1; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
-        return view('admin.addclientcompany')->with('companyDetail',$getCompanyDetail);
+        $company_id = $randomString.mt_rand(1000000,9999999);
+        $check = Company::where('company_id',$company_id)->first();
+        if (empty($check)){
+            return $company_id;
+        } else {
+            $this->getLeagueId();
+        }
     }
 }

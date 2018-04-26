@@ -55,66 +55,60 @@
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>FIRST NAME</b></label>
-														<input style="text-transform:uppercase;" type="text" name="employeeFirstName" id="employeeFirstName" value="{{$employeeDetail->first_name or ''}}" class="form-control" placeholder="EMPLOYEE FIRST NAME">
-													</div>
-												</div>
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label"><b>LAST NAME</b></label>
-														<input style="text-transform: uppercase;" type="text" name="employeeLastName" id="employeeLastName" value="{{$employeeDetail->last_name or ''}}" class="form-control"  placeholder="EMPLOYEE LAST NAME">
-													</div>
-												</div>
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label"><b>PHONE NUMBER</b></label>
-														<input type="text" placeholder="(xxx) xxx-xxxx" name="employeePhoneNo" id="employeePhoneNo" value="{{$employeeDetail->phone_number or ''}}" class="form-control">
-													</div>
+													<input style="text-transform:uppercase;" type="text" name="employeeFirstName" id="employeeFirstName" value="{{$employeeDetail->first_name or ''}}" class="form-control" placeholder="EMPLOYEE FIRST NAME">
 												</div>
 											</div>
-											<div class="row">
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label"><b>EMAIL ADDRESS</b></label>
-														<input style="text-transform: lowercase;" type="email" name="employeeEmail" id="employeeEmail" value="{{$employeeDetail->email or ''}}" class="form-control"  placeholder="Enter your email">
-													</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>LAST NAME</b></label>
+													<input style="text-transform: uppercase;" type="text" name="employeeLastName" id="employeeLastName" value="{{$employeeDetail->last_name or ''}}" class="form-control"  placeholder="EMPLOYEE LAST NAME">
 												</div>
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label"><b>PASSWORD</b></label><br>
-														<input type="password" name="employeePassword" id="employeePassword" value="" class="form-control" placeholder="Enter your password">
-													</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>PHONE NUMBER</b></label>
+													<input type="text" placeholder="(xxx) xxx-xxxx" name="employeePhoneNo" id="employeePhoneNo" value="{{$employeeDetail->phone_number or ''}}" class="form-control">
 												</div>
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label"><b>EMPLOYEE TYPE</b></label><br>
-														<select class="form-control select2" name="employeeType" id="employeeType" placeholder="Select your employee type">
-															<option value="">-- Select employee type  --</option>
-															@foreach($employeeTypes as $employeeType)
-																<option value="{{ $employeeType->login_type_id }}" @if(isset($employeeDetail->emp_type) && $employeeDetail->emp_type == $employeeType->login_type_id) {{"selected='selected'"}} @endif> {{ $employeeType->type_name }}</option>
-															@endforeach
-														</select>
-													</div>
-												</div>	
 											</div>
 										</div>
-										<div class="form-group text-left p-t-md">
-											@if(!isset($employeeDetail->id))
-											<button type="submit" class="btn btn-success">Add</button>
-											@endif
-											@if(isset($employeeDetail->id))
-											<button type="submit" class="btn btn-info">UPDATE</button>
-											@endif
+										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>EMAIL ADDRESS</b></label>
+													<input style="text-transform: lowercase;" type="email" name="employeeEmail" id="employeeEmail" value="{{$employeeDetail->email or ''}}" class="form-control"  placeholder="Enter your email">
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>EMPLOYEE TYPE</b></label><br>
+													<select class="form-control select2" name="employeeType" id="employeeType" placeholder="Select your employee type">
+														<option value="">-- Select employee type  --</option>
+														@foreach($employeeTypes as $employeeType)
+														<option value="{{ $employeeType->login_type_id }}" @if(isset($employeeDetail->login_type_id) && $employeeDetail->login_type_id == $employeeType->login_type_id) {{"selected='selected'"}} @endif> {{ $employeeType->type_name }}</option>
+														@endforeach
+													</select>
+												</div>
+											</div>	
 										</div>
-									</form>
-								</div>
-								<!--/.tab1-->
+									</div>
+									<div class="form-group text-left p-t-md">
+										@if(!isset($employeeDetail->id))
+										<button type="submit" class="btn btn-success">Add</button>
+										@endif
+										@if(isset($employeeDetail->id))
+										<button type="submit" class="btn btn-info">UPDATE</button>
+										@endif
+									</div>
+								</form>
 							</div>
+							<!--/.tab1-->
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 </div>
 @stop
 @section('pageSpecificJs')
@@ -155,7 +149,6 @@
 		var employee_lastName = $('#employeeLastName').val();
 		var employee_contactNo = $('#employeePhoneNo').val();
 		var employee_email = $('#employeeEmail').val();
-		var employee_password = $('#employeePassword').val();
 		var employee_type = $('#employeeType').val();
 		
 		$.ajax({
@@ -166,7 +159,6 @@
 				employee_lastName:employee_lastName,
 				employee_contactNo:employee_contactNo,
 				employee_email:employee_email,
-				employee_password:employee_password,
 				employee_type:employee_type,
 			},
 			type:'post',
