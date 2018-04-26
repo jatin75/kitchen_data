@@ -137,6 +137,7 @@
 <script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{ asset('scripts/jquery.maskedinput.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
+<script src="{{ asset('scripts/company-location.js') }}"></script>
 <script type="text/javascript">
 	$.ajaxSetup({
 		headers: {

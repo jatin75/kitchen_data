@@ -16,7 +16,7 @@
                 </div>
                 <a id="sessionName" style="text-transform: uppercase;" href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Session::get('name')}}<span class="caret"></span></a>
                 <ul class="dropdown-menu animated flipInY">
-                    <li><a href=""><i class="ti-user"></i> My Profile &amp; Setting</a></li>
+                    <li><a href="{{ route('profile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
                     {{-- <li><a href="#"><i class="ti-settings"></i> Account Setting</a></li> --}}
                     <li role="separator" class="divider"></li>
                     <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li>

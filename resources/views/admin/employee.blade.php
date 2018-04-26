@@ -18,14 +18,14 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-         <h4 class="page-title">Administration > Employee</h4>
-     </div>
- </div>
- <div class="row">
+       <h4 class="page-title">Administration > Employee</h4>
+   </div>
+</div>
+<div class="row">
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All EMPLOYEE</h3>
-
+            
             <a href="{{route('addemployee')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Employee</span> <i class="fa fa-plus m-l-5"></i></a>
             <div class="table-responsive">
                 <table id="employeeList" class="display nowrap" cellspacing="0" width="100%">
@@ -57,16 +57,16 @@ tr th{
                             <td>{{substr_replace(substr_replace(substr_replace($employee_member->phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0) }}</td>
                             @endif
                             <td>{{$employee_member->email}}</td>
-                            <td>{{$employee_member->emp_type}}</td>
+                            <td>{{$employee_member->type_name}}</td>
                             <td>{{ date('m/d/Y',strtotime($employee_member->created_at))}}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
-                </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 @stop
 @section('pageSpecificJs')

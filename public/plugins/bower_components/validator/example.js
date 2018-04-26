@@ -216,13 +216,6 @@ $(document).ready(function() {
 					}
 				}
 			},
-			employeePassword: {
-				validators: {
-					notEmpty: {
-						message: 'Password is required and can\'t be empty'
-					},
-				}
-			},
 			employeeType:{
 				validators:{
 					notEmpty: {
@@ -235,6 +228,60 @@ $(document).ready(function() {
 
 	$('#employeePhoneNo').on('keyup', function() {
 		$('#formAddEmployee').bootstrapValidator('revalidateField', 'employeePhoneNo');
+	});
+
+	$('#formAddAdmin').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {			
+			adminFirstName: {
+				validators: {
+					notEmpty: {
+						message: 'Admin first name is required and can\'t be empty.'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Admin first name can only consist of alphanumeric.'
+					}
+				}
+			},
+			adminLastName: {
+				validators: {
+					notEmpty: {
+						message: 'Admin last name is required and can\'t be empty.'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Admin last name can only consist of alphanumeric.'
+					}
+				}
+			},
+			adminPhoneNo: {
+				validators: {
+					notEmpty: {
+						message: 'Phone number is required and can\'t be empty'
+					},
+					stringLength: {
+						min: 16,
+						max: 16,
+						message: 'Phone number should be of 10 digits.'
+					}
+				}
+			},
+			adminEmail: {
+				validators: {
+					notEmpty: {
+						message: 'Email address is required and can\'t be empty'
+					},
+					emailAddress: {
+						message: 'Please enter valid email address.'
+					}
+				}
+			},
+		}
+	});
+
+	$('#adminPhoneNo').on('keyup', function() {
+		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
 	});
 
 	$('#formImportProspect').bootstrapValidator({
@@ -288,341 +335,4 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#formAddProspect').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			organizationName: {
-				validators: {
-					notEmpty: {
-						message: 'Organization name is required and can\'t be empty.'
-					},
-					regexp: {
-						regexp: /^[a-z\s]+$/i,
-						message: 'Organization name can only consist of alphabetical.'
-					}
-				}
-			},
-			accountEmail: {
-				validators: {
-					notEmpty: {
-						message: 'Email address is required and can\'t be empty.'
-					},
-					emailAddress: {
-						message: 'Please enter valid email address.'
-					}
-				}
-			},
-			firstName: {
-				validators: {
-					/*notEmpty: {
-						message: 'First name is required and can\'t be empty.'
-					},*/
-					regexp: {
-						regexp: /^[a-zA-Z0-9\s]+$/i,
-						message: 'First name can only consist of alphanumeric.'
-					}
-				}
-			},
-			lastName: {
-				validators: {
-					/*notEmpty: {
-						message: 'Last name is required and can\'t be empty.'
-					},*/
-					regexp: {
-						regexp: /^[a-zA-Z0-9\s]+$/i,
-						message: 'Last name can only consist of alphanumeric.'
-					}
-				}
-			},
-			txtConsultant: {
-				validators: {
-					/*notEmpty: {
-						message: 'Consultant is required and can\'t be empty.'
-					},*/
-				}
-			},
-			freeTrialEnd: {
-				validators: {
-					notEmpty: {
-						message: 'Free trial-expired date is required and can\'t be empty.'
-					},
-					date: {
-						format: 'MM/DD/YYYY',
-						message: 'The date is not a valid'
-					},
-				}
-			},
-			accountContactNo: {
-				validators: {
-					stringLength: {
-						min: 16,
-						max: 16,
-						message: 'Phone number should be of 10 digits.'
-					},
-				}
-			},
-			claimStatus: {
-				validators: {
-					notEmpty: {
-						message:'Account status is required and can\'t be empty.'
-					},
-				}
-			},
-		}
-	});
-
-	$('#freeTrialEnd').on('changeDate show', function() {
-		$('#formAddProspect').bootstrapValidator('revalidateField', 'freeTrialEnd');
-	});
-
-	$('#accountContactNo').on('keyup', function() {
-		$('#formAddProspect').bootstrapValidator('revalidateField', 'accountContactNo');
-	});
-
-	$('#editUserId').bootstrapValidator({
-		fields: {
-			userId:{
-				validators:{
-					notEmpty:{
-						message:'User id is required and can\'t be empty.'
-					},
-					stringLength: {
-						min: 8,
-						message: 'User id must be of eight digits. '
-					},
-					regexp: {
-						regexp: /^[a-zA-Z]{3}[0-9]{5}$/,
-						message: 'User id can only consist of alphanumeric like ABC12345'
-					}
-				}
-			}
-		}
-	});
-
-	$('#formAddStaff').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			staffFirstName: {
-				validators: {
-					notEmpty: {
-						message: 'First name is required and can\'t be empty.'
-					},
-					regexp: {
-						regexp: /^[a-z\s]+$/i,
-						message: 'First name can only consist of alphabetical.'
-					}
-				}
-			},
-			staffLastName: {
-				validators: {
-					notEmpty: {
-						message: 'Last name is required and can\'t be empty.'
-					},
-					regexp: {
-						regexp: /^[a-z\s]+$/i,
-						message: 'Last name can only consist of alphabetical.'
-					}
-				}
-			},
-			staffEmail: {
-				validators: {
-					notEmpty: {
-						message: 'Email address is required and can\'t be empty.'
-					},
-					emailAddress: {
-						message: 'Please enter valid email address.'
-					}
-				}
-			},
-			staffContactNo: {
-				validators: {
-					stringLength: {
-						min: 16,
-						max: 16,
-						message: 'Phone number should be of 10 digits.'
-					},
-				}
-			},
-			staffDepartment: {
-				validators: {
-					notEmpty: {
-						message:'Please select department.'
-					}
-				}
-			},
-			staffRoles: {
-				validators: {
-					notEmpty: {
-						message:'Please select role.'
-					}
-				}
-			},
-			startDate: {
-				validators: {
-					notEmpty: {
-						message: 'Start date is required and can\'t be empty.'
-					},
-					date: {
-						format: 'MM/DD/YYYY',
-						message: 'The date is not a valid'
-					},
-				}
-			},
-		}
-	});
-
-	$('#formAddSubscriber').bootstrapValidator({
-		fields: {
-			subscriberEmail: {
-				validators: {
-					notEmpty: {
-						message: 'Email address is required and can\'t be empty.'
-					},
-					emailAddress: {
-						message: 'Please enter valid email address.'
-					}
-				}
-			},
-			/*firstName: {
-				validators: {
-					notEmpty: {
-						message: 'First name is required and can\'t be empty'
-					},
-					regexp: {
-						regexp: /^[a-zA-Z0-9\s]+$/i,
-						message: 'First name can only consist of alphanumeric'
-					}
-				}
-			},*/
-			/*lastName: {
-				validators: {
-					notEmpty: {
-						message: 'Last name is required and can\'t be empty'
-					},
-					regexp: {
-						regexp: /^[a-zA-Z0-9\s]+$/i,
-						message: 'Last name can only consist of alphanumeric'
-					}
-				}
-			}*/
-		}
-	});
-
-	$('#formAddFeed').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			feedUrl: {
-				validators: {
-					notEmpty: {
-						message: 'Feed url is required and can\'t be empty.'
-					}
-				}
-			},
-			feedCategory:{
-				validators:{
-					notEmpty: {
-						message:'Please select sport.'
-					}
-				}
-			}
-		}
-	});
-
-	$('#addGameScore').bootstrapValidator({
-		fields: {
-			team_winhome: {
-				validators: {
-					notEmpty: {
-						message: 'Score is required and can\'t be empty.'
-					},
-					stringLength: {
-						max: 3,
-						message: 'Score can be add upto three digits.'
-					},
-					regexp: {
-						regexp: /^[0-9\s]+$/i,
-						message: 'Score can only consist of numeric.'
-					}
-				}
-			},
-			team_winaway: {
-				validators: {
-					notEmpty: {
-						message: 'Score is required and can\'t be empty.'
-					},
-					stringLength: {
-						max: 3,
-						message: 'Score can be add upto three digits.'
-					},
-					regexp: {
-						regexp: /^[0-9\s]+$/i,
-						message: 'Score can only consist of numeric.'
-					}
-				}
-			},
-			team_losthome: {
-				validators: {
-					notEmpty: {
-						message: 'Score is required and can\'t be empty.'
-					},
-					stringLength: {
-						max: 3,
-						message: 'Score can be add upto three digits.'
-					},
-					regexp: {
-						regexp: /^[0-9\s]+$/i,
-						message: 'Score can only consist of numeric.'
-					}
-				}
-			},
-			team_lostaway:{
-				validators:{
-					notEmpty: {
-						message:'Score is required and can\'t be empty.'
-					},
-					stringLength: {
-						max: 3,
-						message: 'Score can be add upto three digits.'
-					},
-					regexp: {
-						regexp: /^[0-9\s]+$/i,
-						message: 'Score can only consist of numeric.'
-					}
-				}
-			}
-		}
-	});
-
-	$('#formDepartment').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			departmentName: {
-				validators: {
-					notEmpty: {
-						message: 'Department name is required and can\'t be empty.'
-					}
-				}
-			}
-		}
-	});
-
-	$('#formRole').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			roleName:{
-				validators:{
-					notEmpty: {
-						message:'Role name is required and can\'t be empty.'
-					}
-				}
-			},
-			staffDepartment:{
-				validators:{
-					notEmpty: {
-						message:'Please select department name.'
-					}
-				}
-			}
-		}
-	});
 });
