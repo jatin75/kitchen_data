@@ -26,14 +26,15 @@ tr th{
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All CLIENTS</h3>
 
-            <a href="{{route('addemployee')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Client</span> <i class="fa fa-plus m-l-5"></i></a>
+            <a href="{{route('addclient')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Client</span> <i class="fa fa-plus m-l-5"></i></a>
             <div class="table-responsive">
                 <table id="jobList" class="display nowrap" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th class="text-center">Actions</th>
-                            <th>Client First Name</th>
-                            <th>Client Last Name</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Client Id</th>
                             <th>Company Name</th>
                             <th>Email Address</th>
                             <th>Phone Number</th>
@@ -55,6 +56,7 @@ tr th{
                             </td>
                             <td>{{strtoupper($client->first_name)}}</td>
                             <td>{{strtoupper($client->last_name)}}</td>
+                            <td>{{$client->client_id}}</td>
                             <td>{{$client->comapny_name}}</td>
                             <td>{{$client->email}}</td>
                             @if(empty($client->phone_number) || $client->phone_number == "")
@@ -105,24 +107,24 @@ tr th{
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]},
             },
             {
                 extend: 'pdf',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]},
             },
             ],
         });

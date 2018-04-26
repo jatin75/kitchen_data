@@ -53,28 +53,28 @@
 							<div class="tab-content br-n pn">
 								<!--tab1-->
 								<div id="tab1" class="tab-pane active">
-									<form id="formAddStaff" method="post">
+									<form id="formAddClient" method="post">
 										{{ csrf_field() }}
 										{{-- <input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$accountDetail->email or ''}}"> --}}
 										{{-- <input type="show" name="hiddenStatus" id="hiddenStatus" value="{{$new_account or ''}}"> --}}
-										<input type="hidden" name="hiddenStaffId" id="hiddenStaffId" value="{{$staffDetail->staff_id or ''}}">
+										<input type="hidden" name="hiddenClientId" id="hiddenClientId" value="{{$clientDetails->client_id or ''}}">
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>FIRST NAME</b></label>
-													<input style="text-transform:uppercase;" type="text" name="staffFirstName" id="staffFirstName" value="{{$staffDetail->first_name or ''}}" class="form-control" placeholder=" FIRST NAME">
+													<input style="text-transform:uppercase;" type="text" name="clientFirstName" id="clientFirstName" value="{{$clientDetails->first_name or ''}}" class="form-control" placeholder=" FIRST NAME">
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>LAST NAME</b></label>
-													<input style="text-transform:uppercase;" type="text" name="staffLastName" id="staffLastName" value="{{$staffDetail->last_name or ''}}" class="form-control" placeholder=" LAST NAME">
+													<input style="text-transform:uppercase;" type="text" name="clientLastName" id="clientLastName" value="{{$clientDetails->last_name or ''}}" class="form-control" placeholder=" LAST NAME">
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>STAFF ID</b></label><br>
-													<span class="disabled-color" id="staffId">{{$staffDetail->staff_id or '' }}</span>
+													<label class="control-label"><b>CLIENT ID</b></label><br>
+													<span class="disabled-color" id="clientId">{{$clientDetails->client_id or '' }}</span>
 												</div>
 											</div>
 										</div>
@@ -82,53 +82,76 @@
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>EMAIL ADDRESS</b></label>
-													<input style="text-transform: lowercase;" type="email" name="staffEmail" id="staffEmail" value="{{$staffDetail->email or ''}}" class="form-control"  placeholder="Enter Your Email">
+													<input style="text-transform: lowercase;" type="email" name="clientEmail" id="clientEmail" value="{{$clientDetails->email or ''}}" class="form-control"  placeholder="Enter Your Email">
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>PHONE NUMBER</b></label>
-													<input type="text" placeholder="(xxx) xxx-xxxx" name="staffContactNo" id="staffContactNo" value="{{$staffDetail->phone_number or ''}}" class="form-control">
+													<input type="text" placeholder="(xxx) xxx-xxxx" name="clientContactNo" id="clientContactNo" value="{{$clientDetails->phone_number or ''}}" class="form-control">
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>START DATE</b></label><br>
-													<input type="text" name="startDate" id="startDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy" maxlength="10" value="{{$staffDetail->start_date or ''}}">
+													<label class="control-label"><b>COMPANY NAME</b></label>
+													<select id="clientCompany" name="clientCompany" class="form-control select2">
+														<option value="">-- Select Company --</option>
+														@foreach($companyList as $company)
+														<option value="{{ $company->company_id }}" @if(isset($clientDetails->company_id) && $clientDetails->company_id == $company->company_id) {{"selected='selected'"}} @endif>{{ $company->name }}</option>
+														@endforeach
+													</select>
 												</div>
 											</div>
 										</div>
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>DEPARTMENT</b></label>
-													<select id="staffDepartment" name="staffDepartment" class="form-control select2">
-														<option value="">-- Select Department --</option>
-														@foreach($departmentList as $department)
-														<option value="{{ $department->department_id }}" @if(isset($staffDetail->department_id) && $staffDetail->department_id == $department->department_id) {{"selected='selected'"}} @endif>{{ $department->department_name }}</option>
-														@endforeach
-													</select>
+													<label class="control-label"><b>ADDRESS 1</b></label>
+													<input type="text" name="locationAddress" id="locationAddress" value="{{$clientDetails->address_1 or ''}}" class="form-control" placeholder="Address line 1">
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>ROLES</b></label>
-													<select id="staffRoles" name="staffRoles" class="form-control select2">
-														<option value="">-- Select Role --</option>
-														@if(isset($staffDetail->staff_id))
-														@foreach($roleList as $role)
-														<option value="{{ $role->role_id }}" @if(isset($staffDetail->role_id) && $staffDetail->role_id == $role->role_id) {{"selected='selected'"}} @endif>{{ $role->role_name }}</option>
-														@endforeach
-														@endif
+													<label class="control-label"><b>ADDRESS 2</b></label><br>
+													<input type="text" name="subAddress" id="subAddress" value="{{$clientDetails->address_2 or ''}}" class="form-control" placeholder="Address line 2">
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>CITY</b></label>
+													<input type="text" name="city" id="city" value="{{$clientDetails->city or ''}}" class="form-control" placeholder="Enter City">
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>STATE</b></label>
+													<input type="text" name="state" id="state" value="{{$clientDetails->state or ''}}" class="form-control"  placeholder="Enter State">
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>ZIPCODE</b></label>
+													<input type="text" placeholder="Enter Zipcode" name="zipcode" id="zipcode" value="{{$clientDetails->zipcode or ''}}" class="form-control">
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>CONTACT PREFERENCE</b></label>
+													<select id="contactPreference" name="contactPreference" class="form-control">
+														<option value="1" @if(isset($clientDetails->contact_preference) && $clientDetails->contact_preference == 1) {{ "selected='selected'" }} @endif>Email</option>
+														<option value="2" @if(isset($clientDetails->contact_preference) && $clientDetails->contact_preference == 2) {{ "selected='selected'" }} @endif>App</option>
+														<option value="3" @if(isset($accountDetail->contact_preference) && $clientDetails->contact_preference == 3) {{ "selected='selected'" }} @endif>Phone</option>
 													</select>
 												</div>
 											</div>
 										</div>
 										<div class="form-group text-left p-t-md">
-											@if(!isset($staffDetail->staff_id))
+											@if(!isset($clientDetails->client_id))
 											<button type="submit" class="btn btn-success">CREATE ACCOUNT</button>
 											@endif
-											@if(isset($staffDetail->staff_id))
+											@if(isset($clientDetails->client_id))
 											<button type="submit" class="btn btn-info">UPDATE</button>
 											@endif
 										</div>
@@ -142,7 +165,7 @@
 										{{ csrf_field() }}
 										<input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$staffDetail->email or ''}}">
 										{{-- <input type="show" name="hiddenStatus" id="hiddenStatus" value="{{$new_account or ''}}"> --}}
-										{{-- <input type="hidden" name="hiddenStaffId" id="hiddenStaffId" value="{{$staffDetail->staff_id or ''}}"> --}}
+										{{-- <input type="hidden" name="hiddenClientId" id="hiddenClientId" value="{{$staffDetail->staff_id or ''}}"> --}}
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
@@ -165,7 +188,7 @@
 								<div id="tab3" class="tab-pane">
 									<form id="formStaffPermission" method="post">
 										{{ csrf_field() }}
-										<input type="hidden" name="hiddenStaffID" id="hiddenStaffID" value="{{$permissionList->staff_id or ''}}">
+										<input type="hidden" name="hiddenClientId" id="hiddenClientId" value="{{$permissionList->staff_id or ''}}">
 										<!--permissions-->
 										<div>
 											<div class="row">
@@ -334,6 +357,7 @@
 {{-- <script type="text/javascript" src="{{asset('plugins/bower_components/switchery/dist/switchery.min.js')}}"></script> --}}
 <script src="{{ asset('scripts/jquery.maskedinput.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
+<script src="{{ asset('scripts/company-location.js') }}"></script>
 <script type="text/javascript">
 	$.ajaxSetup({
 		headers: {
@@ -347,33 +371,12 @@
 			'csv', 'excel', 'pdf', 'print'
 			],
 		});
-		if(typeof($('#staffFirstName').val()) != "undefined" && $('#staffFirstName').val() !== null)
-			$('#staffFirstName').val($('#staffFirstName').val().toUpperCase());
-		if(typeof($('#staffLastName').val()) != "undefined" && $('#staffLastName').val() !== null)
-			$('#staffLastName').val($('#staffLastName').val().toUpperCase());
-		if(typeof($('#staffEmail').val()) != "undefined" && $('#staffEmail').val() !== null)
-			$('#staffEmail').val($('#staffEmail').val().toLowerCase());
-
-		$("#staffDepartment").change(function(){
-			$("#staffRoles").select2("val", "");
-			var departmentId = $(this).val();
-			$.ajax({
-				url: '{{ route('getdepartmentroles') }}',
-				data: {departmentId:departmentId},
-				type: 'post',
-				dataType: 'json',
-				success:function(response){
-					var len = response.roles_data.length;
-					$("#staffRoles").empty();
-					$("#staffRoles").html("<option value=''>-- Select Role --</option>");
-					for( var i = 0; i<len; i++){
-						var id = response.roles_data[i]['role_id'];
-						var name = response.roles_data[i]['role_name'];
-						$("#staffRoles").append("<option value='"+id+"'>"+name+"</option>");
-					}
-				}
-			});
-		});
+		if(typeof($('#clientFirstName').val()) != "undefined" && $('#clientFirstName').val() !== null)
+			$('#clientFirstName').val($('#clientFirstName').val().toUpperCase());
+		if(typeof($('#clientLastName').val()) != "undefined" && $('#clientLastName').val() !== null)
+			$('#clientLastName').val($('#clientLastName').val().toUpperCase());
+		if(typeof($('#clientEmail').val()) != "undefined" && $('#clientEmail').val() !== null)
+			$('#clientEmail').val($('#clientEmail').val().toLowerCase());
 
 		$('#resetPermission').click(function(){
 			location.reload();
@@ -388,28 +391,36 @@
 		new Switchery($(this)[0], $(this).data());
 	});
 
-	$('#formAddStaff').on('success.form.bv', function(e) {
+	$('#formAddClient').on('success.form.bv', function(e) {
 		e.preventDefault();
 		$('#loader').show();
-		var hidden_staff_id = $('#hiddenStaffId').val();
-		var staff_first_name = $('#staffFirstName').val();
-		var staff_last_name = $('#staffLastName').val();
-		var staff_email = $('#staffEmail').val();
-		var staff_contactNo = $('#staffContactNo').val();
-		var staff_department_id = $('#staffDepartment').val();
-		var staff_roles = $('#staffRoles').val();
-		var start_date = $('#startDate').val();
+		var hidden_client_id = $('#hiddenClientId').val();
+		var client_first_name = $('#clientFirstName').val();
+		var client_last_name = $('#clientLastName').val();
+		var client_email = $('#clientEmail').val();
+		var client_contactNo = $('#clientContactNo').val();
+		var client_company = $('#clientCompany').val();
+		var address_1 = $('#locationAddress').val();
+		var address_2 = $('#subAddress').val();
+		var city = $('#city').val();
+		var state = $('#state').val();
+		var zipcode = $('#zipcode').val();
+		var contact_preference = $('#contactPreference').val();
 		$.ajax({
-			url:'{{ url('storestaff') }}',
+			url:'{{ url('storeclient') }}',
 			data:{
-				hidden_staff_id:hidden_staff_id,
-				staff_first_name:staff_first_name,
-				staff_last_name:staff_last_name,
-				staff_email:staff_email,
-				staff_contactNo:staff_contactNo,
-				staff_department_id:staff_department_id,
-				staff_roles:staff_roles,
-				start_date:start_date,
+				hidden_client_id:hidden_client_id,
+				client_first_name:client_first_name,
+				client_last_name:client_last_name,
+				client_email:client_email,
+				client_contactNo:client_contactNo,
+				client_company:client_company,
+				address_1:address_1,
+				address_2:address_2,
+				city:city,
+				state:state,
+				zipcode:zipcode,
+				contact_preference:contact_preference,
 			},
 			type:'post',
 			dataType:'json',
@@ -418,7 +429,7 @@
 				if(data == 1)
 				{
 					/*$('#loader').hide();*/
-					location.href = '{{ route('currentstaff') }}';
+					location.href = '{{ route('addclient') }}';
 				}
 				else if(data.key == 2)
 				{
@@ -438,7 +449,7 @@
 		});
 	});
 
-	$('#formAccountSetting').on('success.form.bv', function(e) {
+	/*$('#formAccountSetting').on('success.form.bv', function(e) {
 		e.preventDefault();
 		$('#loader').show();
 		var current_password = $('#currentPassword').val();
@@ -452,7 +463,7 @@
 			return;
 		}
 		$.ajax({
-			url:'{{ route('changepassword') }}',
+			url:'{ route('changepassword') }}',
 			data:{
 				current_password:current_password,
 				new_password:new_password,
@@ -473,29 +484,29 @@
 				}
 			}
 		});
-	});
+	});*/
 
-	/*$('#formStaffPermission').on('submit', function(e) {
+	/*$('#formclientPermission').on('submit', function(e) {
 		e.preventDefault();
 		// $('#loader').show();
-		var hidden_staff_id = $('#hiddenStaffID').val();
+		var hidden_client_id = $('#hiddenClientId').val();
 		var access_export = $('#access_export').val();
 		var access_import_Agreement = $('#access_import_Agreement').val();
 		var access_department_and_roles = $('#access_department_and_roles').val();
-		var access_add_staff = $('#access_add_staff').val();
-		var access_update_staff = $('#access_update_staff').val();
+		var access_add_client = $('#access_add_client').val();
+		var access_update_client = $('#access_update_client').val();
 		var access_assign_consultant = $('#access_assign_consultant').val();
 		var access_add_feeds = $('#access_add_feeds').val();
 		var access_remove_feeds = $('#access_remove_feeds').val();
 		$.ajax({
-			url:'{{ route('storepermission') }}',
+			url:'{ route('storepermission') }}',
 			data:{
-				hidden_staff_id:hidden_staff_id,
+				hidden_client_id:hidden_client_id,
 				access_export:access_export,
 				access_import_Agreement:access_import_Agreement,
 				access_department_and_roles:access_department_and_roles,
-				access_add_staff:access_add_staff,
-				access_update_staff:access_update_staff,
+				access_add_client:access_add_client,
+				access_update_client:access_update_client,
 				access_assign_consultant:access_assign_consultant,
 				access_add_feeds:access_add_feeds,
 				access_remove_feeds:access_remove_feeds,
@@ -512,12 +523,12 @@
 		});
 	});*/
 
-	function deactivateAccount(account_id)
+	/*function deactivateAccount(account_id)
 	{
 		if(confirm(' You cant reactivate prospect. Are you sure you want to remove this prospect?')){
 			$('#loader').show();
 			$.ajax({
-				url:'{{ url('accountstatus') }}',
+				url:'{ url('accountstatus') }}',
 				data:{
 					account_id:account_id,
 				},
@@ -526,24 +537,22 @@
 				{
 					if(data == 'deactivated')
 					{
-						/*$('#loader').hide();*/
-						location.href = '{{ route('activeaccount') }}';
+						location.href = '{ route('activeaccount') }}';
 					}
 					else
 					{
-						/*$('#loader').hide();*/
-						location.href = '{{ route('deactivatedaccount') }}';
+						location.href = '{ route('deactivatedaccount') }}';
 					}
 				}
 			});
 		}
-	}
+	}*/
 
-	$('#staffFirstName,#staffLastName').keyup(function() {
+	$('#clientFirstName,#clientLastName').keyup(function() {
 		this.value = this.value.toUpperCase();
 	});
 
-	$('#staffEmail').keyup(function() {
+	$('#clientEmail').keyup(function() {
 		this.value = this.value.toLowerCase();
 	});
 
@@ -587,7 +596,7 @@
 
 	/*Mask phone Number Digits*/
 	/*$("#leagueContactNo").mask("999-999-999-9?999999");*/
-	$("#staffContactNo").mask("(999) 999 - 9999");
+	$("#clientContactNo").mask("(999) 999 - 9999");
 
 	/*Date picker*/
 	jQuery('#startDate').datepicker({

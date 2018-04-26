@@ -26,7 +26,7 @@
         <ul class="nav" id="side-menu">
             <li class="nav-small-cap m-t-10">&nbsp;&nbsp;Main Menu</li>
             <li>
-                <a href="{{ URL::to('/') }}" class="waves-effect {!! (Request::is('/') ? 'active' : '') !!}">
+                <a href="{{route('dashboard')}}" class="waves-effect {!! (Request::is('/') ? 'active' : '') !!}">
                     <i class="ti-home fa-fw" data-icon="v"></i>
                     <span class="hide-menu"> Dashboard </span>
                 </a>

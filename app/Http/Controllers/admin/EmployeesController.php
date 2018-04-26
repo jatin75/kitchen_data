@@ -75,12 +75,14 @@ class EmployeesController extends Controller
 				$objEmployee->save();
 
 				/*send Mail*/
+				
 				/*Mail::send('emails.employeecreated',array(
 					'password' => $employee_password,
 					'email' => $employee_email,
 				), function($message)use($employee_email){
 					$message->from(env('FromMail','kitchen@gmail.com'),'KITCHEN');
 					$message->to($employee_email)->subject('KITCHEN | Employee Account Created');
+			
 				});*/
 
 				$response['key'] = 1;
@@ -106,5 +108,5 @@ class EmployeesController extends Controller
 		Session::flash('successMessage',$msg);
 		return back();
 	}
-	
+
 }
