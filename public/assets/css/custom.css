@@ -1,0 +1,12 @@
+.has-error .help-block{
+	padding-left: 10px;
+}
+table.dataTable thead .sorting:after {
+	content: ""; /* sort */
+}
+table.dataTable thead .sorting_asc:after {
+	content: ""; /* sort-by-attributes */
+}
+table.dataTable thead .sorting_desc:after {
+	content: ""; /* sort-by-attributes-alt */
+}
