@@ -89,7 +89,6 @@ class AdminHomeController extends Controller
 		if(!empty($getAdminDetail)) {
 			return view('admin.adminprofile')->with('adminDetail',$getAdminDetail)->with('accountSetting',1);
 		}
-	}
 
 		$hidden_adminID = $request->get('hidden_adminId');
 		$admin_firstName = $request->get('admin_firstName');
