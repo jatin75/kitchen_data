@@ -66,12 +66,18 @@
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>PHONE NUMBER</b></label>
-													<input type="text" placeholder="(xxx) xxx-xxxx" name="companyPhoneNo" id="companyPhoneNo" value="{{$companyDetail->phone_number or ''}}" class="form-control">
+													<label class="control-label"><b>COMPANY ID</b></label><br>
+													<span class="disabled-color" id="companyId">{{$companyDetail->company_id or '' }}</span>
 												</div>
 											</div>
 										</div>
 										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>PHONE NUMBER</b></label>
+													<input type="text" placeholder="(xxx) xxx-xxxx" name="companyPhoneNo" id="companyPhoneNo" value="{{$companyDetail->phone_number or ''}}" class="form-control">
+												</div>
+											</div>
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>ADDRESS 1</b></label><br>
@@ -84,14 +90,14 @@
 													<input type="text" name="subAddress" id="subAddress" value="{{$companyDetail->address_2 or ''}}" class="form-control" placeholder="Address line 2">
 												</div>
 											</div>
+										</div>
+										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>CITY</b></label>
 													<input type="text" name="city" id="city" value="{{$companyDetail->city or ''}}" class="form-control" placeholder="Enter city">
 												</div>
 											</div>
-										</div>
-										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>STATE</b></label>
@@ -186,6 +192,11 @@
 				if(data.key == 1)
 				{
 					location.href = '{{ route('showclientcompany') }}';
+				}
+				if(data.key == 2)
+				{
+					$('#loader').hide();
+					notify('Company detail has been updated successfully.','blackgloss');
 				}
 			}
 		});

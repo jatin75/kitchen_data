@@ -47,8 +47,8 @@ class AdministrationController extends Controller
 			$getDetail->state = $state;
 			$getDetail->zipcode = $zipcode;
 			$getDetail->save();
-			$response['key'] = 1;
-			Session::put('successMessage', 'Company detail has been updated successfully.');
+			$response['key'] = 2;
+			//Session::put('successMessage', 'Company detail has been updated successfully.');
 			echo json_encode($response);
 		}
 		else
@@ -81,7 +81,7 @@ class AdministrationController extends Controller
 	}
 
 	public function edit($company_id) {
-		$getCompanyDetail = Company::selectRaw('name,phone_number,address_1,address_2,city,state,zipcode,email,created_at,id')->where('id',$company_id)->get();
+		$getCompanyDetail = Company::selectRaw('name,phone_number,address_1,address_2,city,state,zipcode,email,created_at,company_id,id')->where('id',$company_id)->get();
 		if(sizeof($getCompanyDetail) > 0)
 		{
 			$getCompanyDetail = $getCompanyDetail[0];

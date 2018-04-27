@@ -40,7 +40,7 @@ class EmployeesController extends Controller
 
 			$checkEmailExist = Admin::selectRaw('email')->where('email',$employee_email)->where('id','<>',$hidden_employeeID)->first();
 			if(isset($checkEmailExist->email)) {
-				$response['key'] = 2;
+				$response['key'] = 3;
 				echo json_encode($response);
 			} else {
 
@@ -52,14 +52,14 @@ class EmployeesController extends Controller
 				$getDetail->login_type_id = $employee_type;
 				$getDetail->save();
 
-				$response['key'] = 1;
-				Session::put('successMessage', 'Employee detail has been updated successfully.');
+				$response['key'] = 2;
+				//Session::put('successMessage', 'Employee detail has been updated successfully.');
 				echo json_encode($response);
 			}
 		}else {
 			$checkEmailExist = Admin::selectRaw('email')->where('email',$employee_email)->first();
 			if(isset($checkEmailExist->email)) {
-				$response['key'] = 2;
+				$response['key'] = 3;
 				echo json_encode($response);
 			} else {
 				$employeeId = (new AdminHomeController)->getuserid();
@@ -75,6 +75,7 @@ class EmployeesController extends Controller
 				$objEmployee->save();
 
 				/*send Mail*/
+
 				/*Mail::send('emails.AdminPanel_EmployeeCreated',array(
 					'password' => $employee_password,
 					'email' => $employee_email,

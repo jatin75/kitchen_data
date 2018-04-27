@@ -66,12 +66,18 @@
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>PHONE NUMBER</b></label>
-													<input type="text" placeholder="(xxx) xxx-xxxx" name="employeePhoneNo" id="employeePhoneNo" value="{{$employeeDetail->phone_number or ''}}" class="form-control">
+													<label class="control-label"><b>EMPLOYEE ID</b></label><br>
+													<span class="disabled-color" id="employeeId">{{$employeeDetail->id or '' }}</span>
 												</div>
 											</div>
 										</div>
 										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>PHONE NUMBER</b></label>
+													<input type="text" placeholder="(xxx) xxx-xxxx" name="employeePhoneNo" id="employeePhoneNo" value="{{$employeeDetail->phone_number or ''}}" class="form-control">
+												</div>
+											</div>
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>EMAIL ADDRESS</b></label>
@@ -169,7 +175,12 @@
 				{
 					location.href = '{{ route('showemployees') }}';
 				}
-				else if(data.key == 2)
+				if(data.key == 2)
+				{
+					$('#loader').hide();
+					notify('Employee detail has been updated successfully.','blackgloss');
+				}
+				else if(data.key == 3)
 				{
 					$('#loader').hide();
 					notify('Entered email address already exists.','blackgloss');
