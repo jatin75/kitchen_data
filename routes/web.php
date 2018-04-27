@@ -59,6 +59,5 @@
 
     /*Reports*/
     Route::get('reports/showreports','admin\ReportsController@index')->name('showreports');
-
-
+    Route::post('downloadjobexcel','admin\ReportsController@downloadJobExcel')->name('downloadjobexcel');
   });
