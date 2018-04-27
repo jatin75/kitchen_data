@@ -69,7 +69,7 @@ class AdminHomeController extends Controller
 			Admin::where('email',$email)->update(['password'=>Hash::make($temporaryPwd)]);
 
 			try{
-				Mail::send('emails.sendtemppassword',array(
+				Mail::send('emails.AdminPanel_ForgotPassword',array(
 					'temp_password' => $temporaryPwd
 				), function($message)use($email){
 					$message->from(env('FromMail','kitchen@gmail.com'),'KITCHEN');
