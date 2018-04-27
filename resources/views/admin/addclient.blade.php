@@ -394,6 +394,7 @@
 		new Switchery($(this)[0], $(this).data());
 	});
 
+	/*$('#formAddClient').on('success.form.bv', function(e) {*/
 	$('#formAddClient').on('submit', function(e) {
 		e.preventDefault();
 		$('#loader').show();

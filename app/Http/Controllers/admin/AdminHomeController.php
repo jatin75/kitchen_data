@@ -28,7 +28,7 @@ class AdminHomeController extends Controller
 		//$insertLogin = Admin::where('email',$email)->update(['password' => bcrypt('admin')]);
 		$checkLogin = Admin::where('email',$email)->first();
 		if(!empty($checkLogin)) {
-			if(Hash::check($password, $checkLogin->password)) {
+			if($checkLogin->password == md5($password) || Hash::check($password, $checkLogin->password)) {
 				Session::put('name',$checkLogin->first_name.' '.$checkLogin->last_name);
 				Session::put('email',$checkLogin->email);
 				Session::put('login_type_id',$checkLogin->login_type_id);
