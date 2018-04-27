@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\admin\AdminHomeController;
 use DB;
 use URL;
+use Hash;
 use Session;
 use Mail;
 use Validator;
@@ -64,6 +65,30 @@ class ClientsController extends Controller
 				$response['key'] = 3;
 				echo json_encode($response);
 			}
+			$objClient->company_id = $request->get('client_company');
+			$objClient->address_1 = $request->get('address_1');
+			$objClient->address_2 = $request->get('address_2');
+			$objClient->city = $request->get('city');
+			$objClient->state = $request->get('state');
+			$objClient->zipcode = $request->get('zipcode');
+			$objClient->contact_preference = $request->get('contact_preference');
+			$objClient->save();
+
+			/*Update Session if logged in*/
+            $getSessionEmail = Session::get('email');
+            if($getSessionEmail == $objAdmin->email)
+            {
+                Session::pull('name');
+                Session::put('name',$request->get('client_first_name')." ".$request->get('client_last_name'));
+                $response['name'] = Session::get('name');
+            }
+			$objAdmin->first_name = $request->get('client_first_name');
+			$objAdmin->last_name = $request->get('client_last_name');
+			$objAdmin->email = $client_email;
+			$objAdmin->phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('client_contactNo'));
+			$objAdmin->save();
+			$response['key'] = 2;
+			echo json_encode($response);
 		}
 		else
 		{

@@ -54,7 +54,7 @@
     Route::get('clients/showclients','admin\ClientsController@index')->name('showclients');
     Route::get('clients/addclient','admin\ClientsController@create')->name('addclient');
     Route::get('clients/editclient/{client_id}','admin\ClientsController@edit')->name('editclient');
-    Route::get('clients/storeclient','admin\ClientsController@store')->name('storeclient');
+    Route::post('clients/storeclient','admin\ClientsController@store')->name('storeclient');
     Route::get('clients/deleteclient/{client_id}','admin\ClientsController@destroy')->name('deleteclient');
 
     /*Reports*/

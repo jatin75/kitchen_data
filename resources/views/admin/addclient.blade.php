@@ -154,6 +154,9 @@
 											@if(isset($clientDetails->client_id))
 											<button type="submit" class="btn btn-info">UPDATE</button>
 											@endif
+											&nbsp;
+											&nbsp;
+											<button id="resetPermission" type="button" class="btn btn-danger">CANCEL</button>
 										</div>
 									</form>
 								</div>
@@ -391,7 +394,7 @@
 		new Switchery($(this)[0], $(this).data());
 	});
 
-	$('#formAddClient').on('success.form.bv', function(e) {
+	$('#formAddClient').on('submit', function(e) {
 		e.preventDefault();
 		$('#loader').show();
 		var hidden_client_id = $('#hiddenClientId').val();
@@ -407,7 +410,7 @@
 		var zipcode = $('#zipcode').val();
 		var contact_preference = $('#contactPreference').val();
 		$.ajax({
-			url:'{{ url('storeclient') }}',
+			url:'{{ route('storeclient') }}',
 			data:{
 				hidden_client_id:hidden_client_id,
 				client_first_name:client_first_name,
@@ -420,16 +423,15 @@
 				city:city,
 				state:state,
 				zipcode:zipcode,
-				contact_preference:contact_preference,
+				contact_preference:contact_preference
 			},
 			type:'post',
 			dataType:'json',
 			success: function(data)
 			{
-				if(data == 1)
+				if(data.key == 1)
 				{
-					/*$('#loader').hide();*/
-					location.href = '{{ route('addclient') }}';
+					location.href = '{{ route('showclients') }}';
 				}
 				else if(data.key == 2)
 				{
@@ -438,7 +440,7 @@
 						$('#sessionName').html(data.name);
 					}
 					$('#loader').hide();
-					notify('Account has been updated successfully','blackgloss');
+					notify('Client has been updated successfully','blackgloss');
 				}
 				else if(data == 3)
 				{
@@ -599,12 +601,11 @@
 	$("#clientContactNo").mask("(999) 999 - 9999");
 
 	/*Date picker*/
-	jQuery('#startDate').datepicker({
+	/*jQuery('#startDate').datepicker({
 		autoclose: true,
 		todayHighlight: true,
-		/*startDate: new Date()*/
-	});
-
+		startDate: new Date()
+	});*/
 	function changePermission(id){
 		var value = $('#access_'+id).val();
 		if(value == 1){
