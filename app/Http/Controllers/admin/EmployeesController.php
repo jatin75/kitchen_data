@@ -36,10 +36,9 @@ class EmployeesController extends Controller
 		$employee_contactNo = $request->get('employee_contactNo');
 		$employee_email = $request->get('employee_email');
 		$employee_type = $request->get('employee_type');
-		$employee_password = str_random(8);
 		if(!empty($hidden_employeeID)) {
 
-			$checkEmailExist = Admin::selectRaw('email')->where('email',$employee_email)->where('id','<>',$hidden_employeeID)->where('is_deleted','<>',1)->first();
+			$checkEmailExist = Admin::selectRaw('email')->where('email',$employee_email)->where('id','<>',$hidden_employeeID)->first();
 			if(isset($checkEmailExist->email)) {
 				$response['key'] = 2;
 				echo json_encode($response);
@@ -58,12 +57,13 @@ class EmployeesController extends Controller
 				echo json_encode($response);
 			}
 		}else {
-			$checkEmailExist = Admin::selectRaw('email')->where('email',$employee_email)->where('is_deleted','<>',1)->first();
+			$checkEmailExist = Admin::selectRaw('email')->where('email',$employee_email)->first();
 			if(isset($checkEmailExist->email)) {
 				$response['key'] = 2;
 				echo json_encode($response);
 			} else {
 				$employeeId = (new AdminHomeController)->getuserid();
+				$employee_password = $employeeId;
 				$objEmployee = new Admin();
 				$objEmployee->id = $employeeId;
 				$objEmployee->first_name = $employee_firstName;
@@ -75,14 +75,14 @@ class EmployeesController extends Controller
 				$objEmployee->save();
 
 				/*send Mail*/
-				
+
 				/*Mail::send('emails.employeecreated',array(
 					'password' => $employee_password,
 					'email' => $employee_email,
 				), function($message)use($employee_email){
 					$message->from(env('FromMail','kitchen@gmail.com'),'KITCHEN');
 					$message->to($employee_email)->subject('KITCHEN | Employee Account Created');
-			
+
 				});*/
 
 				$response['key'] = 1;

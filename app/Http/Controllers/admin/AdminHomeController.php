@@ -89,7 +89,9 @@ class AdminHomeController extends Controller
 		if(!empty($getAdminDetail)) {
 			return view('admin.adminprofile')->with('adminDetail',$getAdminDetail)->with('accountSetting',1);
 		}
+	}
 
+	public function store(Request $request) {
 		$hidden_adminID = $request->get('hidden_adminId');
 		$admin_firstName = $request->get('admin_firstName');
 		$admin_lastName = $request->get('admin_lastName');
@@ -110,13 +112,12 @@ class AdminHomeController extends Controller
 			}
 			$getDetail->first_name = $admin_firstName;
 			$getDetail->last_name = $admin_lastName;
-
-			$getDetail->phone_number = $this->replacePhoneNumber($admin_contactNo);
+			$getDetail->phone_number = (new AdminHomeController)->replacePhoneNumber($admin_contactNo);
 			$getDetail->email = $admin_email;
 			$getDetail->save();
 
 			$response['key'] = 1;
-			Session::put('successMessage', 'Admin detail has been updated successfully.');
+			//Session::put('successMessage', 'Admin detail has been updated successfully.');
 			echo json_encode($response);
 		}
 	}
@@ -135,6 +136,35 @@ class AdminHomeController extends Controller
 			}else {
 				return 2;
 			}
+		}
+	}
+
+	function replacePhoneNumber($phone_number)
+	{
+		$replace_phone_number = preg_replace('/\D/', '', $phone_number);
+		return $replace_phone_number;
+	}
+
+	function formatPhoneNumber($phone_number)
+	{
+		$replace_phone_number = preg_replace('/\D/', '', $phone_number);
+		$format_phone_number = substr_replace(substr_replace(substr_replace($replace_phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0);
+		return $format_phone_number;
+	}
+
+	function getuserid() {
+		$characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < 3; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		$userid = $randomString.mt_rand(10000,99999);
+		$check = Admin::where('id',$userid)->first();
+		if (empty($check)){
+			return $userid;
+		} else {
+			$this->getuserid();
 		}
 	}
 }

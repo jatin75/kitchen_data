@@ -88,7 +88,7 @@
 														@endforeach
 													</select>
 												</div>
-											</div>	
+											</div>
 										</div>
 									</div>
 									<div class="form-group text-left p-t-md">
@@ -150,7 +150,7 @@
 		var employee_contactNo = $('#employeePhoneNo').val();
 		var employee_email = $('#employeeEmail').val();
 		var employee_type = $('#employeeType').val();
-		
+
 		$.ajax({
 			url:'{{ route('storeemployee') }}',
 			data:{
