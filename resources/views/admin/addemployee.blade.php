@@ -104,6 +104,9 @@
 										@if(isset($employeeDetail->id))
 										<button type="submit" class="btn btn-info">UPDATE</button>
 										@endif
+										&nbsp;
+										&nbsp;
+										<button id="resetPermission" type="button" class="btn btn-danger">CANCEL</button>
 									</div>
 								</form>
 							</div>
@@ -142,6 +145,10 @@
 			$('#employeeLastName').val($('#employeeLastName').val().toUpperCase());
 		if(typeof($('#employeeEmail').val()) != "undefined" && $('#employeeEmail').val() !== null)
 			$('#employeeEmail').val($('#employeeEmail').val().toLowerCase());
+
+		$('#resetPermission').click(function(){
+			location.reload();
+		});
 	});
 
 	/* For select 2*/

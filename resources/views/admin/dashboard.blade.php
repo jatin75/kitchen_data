@@ -1,12 +1,30 @@
 @extends('layouts/main')
+@section('pageSpecificCss')
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.css')}}" />
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
+<style type="text/css">
+.nav-link.active {
+    background: #4c5667 !important;
+}
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+    background: #4c5667 !important;
+    color: #ffffff !important;
+}
+.disabled-color{
+    color: #90989c !important;
+}
+tr th{
+  padding-left: 10px !important;
+}
+</style>
+@stop
 @section('content')
 <!-- Page Content -->
-
-    <div class="container-fluid">
-        <div class="row bg-title">
-            <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                <h4 class="page-title">Kitchen Dashboard</h4>
-            </div>
+<div class="container-fluid">
+    <div class="row bg-title">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h4 class="page-title">Kitchen Dashboard</h4>
+        </div>
             <!--<div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
                 <a href="https://themeforest.net/item/elite-admin-responsive-dashboard-web-app-kit-/16750820" target="_blank" class="btn btn-danger pull-right m-l-20 btn-rounded btn-outline hidden-xs hidden-sm waves-effect waves-light">Buy Now</a>
                 <ol class="breadcrumb">
@@ -21,10 +39,10 @@
             <div class="col-md-3 col-sm-6">
                 <div class="white-box">
                     <div class="r-icon-stats">
-                        <i class="ti-user bg-danger"></i>
+                        <i class="ti-bag bg-danger"></i>
                         <div class="bodystate">
-                            <h4>3564</h4>
-                            <span class="text-muted">New Customers</span>
+                            <h4>200</h4>
+                            <span class="text-muted">All Jobs</span>
                         </div>
                     </div>
                 </div>
@@ -32,10 +50,10 @@
             <div class="col-md-3 col-sm-6">
                 <div class="white-box">
                     <div class="r-icon-stats">
-                        <i class="ti-shopping-cart bg-info"></i>
+                        <i class="ti-star bg-info"></i>
                         <div class="bodystate">
-                            <h4>342</h4>
-                            <span class="text-muted">New Products</span>
+                            <h4>100</h4>
+                            <span class="text-muted">New Jobs</span>
                         </div>
                     </div>
                 </div>
@@ -43,10 +61,10 @@
             <div class="col-md-3 col-sm-6">
                 <div class="white-box">
                     <div class="r-icon-stats">
-                        <i class="ti-wallet bg-success"></i>
+                        <i class="ti-blackboard bg-success"></i>
                         <div class="bodystate">
-                            <h4>56%</h4>
-                            <span class="text-muted">Today's Profit</span>
+                            <h4>50</h4>
+                            <span class="text-muted">Actived Jobs</span>
                         </div>
                     </div>
                 </div>
@@ -54,109 +72,115 @@
             <div class="col-md-3 col-sm-6">
                 <div class="white-box">
                     <div class="r-icon-stats">
-                        <i class="ti-star bg-inverse"></i>
+                        <i class="ti-na bg-inverse"></i>
                         <div class="bodystate">
-                            <h4>56%</h4>
-                            <span class="text-muted">New Leads</span>
+                            <h4>50</h4>
+                            <span class="text-muted">Deactived Jobs</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <!--/row -->
-        <!--row -->
         <div class="row">
-            <div class="col-md-5 col-lg-4 col-sm-12 col-xs-12">
-                <div class="white-box">
-                    <h3 class="box-title">Leads by Source</h3>
-                    <div id="morris-donut-chart" class="ecomm-donute" style="height: 317px;"></div>
-                    <ul class="list-inline m-t-30 text-center">
-                        <li class="p-r-20">
-                            <h5 class="text-muted"><i class="fa fa-circle" style="color: #fb9678;"></i> Ads</h5>
-                            <h4 class="m-b-0">8500</h4>
-                        </li>
-                        <li class="p-r-20">
-                            <h5 class="text-muted"><i class="fa fa-circle" style="color: #01c0c8;"></i> Tredshow</h5>
-                            <h4 class="m-b-0">3630</h4>
-                        </li>
-                        <li>
-                            <h5 class="text-muted"> <i class="fa fa-circle" style="color: #4F5467;"></i> Web</h5>
-                            <h4 class="m-b-0">4870</h4>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-7 col-lg-8 col-sm-12 col-xs-12">
-                <div class="white-box">
-                    <h3 class="box-title">Top Products sales</h3>
-                    <ul class="list-inline text-center">
-                        <li>
-                            <h5><i class="fa fa-circle m-r-5" style="color: #00bfc7;"></i>iMac</h5>
-                        </li>
-                        <li>
-                            <h5><i class="fa fa-circle m-r-5" style="color: #b4becb;"></i>iPhone</h5>
-                        </li>
-                    </ul>
-                    <div id="morris-area-chart2" style="height: 370px;"></div>
+            <div class="col-md-12">
+                <div class="panel panel-info">
+                    <div class="panel-wrapper collapse in" aria-expanded="true">
+                        <div class="panel-body">
+                            <ul class="nav nav-pills m-b-30">
+                                <li data-id="0" class="nav-item active"> <a href="javascript:void(0)" onclick="getJobDetailsList(0)" class="nav-link" data-toggle="tab" aria-expanded="true">All</a> </li>
+                                @foreach($jobTypeDetails as $jobType)
+                                <li data-id="{{ $jobType->job_status_id }}" class="nav-item"> <a href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})" class="nav-link" data-toggle="tab" aria-expanded="true">{{ $jobType->job_status_name }}</a> </li>
+                                @endforeach
+                            </ul>
+                            <div class="table-responsive jobDetailList">
+                                {{-- <table id="jobList" class="display nowrap" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Job Name</th>
+                                            <th>Client Name</th>
+                                            <th>Job Super Name</th>
+                                            <th>Start Date</th>
+                                            <th>Expected Completion Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table> --}}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- row -->
-        <!-- .row -->
-        <div class="row">
-            <div class="col-md-4 col-sm-12 col-xs-12">
-                <div class="white-box">
-                    <h3 class="box-title"><small class="pull-right m-t-10 text-success"><i class="fa fa-sort-asc"></i> 18% High then last month</small> Total Leads</h3>
-                    <div class="stats-row">
-                        <div class="stat-item">
-                            <h6>Overall Growth</h6>
-                            <b>80.40%</b></div>
-                        <div class="stat-item">
-                            <h6>Montly</h6>
-                            <b>15.40%</b></div>
-                        <div class="stat-item">
-                            <h6>Day</h6>
-                            <b>5.50%</b></div>
-                    </div>
-                    <div id="sparkline8" class="minus-mar"></div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-12 col-xs-12">
-                <div class="white-box">
-                    <h3 class="box-title"><small class="pull-right m-t-10 text-danger"><i class="fa fa-sort-desc"></i> 18% High then last month</small>Total Vendor</h3>
-                    <div class="stats-row">
-                        <div class="stat-item">
-                            <h6>Overall Growth</h6>
-                            <b>80.40%</b></div>
-                        <div class="stat-item">
-                            <h6>Montly</h6>
-                            <b>15.40%</b></div>
-                        <div class="stat-item">
-                            <h6>Day</h6>
-                            <b>5.50%</b></div>
-                    </div>
-                    <div id="sparkline9" class="minus-mar"></div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-12 col-xs-12">
-                <div class="white-box">
-                    <h3 class="box-title"><small class="pull-right m-t-10 text-success"><i class="fa fa-sort-asc"></i> 18% High then last month</small>Invoice Generate</h3>
-                    <div class="stats-row">
-                        <div class="stat-item">
-                            <h6>Overall Growth</h6>
-                            <b>80.40%</b></div>
-                        <div class="stat-item">
-                            <h6>Montly</h6>
-                            <b>15.40%</b></div>
-                        <div class="stat-item">
-                            <h6>Day</h6>
-                            <b>5.50%</b></div>
-                    </div>
-                    <div id="sparkline10" class="minus-mar"></div>
-                </div>
-            </div>
-        </div>
-        <!-- /.row -->
     </div>    
-        @stop
-        
+    @stop
+
+    @section('pageSpecificJs')
+    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/dataTables.buttons.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.flash.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jszip.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/pdfmake.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/vfs_fonts.js')}}"></script>
+    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.html5.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.print.min.js')}}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var date = $('#formatedDate').val();
+            var value = 'Kitchen_job' + date;
+            $('#jobList').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                {
+                    extend: 'csv',
+                    title: value,
+                    exportOptions: {columns: [ 1,2,3,4,5 ]},
+                },
+                {
+                    extend: 'excel',
+                    title: value,
+                    exportOptions: {columns: [ 1,2,3,4,5 ]},
+                },
+                {
+                    extend: 'pdf',
+                    pageSize: 'LEGAL',
+                    title: value,
+                    exportOptions: {columns: [ 1,2,3,4,5]},
+                },
+                {
+                    extend: 'print',
+                    title: value,
+                    exportOptions: {columns: [ 1,2,3,4,5 ]},
+                },
+                ],
+            });
+
+            /*get job detail list*/
+            getJobDetailsList(0);
+
+        });
+
+        /*get job detail list*/
+        function getJobDetailsList(jobStatusId){
+            $.ajax({
+                url:'{{ route('showjobdetailstatus') }}',
+                data:{
+                    jobStatusId:jobStatusId,
+                },
+                type:'post',
+                dataType:'json',
+                success: function(data)
+                {
+                    if(data.html != '')
+                    {
+                       $('.jobDetailList').html(data.html);
+                       $('#jobList').DataTable();
+                   }
+               }
+           });
+        }
+    </script>
+    @stop

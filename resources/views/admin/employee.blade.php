@@ -110,10 +110,5 @@ tr th{
             ],
         });
     });
-
-    @if(Session::has('successMessage'))
-    notify('{{  Session::get('successMessage') }}','blackgloss');
-    {{ Session::forget('successMessage') }}
-    @endif
 </script>
 @stop
