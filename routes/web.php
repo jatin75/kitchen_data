@@ -25,10 +25,10 @@
     Route::get('dashboard','admin\AdminHomeController@showDashboard')->name('dashboard');
     Route::post('showjobdetailstatus','admin\AdminHomeController@showJobDetails')->name('showjobdetailstatus'); 
 
-    /*Admin*/
-    Route::get('profile/{email}','admin\AdminHomeController@editMyProfile')->name('profile');
-    Route::post('storeadmin','admin\AdminHomeController@store')->name('storeadmin');
-    Route::post('profile/adminchangepassword','admin\AdminHomeController@changePassword')->name('adminchangepassword');
+    /*My Profile*/
+    //Route::get('profile/{email}','admin\AdminHomeController@editMyProfile')->name('adminprofile');
+    //Route::post('storeadmin','admin\AdminHomeController@store')->name('storeadmin');
+    Route::post('profile/changepassword','admin\AdminHomeController@changePassword')->name('changepassword');
 
     /*Jobs*/
     Route::get('jobs/activejobs','admin\JobsController@index')->name('activejobs');
@@ -43,6 +43,7 @@
     Route::get('employees/editemployee/{employee_id}','admin\EmployeesController@edit')->name('editemployee');
     Route::get('employees/deleteemployee/{employee_id}','admin\EmployeesController@destroy')->name('deleteemployee');
     Route::post('storeemployee','admin\EmployeesController@store')->name('storeemployee');
+    Route::get('profile/{email}','admin\EmployeesController@editMyProfile')->name('employeeprofile');
 
     /*Administration*/
     Route::get('administration/showclientcompany','admin\AdministrationController@index')->name('showclientcompany');
@@ -57,6 +58,7 @@
     Route::get('clients/editclient/{client_id}','admin\ClientsController@edit')->name('editclient');
     Route::post('clients/storeclient','admin\ClientsController@store')->name('storeclient');
     Route::get('clients/deleteclient/{client_id}','admin\ClientsController@destroy')->name('deleteclient');
+    Route::get('myprofile/{email}','admin\ClientsController@editMyProfile')->name('clientprofile');
 
     /*Reports*/
     Route::get('reports/showreports','admin\ReportsController@index')->name('showreports');

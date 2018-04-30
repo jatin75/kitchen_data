@@ -16,8 +16,13 @@
                 </div>
                 <a id="sessionName" style="text-transform: uppercase;" href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Session::get('name')}}<span class="caret"></span></a>
                 <ul class="dropdown-menu animated flipInY">
-                    <li><a href="{{ route('profile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
-                    {{-- <li><a href="#"><i class="ti-settings"></i> Account Setting</a></li> --}}
+                    {{-- <li><a href="{{ route('adminprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li> --}}
+                    @if(Session::get('login_type_id') == 1 || Session::get('login_type_id') == 2)
+                    <li><a href="{{ route('employeeprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
+                    @endif
+                    @if(Session::get('login_type_id') == 9)
+                    <li><a href="{{ route('clientprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
+                    @endif
                     <li role="separator" class="divider"></li>
                     <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li>
                 </ul>
@@ -30,6 +35,7 @@
                     <i class="ti-home fa-fw" data-icon="v"></i>
                     <span class="hide-menu"> Dashboard </span>
                 </a>
+            @if(Session::get('login_type_id') != 9)    
             </li>
             <li>
                 <a id="staff" href="javascript:void(0);" class="waves-effect {!! (Request::is('jobs/*') ? 'active' : '') !!}"><i data-icon=")" class="ti-clipboard fa-fw"></i>
@@ -66,6 +72,7 @@
                     <span class="hide-menu">Reports</span>
                 </a>
             </li>
+            @endif
         </ul>
     </div>
 </div>

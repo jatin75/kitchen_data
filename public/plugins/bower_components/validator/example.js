@@ -124,6 +124,10 @@ $(document).ready(function() {
 						min: 16,
 						max: 16,
 						message: 'Phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
 					}
 				}
 			},
@@ -203,6 +207,10 @@ $(document).ready(function() {
 						min: 16,
 						max: 16,
 						message: 'Phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
 					}
 				}
 			},
@@ -228,6 +236,113 @@ $(document).ready(function() {
 
 	$('#employeePhoneNo').on('keyup', function() {
 		$('#formAddEmployee').bootstrapValidator('revalidateField', 'employeePhoneNo');
+	});
+
+	$('#formAddClient').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {			
+			clientFirstName: {
+				validators: {
+					notEmpty: {
+						message: 'Client first name is required and can\'t be empty.'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Client first name can only consist of alphanumeric.'
+					}
+				}
+			},
+			clientLastName: {
+				validators: {
+					notEmpty: {
+						message: 'Client last name is required and can\'t be empty.'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Client last name can only consist of alphanumeric.'
+					}
+				}
+			},
+			clientContactNo: {
+				validators: {
+					notEmpty: {
+						message: 'Phone number is required and can\'t be empty'
+					},
+					stringLength: {
+						min: 16,
+						max: 16,
+						message: 'Phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
+					}
+				}
+			},
+			clientEmail: {
+				validators: {
+					notEmpty: {
+						message: 'Email address is required and can\'t be empty'
+					},
+					emailAddress: {
+						message: 'Please enter valid email address.'
+					}
+				}
+			},
+			clientCompany:{
+				validators:{
+					notEmpty: {
+						message:'Client company is required and can\'t be empty.'
+					}
+				}
+			},
+			locationAddress:{
+				validators:{
+					notEmpty: {
+						message:'Address 1 is required and can\'t be empty.'
+					}
+				}
+			},
+			subAddress:{
+				validators:{
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			city:{
+				validators:{
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			state:{
+				validators:{
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			zipcode:{
+				validators:{
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			contactPreference:{
+				validators:{
+					notEmpty: {
+						message:'Contact Preference is required and can\'t be empty.'
+					}
+				}
+			},
+		}
+	});
+
+	$('#clientContactNo').on('keyup', function() {
+		$('#formAddClient').bootstrapValidator('revalidateField', 'clientContactNo');
 	});
 
 	$('#formAddAdmin').bootstrapValidator({
@@ -284,55 +399,6 @@ $(document).ready(function() {
 		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
 	});
 
-	$('#formImportProspect').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			importProspect: {
-				validators: {
-					notEmpty: {
-						message: 'Please select file.'
-					},
-					file: {
-						extension: 'csv',
-						message: 'The selected file is not valid.'
-					}
-				}
-			}
-		}
-	});
-
-	$('#formImportSubscriber').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			importSubscriber: {
-				validators: {
-					notEmpty: {
-						message: 'Please select file.'
-					},
-					file: {
-						extension: 'csv',
-						message: 'The selected file is not valid.'
-					}
-				}
-			}
-		}
-	});
-
-	$('#formImportAgreement').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			importAgreement: {
-				validators: {
-					notEmpty: {
-						message: 'Please select file.'
-					},
-					file: {
-						extension: 'pdf',
-						message: 'The selected file is not valid.'
-					}
-				}
-			}
-		}
-	});
+	
 
 });

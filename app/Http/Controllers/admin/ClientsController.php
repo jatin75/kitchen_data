@@ -75,13 +75,13 @@ class ClientsController extends Controller
 			$objClient->save();
 
 			/*Update Session if logged in*/
-            $getSessionEmail = Session::get('email');
-            if($getSessionEmail == $objAdmin->email)
-            {
-                Session::pull('name');
-                Session::put('name',$request->get('client_first_name')." ".$request->get('client_last_name'));
-                $response['name'] = Session::get('name');
-            }
+			$getSessionEmail = Session::get('email');
+			if($getSessionEmail == $objAdmin->email)
+			{
+				Session::pull('name');
+				Session::put('name',$request->get('client_first_name')." ".$request->get('client_last_name'));
+				$response['name'] = Session::get('name');
+			}
 			$objAdmin->first_name = $request->get('client_first_name');
 			$objAdmin->last_name = $request->get('client_last_name');
 			$objAdmin->email = $client_email;
@@ -144,7 +144,21 @@ class ClientsController extends Controller
 	public function destroy($client_id)
 	{
 		Client::where('client_id',$client_id)->update(['is_deleted'=>1]);
+		Admin::where('id',$client_id)->update(['is_deleted'=>1]);
 		Session::flash('successMessage', 'Client has been removed Successfully');
 		return redirect()->route('showclients');
+	}
+
+	public function editMyProfile($email) {
+		$getClientDetails = DB::select("SELECT cl.client_id,cl.company_id,cl.address_1,cl.address_2,cl.city,cl.state,cl.zipcode,cl.contact_preference,au.email,au.first_name,au.last_name,au.phone_number
+			FROM clients AS cl
+			JOIN admin_users AS au ON au.id = cl.client_id
+			WHERE cl.is_deleted = 0 AND au.is_deleted = 0 AND au.email = '{$email}'");
+		if(sizeof($getClientDetails) > 0)
+		{
+			$getClientDetails = $getClientDetails[0];
+		}
+		$companyList = Company::selectRaw('company_id,name')->where('is_deleted',0)->get();
+		return view('admin.addclient')->with('clientDetails',$getClientDetails)->with('companyList',$companyList)->with('accountSetting',1);
 	}
 }

@@ -41,7 +41,7 @@ tr th{
                     <div class="r-icon-stats">
                         <i class="ti-bag bg-danger"></i>
                         <div class="bodystate">
-                            <h4>200</h4>
+                            <h4>{{ $totalJobs }}</h4>
                             <span class="text-muted">All Jobs</span>
                         </div>
                     </div>
@@ -52,7 +52,7 @@ tr th{
                     <div class="r-icon-stats">
                         <i class="ti-star bg-info"></i>
                         <div class="bodystate">
-                            <h4>100</h4>
+                            <h4>{{ $newJobs }}</h4>
                             <span class="text-muted">New Jobs</span>
                         </div>
                     </div>
@@ -63,7 +63,7 @@ tr th{
                     <div class="r-icon-stats">
                         <i class="ti-blackboard bg-success"></i>
                         <div class="bodystate">
-                            <h4>50</h4>
+                            <h4>{{ $activedJobs }}</h4>
                             <span class="text-muted">Actived Jobs</span>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ tr th{
                     <div class="r-icon-stats">
                         <i class="ti-na bg-inverse"></i>
                         <div class="bodystate">
-                            <h4>50</h4>
+                            <h4>{{ $deactivedJobs }}</h4>
                             <span class="text-muted">Deactived Jobs</span>
                         </div>
                     </div>
@@ -94,20 +94,7 @@ tr th{
                                 @endforeach
                             </ul>
                             <div class="table-responsive jobDetailList">
-                                {{-- <table id="jobList" class="display nowrap" cellspacing="0" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Job Name</th>
-                                            <th>Client Name</th>
-                                            <th>Job Super Name</th>
-                                            <th>Start Date</th>
-                                            <th>Expected Completion Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        
-                                    </tbody>
-                                </table> --}}
+
                             </div>
                         </div>
                     </div>
@@ -137,23 +124,23 @@ tr th{
                 {
                     extend: 'csv',
                     title: value,
-                    exportOptions: {columns: [ 1,2,3,4,5 ]},
+                    exportOptions: {columns: [ 1,2,3,4 ]},
                 },
                 {
                     extend: 'excel',
                     title: value,
-                    exportOptions: {columns: [ 1,2,3,4,5 ]},
+                    exportOptions: {columns: [ 1,2,3,4 ]},
                 },
                 {
                     extend: 'pdf',
                     pageSize: 'LEGAL',
                     title: value,
-                    exportOptions: {columns: [ 1,2,3,4,5]},
+                    exportOptions: {columns: [ 1,2,3,4]},
                 },
                 {
                     extend: 'print',
                     title: value,
-                    exportOptions: {columns: [ 1,2,3,4,5 ]},
+                    exportOptions: {columns: [ 1,2,3,4 ]},
                 },
                 ],
             });

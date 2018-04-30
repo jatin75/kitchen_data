@@ -206,7 +206,7 @@
 			return;
 		}
 		$.ajax({
-			url:'{{ route('adminchangepassword') }}',
+			url:'{{ route('changepassword') }}',
 			data:{
 				current_password:current_password,
 				new_password:new_password,

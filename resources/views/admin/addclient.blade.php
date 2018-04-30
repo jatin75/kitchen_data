@@ -41,7 +41,7 @@
 					<!--/header-->
 					<div class="panel-body">
 						<ul class="nav nav-pills m-b-30">
-							<li class="active nav-item"> <a href="#tab1" class="nav-link" data-toggle="tab" aria-expanded="true">CLIENT PROFILE</a> </li>
+							<li class="active nav-item"> <a href="#tab1" class="nav-link" data-toggle="tab" aria-expanded="true">@if(isset($accountSetting)) {{ "MY PROFILE" }} @else {{ "CLIENT PROFILE" }} @endif</a> </li>
 							@if(isset($accountSetting))
 							<li class="nav-item"> <a href="#tab2" class="nav-link" data-toggle="tab" aria-expanded="true">ACCOUNT SETTINGS</a> </li>
 							@endif
@@ -166,7 +166,7 @@
 								<div id="tab2" class="tab-pane">
 									<form id="formAccountSetting" method="post">
 										{{ csrf_field() }}
-										<input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$staffDetail->email or ''}}">
+										<input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$clientDetails->email or ''}}">
 										{{-- <input type="show" name="hiddenStatus" id="hiddenStatus" value="{{$new_account or ''}}"> --}}
 										{{-- <input type="hidden" name="hiddenClientId" id="hiddenClientId" value="{{$staffDetail->staff_id or ''}}"> --}}
 										<div class="row">
@@ -186,158 +186,6 @@
 								</div>
 								@endif
 								<!--/.tab2-->
-								<!--tab3-->
-								{{-- @if(!isset($accountSetting) && (isset($permissionList) && $permissionList->email != Session::get('email') && $permissionList->is_admin = 1))
-								<div id="tab3" class="tab-pane">
-									<form id="formStaffPermission" method="post">
-										{{ csrf_field() }}
-										<input type="hidden" name="hiddenClientId" id="hiddenClientId" value="{{$permissionList->staff_id or ''}}">
-										<!--permissions-->
-										<div>
-											<div class="row">
-												<div class="col-md-12">
-													<div class="control-label"><b>MANAGE PERMISSIONS</b></div>
-												</div>
-											</div>
-											<hr>
-											<div class="row">
-												<div class="col-md-6">
-													<div class="form-group">
-														<label class="control-label"><b>EXPORT</b></label>
-														<div class="m-b-10">
-															<div class="row">
-																<div class="col-md-6">
-																	<span>Export CSV, Excel, PDF, Print file.</span>
-																</div>
-																<div class="col-md-6">
-																	<input value="{{$permissionList->can_access_export or 0}}" type="checkbox" @if(isset($permissionList->can_access_export) && $permissionList->can_access_export == 1) {{'checked="checked"'}} @endif id="access_export" name="access_export" class="js-switch" onchange="changePermission('export');" data-color="#63a9f7" data-secondary-color="#e3e3e3" data-size="small" />
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="col-md-6">
-													<div class="form-group">
-														<label class="control-label"><b>UPDATE STAFF</b></label>
-														<div class="m-b-10">
-															<div class="row">
-																<div class="col-md-6">
-																	<span>Update Staff, Reset Password, Deactivate Staff, Reactivate Staff, Delete Staff .</span>
-																</div>
-																<div class="col-md-6">
-																	<input value="{{$permissionList->can_access_update_staff or 0}}" type="checkbox" id="access_update_staff" name="access_update_staff" class="js-switch" data-color="#63a9f7" data-secondary-color="#e3e3e3" data-size="small" @if(isset($permissionList->can_access_update_staff) && $permissionList->can_access_update_staff == 1) {{'checked="checked"'}} @endif onchange="changePermission('update_staff');"/>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-md-6">
-													<div class="form-group">
-														<label class="control-label"><b>IMPORT AGREEMENT</b></label>
-														<div class="m-b-10">
-															<div class="row">
-																<div class="col-md-6">
-																	<span>Import Software Agreement.</span>
-																</div>
-																<div class="col-md-6">
-																	<input value="{{$permissionList->can_access_import_Agreement or 0}}" type="checkbox" id="access_import_Agreement" name="access_import_Agreement" class="js-switch" data-color="#63a9f7" data-secondary-color="#e3e3e3" data-size="small" @if(isset($permissionList->can_access_import_Agreement) && $permissionList->can_access_import_Agreement == 1) {{'checked="checked"'}} @endif onchange="changePermission('import_Agreement');"/>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="col-md-6">
-													<div class="form-group">
-														<label class="control-label"><b>ASSIGN CONSULTANT</b></label>
-														<div class="m-b-10">
-															<div class="row">
-																<div class="col-md-6">
-																	<span>Assign Consultant to any prospect.</span>
-																</div>
-																<div class="col-md-6">
-																	<input value="{{$permissionList->can_access_assign_consultant or 0}}" type="checkbox" id="access_assign_consultant" name="access_assign_consultant" class="js-switch" data-color="#63a9f7" data-secondary-color="#e3e3e3" data-size="small" @if(isset($permissionList->can_access_assign_consultant) && $permissionList->can_access_assign_consultant == 1) {{'checked="checked"'}} @endif onchange="changePermission('assign_consultant');"/>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-md-6">
-													<div class="form-group">
-														<label class="control-label"><b>DEPARTMENTS &amp; ROLES</b></label>
-														<div class="m-b-10">
-															<div class="row">
-																<div class="col-md-6">
-																	<span>Add Departments and Roles.</span>
-																</div>
-																<div class="col-md-6">
-																	<input value="{{$permissionList->can_access_department_and_roles or 0}}" type="checkbox" id="access_department_and_roles" name="access_department_and_roles" class="js-switch" data-color="#63a9f7" data-secondary-color="#e3e3e3" data-size="small" @if(isset($permissionList->can_access_department_and_roles) && $permissionList->can_access_department_and_roles == 1) {{'checked="checked"'}} @endif onchange="changePermission('department_and_roles');"/>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="col-md-6">
-													<div class="form-group">
-														<label class="control-label"><b>ADD FEEDS</b></label>
-														<div class="m-b-10">
-															<div class="row">
-																<div class="col-md-6">
-																	<span>Add Feeds that contains information.</span>
-																</div>
-																<div class="col-md-6">
-																	<input value="{{$permissionList->can_access_add_feeds or 0}}" type="checkbox" id="access_add_feeds" name="access_add_feeds" class="js-switch" data-color="#63a9f7" data-secondary-color="#e3e3e3" data-size="small" @if(isset($permissionList->can_access_add_feeds) && $permissionList->can_access_add_feeds == 1) {{'checked="checked"'}} @endif onchange="changePermission('add_feeds');"/>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-md-6">
-													<div class="form-group">
-														<label class="control-label"><b>ADD STAFF</b></label>
-														<div class="m-b-10">
-															<div class="row">
-																<div class="col-md-6">
-																	<span>Add Staff ability.</span>
-																</div>
-																<div class="col-md-6">
-																	<input value="{{$permissionList->can_access_add_staff or 0}}" type="checkbox" id="access_add_staff" name="access_add_staff" class="js-switch" data-color="#63a9f7" data-secondary-color="#e3e3e3" data-size="small" @if(isset($permissionList->can_access_add_staff) && $permissionList->can_access_add_staff == 1) {{'checked="checked"'}} @endif onchange="changePermission('add_staff');"/>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="col-md-6">
-													<div class="form-group">
-														<label class="control-label"><b>REMOVE FEEDS</b></label>
-														<div class="m-b-10">
-															<div class="row">
-																<div class="col-md-6">
-																	<span>Remove feeds that contains information.</span>
-																</div>
-																<div class="col-md-6">
-																	<input value="{{$permissionList->can_access_remove_feeds or 0}}" type="checkbox" id="access_remove_feeds" name="access_remove_feeds" class="js-switch" data-color="#63a9f7" data-secondary-color="#e3e3e3" data-size="small" @if(isset($permissionList->can_access_remove_feeds) && $permissionList->can_access_remove_feeds == 1) {{'checked="checked"'}} @endif onchange="changePermission('remove_feeds');"/>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<!--/.permissions-->
-										<div class="form-group text-left p-t-md">
-											<button type="submit" class="btn btn-info">SAVE</button>&nbsp;&nbsp;&nbsp;
-											<button id="resetPermission" type="button" class="btn btn-danger">CANCEL</button>
-										</div>
-									</form>
-								</div>
-								@endif --}}
-								<!--/.tab3-->
 							</div>
 						</div>
 					</div>
@@ -395,136 +243,98 @@
 	});
 
 	/*$('#formAddClient').on('success.form.bv', function(e) {*/
-	$('#formAddClient').on('submit', function(e) {
-		e.preventDefault();
-		$('#loader').show();
-		var hidden_client_id = $('#hiddenClientId').val();
-		var client_first_name = $('#clientFirstName').val();
-		var client_last_name = $('#clientLastName').val();
-		var client_email = $('#clientEmail').val();
-		var client_contactNo = $('#clientContactNo').val();
-		var client_company = $('#clientCompany').val();
-		var address_1 = $('#locationAddress').val();
-		var address_2 = $('#subAddress').val();
-		var city = $('#city').val();
-		var state = $('#state').val();
-		var zipcode = $('#zipcode').val();
-		var contact_preference = $('#contactPreference').val();
-		$.ajax({
-			url:'{{ route('storeclient') }}',
-			data:{
-				hidden_client_id:hidden_client_id,
-				client_first_name:client_first_name,
-				client_last_name:client_last_name,
-				client_email:client_email,
-				client_contactNo:client_contactNo,
-				client_company:client_company,
-				address_1:address_1,
-				address_2:address_2,
-				city:city,
-				state:state,
-				zipcode:zipcode,
-				contact_preference:contact_preference
-			},
-			type:'post',
-			dataType:'json',
-			success: function(data)
-			{
-				if(data.key == 1)
+		$('#formAddClient').on('success.form.bv', function(e) {
+			e.preventDefault();
+			$('#loader').show();
+			var hidden_client_id = $('#hiddenClientId').val();
+			var client_first_name = $('#clientFirstName').val();
+			var client_last_name = $('#clientLastName').val();
+			var client_email = $('#clientEmail').val();
+			var client_contactNo = $('#clientContactNo').val();
+			var client_company = $('#clientCompany').val();
+			var address_1 = $('#locationAddress').val();
+			var address_2 = $('#subAddress').val();
+			var city = $('#city').val();
+			var state = $('#state').val();
+			var zipcode = $('#zipcode').val();
+			var contact_preference = $('#contactPreference').val();
+			$.ajax({
+				url:'{{ route('storeclient') }}',
+				data:{
+					hidden_client_id:hidden_client_id,
+					client_first_name:client_first_name,
+					client_last_name:client_last_name,
+					client_email:client_email,
+					client_contactNo:client_contactNo,
+					client_company:client_company,
+					address_1:address_1,
+					address_2:address_2,
+					city:city,
+					state:state,
+					zipcode:zipcode,
+					contact_preference:contact_preference
+				},
+				type:'post',
+				dataType:'json',
+				success: function(data)
 				{
-					location.href = '{{ route('showclients') }}';
-				}
-				else if(data.key == 2)
-				{
-					if(typeof(data.name) != "undefined" && data.name !== null)
+					if(data.key == 1)
 					{
-						$('#sessionName').html(data.name);
+						location.href = '{{ route('showclients') }}';
 					}
-					$('#loader').hide();
-					notify('Client has been updated successfully','blackgloss');
+					else if(data.key == 2)
+					{
+						if(typeof(data.name) != "undefined" && data.name !== null)
+						{
+							$('#sessionName').html(data.name);
+						}
+						$('#loader').hide();
+						notify('Client has been updated successfully','blackgloss');
+					}
+					else if(data == 3)
+					{
+						$('#loader').hide();
+						notify('Entered email address already exists.','blackgloss');
+					}
 				}
-				else if(data == 3)
-				{
-					$('#loader').hide();
-					notify('Entered email address already exists.','blackgloss');
-				}
-			}
+			});
 		});
-	});
 
-	/*$('#formAccountSetting').on('success.form.bv', function(e) {
-		e.preventDefault();
-		$('#loader').show();
-		var current_password = $('#currentPassword').val();
-		var new_password = $('#newPassword').val();
-		var retype_password = $('#retypePassword').val();
-		var hidden_email = $('#hiddenMail').val();
-		if(new_password != retype_password)
-		{
-			$('#loader').hide();
-			notify('New password and  Retype password is not match. Please try again.','blackgloss');
-			return;
-		}
-		$.ajax({
-			url:'{ route('changepassword') }}',
-			data:{
-				current_password:current_password,
-				new_password:new_password,
-				hidden_email:hidden_email,
-			},
-			type:'post',
-			success: function(data)
-			{
-				if(data == 1)
-				{
-					$('#loader').hide();
-					notify('Your password has been reset.','blackgloss');
-				}
-				else if(data == 2)
-				{
-					$('#loader').hide();
-					notify('Current password is invalid. Please try again.','blackgloss');
-				}
+		$("#formAccountSetting").on('success.form.bv',function(e){
+			e.preventDefault();
+			$("#loader").show();
+			var current_password = $("#currentPassword").val();
+			var new_password = $('#newPassword').val();
+			var retype_password = $('#retypePassword').val();
+			var hidden_email = $('#hiddenMail').val();
+			if(new_password != retype_password) {
+				$("#loader").hide();
+				notify('New password and  Retype password is not match. Please try again.','blackgloss');
+				return;
 			}
-		});
-	});*/
-
-	/*$('#formclientPermission').on('submit', function(e) {
-		e.preventDefault();
-		// $('#loader').show();
-		var hidden_client_id = $('#hiddenClientId').val();
-		var access_export = $('#access_export').val();
-		var access_import_Agreement = $('#access_import_Agreement').val();
-		var access_department_and_roles = $('#access_department_and_roles').val();
-		var access_add_client = $('#access_add_client').val();
-		var access_update_client = $('#access_update_client').val();
-		var access_assign_consultant = $('#access_assign_consultant').val();
-		var access_add_feeds = $('#access_add_feeds').val();
-		var access_remove_feeds = $('#access_remove_feeds').val();
-		$.ajax({
-			url:'{ route('storepermission') }}',
-			data:{
-				hidden_client_id:hidden_client_id,
-				access_export:access_export,
-				access_import_Agreement:access_import_Agreement,
-				access_department_and_roles:access_department_and_roles,
-				access_add_client:access_add_client,
-				access_update_client:access_update_client,
-				access_assign_consultant:access_assign_consultant,
-				access_add_feeds:access_add_feeds,
-				access_remove_feeds:access_remove_feeds,
-			},
-			type:'post',
-			success: function(data)
-			{
-				if(data == 1)
+			$.ajax({
+				url:'{{ route('changepassword') }}',
+				data:{
+					current_password:current_password,
+					new_password:new_password,
+					hidden_email:hidden_email,
+				},
+				type:'post',
+				success: function(data)
 				{
-					$('#loader').hide();
-					notify('Permissions has been updated successfully','blackgloss');
+					if(data == 1)
+					{
+						$('#loader').hide();
+						notify('Your password has been reset.','blackgloss');
+					}
+					else if(data == 2)
+					{
+						$('#loader').hide();
+						notify('Current password is invalid. Please try again.','blackgloss');
+					}
 				}
-			}
+			});
 		});
-	});*/
 
 	/*function deactivateAccount(account_id)
 	{
