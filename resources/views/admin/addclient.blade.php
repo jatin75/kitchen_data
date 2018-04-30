@@ -291,7 +291,7 @@
 						$('#loader').hide();
 						notify('Client has been updated successfully','blackgloss');
 					}
-					else if(data == 3)
+					else if(data.key == 3)
 					{
 						$('#loader').hide();
 						notify('Entered email address already exists.','blackgloss');

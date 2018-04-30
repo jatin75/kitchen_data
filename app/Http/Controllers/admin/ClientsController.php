@@ -63,7 +63,7 @@ class ClientsController extends Controller
 			{
 				/*$msg = 'Entered email address already exists.';*/
 				$response['key'] = 3;
-				echo json_encode($response);
+				return json_encode($response);
 			}
 			$objClient->company_id = $request->get('client_company');
 			$objClient->address_1 = $request->get('address_1');
@@ -88,7 +88,7 @@ class ClientsController extends Controller
 			$objAdmin->phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('client_contactNo'));
 			$objAdmin->save();
 			$response['key'] = 2;
-			echo json_encode($response);
+			return json_encode($response);
 		}
 		else
 		{
@@ -100,7 +100,7 @@ class ClientsController extends Controller
 			{
 				/*$msg = 'Entered email address already exists.';*/
 				$response['key'] = 3;
-				echo json_encode($response);
+				return json_encode($response);
 			}
 			$new_client_id = (new AdminHomeController)->getuserid();
 			$objClient = new Client();
@@ -137,7 +137,7 @@ class ClientsController extends Controller
 
 			$response['key'] = 1;
 			Session::put('successMessage', 'Client detail has been added successfully.');
-			echo json_encode($response);
+			return json_encode($response);
 		}
 	}
 
