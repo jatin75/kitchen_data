@@ -21,7 +21,7 @@ class ReportsController extends Controller
         // $excelArray = [];
         // $excelArray[] = ['job_id', 'client_id', 'job_title', 'address_1', 'address_2', 'city', 'state', 'zipcode', 'apartment_number', 'super_name', 'super_phone_number', 'contractor_name', 'contractor_phone_number', 'contractor_email', 'working_employee_id', 'job_client_id', 'plumbing_installation_date', 'delivery_datetime', 'installation_datetime', 'installation_employee_id', 'stone_installation_datetime', 'stone_installation_employee_id', 'start_date', 'end_date', 'job_status_name'];
 
-        return Excel::download(new Exports, 'product.xlsx');
+        // return Excel::download(new Exports, 'product.xlsx');
 
         // foreach ($getJobDetails as $job) {
         //     $excelArray[] = json_decode(json_encode($job), true);
@@ -29,7 +29,7 @@ class ReportsController extends Controller
         // return Excel::download(new InvoicesExport, 'invoices.xlsx');
         // return response()->download($getJobDetails, 'Kitchen_Jobs_' . date('Y_m_d') . '.xlsx');
 
-        // return view('admin.reports')->with('jobStatusList', JobType::all());
+        return view('admin.reports')->with('jobStatusList', JobType::all());
     }
 
     public function downloadJobExcel(Request $request)
