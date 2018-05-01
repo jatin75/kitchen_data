@@ -28,6 +28,5 @@ class Exports implements FromCollection, FromQuery, WithHeadings
 
         return $getJobDetails;
         return Job::where('job_status_id',1)->get();
-
     }
 }

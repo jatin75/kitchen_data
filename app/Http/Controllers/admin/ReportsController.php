@@ -32,7 +32,14 @@ class ReportsController extends Controller
         // $excelArray = [];
         // $excelArray[] = ['job_id', 'client_id', 'job_title', 'address_1', 'address_2', 'city', 'state', 'zipcode', 'apartment_number', 'super_name', 'super_phone_number', 'contractor_name', 'contractor_phone_number', 'contractor_email', 'working_employee_id', 'job_client_id', 'plumbing_installation_date', 'delivery_datetime', 'installation_datetime', 'installation_employee_id', 'stone_installation_datetime', 'stone_installation_employee_id', 'start_date', 'end_date', 'job_status_name'];
 
-        // return Excel::download(new Exports, 'product.xlsx');
+        /*$excelDetails = new Exports();
+        $getDetail = $excelDetails->collection();
+        echo '<pre>';
+        $getDetail = json_decode(json_encode($getDetail), true);
+        array_unshift($getDetail,array('job_id'=>'job_id','client_id'=>'client_id'));
+        print_r($getDetail);
+        die;*/
+        //return Excel::download(new Exports, 'joblist.xlsx');
 
         // foreach ($getJobDetails as $job) {
         //     $excelArray[] = json_decode(json_encode($job), true);

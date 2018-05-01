@@ -49,22 +49,7 @@ class AdminHomeController extends Controller
 	/*showdashboard*/
 	public function showDashboard(){
 		$getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
-		$getSessionEmail = Session::get('email');
-		if(Session::get('login_type_id') == 9){
-			$getDetail = Admin::where('email',$getSessionEmail)->first();
-
-			$totalJobs = Job::where('is_deleted',0)->where('client_id',$getDetail->id)->count();
-			$newJobs = Job::where('is_deleted',0)->where('client_id',$getDetail->id)->where('job_status_id',1)->count();
-			$activedJobs = Job::where('is_deleted',0)->where('client_id',$getDetail->id)->where('is_active',1)->count();
-			$deactivedJobs = Job::where('is_deleted',0)->where('client_id',$getDetail->id)->where('is_active',0)->orWhere('job_status_id',8)->count();
-		}else{
-			$totalJobs = Job::where('is_deleted',0)->count();
-			$newJobs = Job::where('is_deleted',0)->where('job_status_id',1)->count();
-			$activedJobs = Job::where('is_deleted',0)->where('is_active',1)->count();
-			$deactivedJobs = Job::where('is_deleted',0)->where('is_active',0)->orWhere('job_status_id',8)->count();
-		}
-		
-		return view('admin.dashboard')->with('jobTypeDetails',$getJobTypeDetail)->with('totalJobs',$totalJobs)->with('newJobs',$newJobs)->with('activedJobs',$activedJobs)->with('deactivedJobs',$deactivedJobs);
+		return view('admin.dashboard')->with('jobTypeDetails',$getJobTypeDetail);
 	}
 
 	public function logout()
@@ -159,76 +144,87 @@ class AdminHomeController extends Controller
 	public function showJobDetails(Request $request) {
 		$getSessionEmail = Session::get('email');
 		$job_statusId = $request->get('jobStatusId');
+		if($job_statusId == 0) {
+			$jobStatusCond = '';
+		}else {
+			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
+		}
 		if(Session::get('login_type_id') == 9) {
 			$getDetail = Admin::where('email',$getSessionEmail)->first();
-			if($job_statusId == 0) {
-				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id WHERE jb.is_deleted = 0 AND jb.client_id = '{$getDetail->id}' AND jb.is_active = 1 ");
+			
+			$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0  {$jobStatusCond} AND jb.client_id = '{$getDetail->id}'");
+
+			/*if($job_statusId == 0) {
+				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id  WHERE jb.is_deleted = 0 AND jb.client_id = '{$getDetail->id}' AND jb.is_active = 1 ");
 			}else {
-				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id WHERE jb.is_deleted = 0 AND jb.job_status_id = '{$job_statusId}' AND jb.client_id = '{$getDetail->id}'");
-			}
+				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 AND jb.job_status_id = '{$job_statusId}' AND jb.client_id = '{$getDetail->id}'");
+			}*/
 		}else {
-			if($job_statusId == 0) {
-				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id WHERE jb.is_deleted = 0 AND jb.is_active = 1");
+			
+			$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 {$jobStatusCond}");
+
+			/*if($job_statusId == 0) {
+				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 AND jb.is_active = 1");
 			}else {
-				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id WHERE jb.is_deleted = 0 AND jb.job_status_id = '{$job_statusId}'");
-			}
+				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 AND jb.job_status_id = '{$job_statusId}'");
+			}*/
 		}
 		$html = '';
 		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Job Name</th>
-                            <th>Client Name</th>
-                            <th>Job Super Name</th>
-                            <th>Start Date</th>
-                            <th>Expected Completion Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
-        if(!empty($getJobDetails)) {
-        	foreach($getJobDetails as $jobDetail) {
-        		$html .='<tr>
-        					<td>'.$jobDetail->job_title.'</td>
-        					<td>'.$jobDetail->first_name.' '.$jobDetail->last_name.'</td>
-        					<td>'.$jobDetail->super_name.'</td>
-        					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
-        					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
-        				</tr>';
-        	}
+		<thead>
+		<tr>
+		<th>Job Name</th>
+		<th>Client Name</th>
+		<th>Status</th>
+		<th>Start Date</th>
+		<th>Expected Completion Date</th>
+		</tr>
+		</thead>
+		<tbody>';
+		if(!empty($getJobDetails)) {
+			foreach($getJobDetails as $jobDetail) {
+				$html .='<tr>
+				<td>'.$jobDetail->job_title.'</td>
+				<td>'.$jobDetail->first_name.' '.$jobDetail->last_name.'</td>
+				<td>'.$jobDetail->job_status_name.'</td>
+				<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+				<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+				</tr>';
+			}
 		}
-        $html .='</tbody>
-        		 </table>';
+		$html .='</tbody>
+		</table>';
 
-        $response['html'] = $html;
-        echo json_encode($response);
-    }
+		$response['html'] = $html;
+		echo json_encode($response);
+	}
 
-    function replacePhoneNumber($phone_number)
-    {
-    	$replace_phone_number = preg_replace('/\D/', '', $phone_number);
-    	return $replace_phone_number;
-    }
+	function replacePhoneNumber($phone_number)
+	{
+		$replace_phone_number = preg_replace('/\D/', '', $phone_number);
+		return $replace_phone_number;
+	}
 
-    function formatPhoneNumber($phone_number)
-    {
-    	$replace_phone_number = preg_replace('/\D/', '', $phone_number);
-    	$format_phone_number = substr_replace(substr_replace(substr_replace($replace_phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0);
-    	return $format_phone_number;
-    }
+	function formatPhoneNumber($phone_number)
+	{
+		$replace_phone_number = preg_replace('/\D/', '', $phone_number);
+		$format_phone_number = substr_replace(substr_replace(substr_replace($replace_phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0);
+		return $format_phone_number;
+	}
 
-    function getuserid() {
-    	$characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    	$charactersLength = strlen($characters);
-    	$randomString = '';
-    	for ($i = 0; $i < 3; $i++) {
-    		$randomString .= $characters[rand(0, $charactersLength - 1)];
-    	}
-    	$userid = $randomString.mt_rand(10000,99999);
-    	$check = Admin::where('id',$userid)->first();
-    	if (empty($check)){
-    		return $userid;
-    	} else {
-    		$this->getuserid();
-    	}
-    }
+	function getuserid() {
+		$characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < 3; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		$userid = $randomString.mt_rand(10000,99999);
+		$check = Admin::where('id',$userid)->first();
+		if (empty($check)){
+			return $userid;
+		} else {
+			$this->getuserid();
+		}
+	}
 }

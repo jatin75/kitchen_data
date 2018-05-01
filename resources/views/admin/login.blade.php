@@ -27,7 +27,7 @@
   </div>
   <section id="wrapper" class="login-register">
     <div class="login-box">
-      <div class="white-box">
+      <div class="white-box " style="box-shadow: 0 0 14px #666;">
         @if(Session::has('matchResetPassword'))
         <div class="alert alert-success alert-bold-border fade in alert-dismissable">
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>

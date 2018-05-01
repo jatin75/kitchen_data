@@ -25,149 +25,102 @@ tr th{
         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
             <h4 class="page-title">Kitchen Dashboard</h4>
         </div>
-            <!--<div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
-                <a href="https://themeforest.net/item/elite-admin-responsive-dashboard-web-app-kit-/16750820" target="_blank" class="btn btn-danger pull-right m-l-20 btn-rounded btn-outline hidden-xs hidden-sm waves-effect waves-light">Buy Now</a>
-                <ol class="breadcrumb">
-                    <li><a href="#">Dashboard</a></li>
-                    <li class="active">Kitchen Dashboard</li>
-                </ol>
-            </div>-->
-            <!-- /.col-lg-12 -->
-        </div>
-        <!--row -->
-        <div class="row">
-            <div class="col-md-3 col-sm-6">
-                <div class="white-box">
-                    <div class="r-icon-stats">
-                        <i class="ti-bag bg-danger"></i>
-                        <div class="bodystate">
-                            <h4>{{ $totalJobs }}</h4>
-                            <span class="text-muted">All Jobs</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="white-box">
-                    <div class="r-icon-stats">
-                        <i class="ti-star bg-info"></i>
-                        <div class="bodystate">
-                            <h4>{{ $newJobs }}</h4>
-                            <span class="text-muted">New Jobs</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="white-box">
-                    <div class="r-icon-stats">
-                        <i class="ti-blackboard bg-success"></i>
-                        <div class="bodystate">
-                            <h4>{{ $activedJobs }}</h4>
-                            <span class="text-muted">Actived Jobs</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="white-box">
-                    <div class="r-icon-stats">
-                        <i class="ti-na bg-inverse"></i>
-                        <div class="bodystate">
-                            <h4>{{ $deactivedJobs }}</h4>
-                            <span class="text-muted">Deactived Jobs</span>
+    </div>
+    <!--/row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-wrapper collapse in" aria-expanded="true">
+                    <div class="panel-body dashboard-job-list">
+                        <div class="nav_toggle"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></div>
+                        <ul class="nav nav-pills m-b-30" id="nav_menu">
+                            <li data-id="0" class="nav-item active"> <a href="javascript:void(0)" onclick="getJobDetailsList(0)" class="nav-link" data-toggle="tab" aria-expanded="true">All</a> </li>
+                            @foreach($jobTypeDetails as $jobType)
+                            <li data-id="{{ $jobType->job_status_id }}" class="nav-item"> <a href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})" class="nav-link" data-toggle="tab" aria-expanded="true">{{ strtoupper($jobType->job_status_name) }}</a> </li>
+                            @endforeach
+                        </ul>
+                        <div class="table-responsive jobDetailList">
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--/row -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-info">
-                    <div class="panel-wrapper collapse in" aria-expanded="true">
-                        <div class="panel-body">
-                            <ul class="nav nav-pills m-b-30">
-                                <li data-id="0" class="nav-item active"> <a href="javascript:void(0)" onclick="getJobDetailsList(0)" class="nav-link" data-toggle="tab" aria-expanded="true">All</a> </li>
-                                @foreach($jobTypeDetails as $jobType)
-                                <li data-id="{{ $jobType->job_status_id }}" class="nav-item"> <a href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})" class="nav-link" data-toggle="tab" aria-expanded="true">{{ $jobType->job_status_name }}</a> </li>
-                                @endforeach
-                            </ul>
-                            <div class="table-responsive jobDetailList">
+    </div>
+    <!-- row -->
+</div>    
+@stop
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- row -->
-    </div>    
-    @stop
-
-    @section('pageSpecificJs')
-    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/dataTables.buttons.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.flash.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jszip.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/pdfmake.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/vfs_fonts.js')}}"></script>
-    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.html5.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.print.min.js')}}"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var date = $('#formatedDate').val();
-            var value = 'Kitchen_job' + date;
-            $('#jobList').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                {
-                    extend: 'csv',
-                    title: value,
-                    exportOptions: {columns: [ 1,2,3,4 ]},
-                },
-                {
-                    extend: 'excel',
-                    title: value,
-                    exportOptions: {columns: [ 1,2,3,4 ]},
-                },
-                {
-                    extend: 'pdf',
-                    pageSize: 'LEGAL',
-                    title: value,
-                    exportOptions: {columns: [ 1,2,3,4]},
-                },
-                {
-                    extend: 'print',
-                    title: value,
-                    exportOptions: {columns: [ 1,2,3,4 ]},
-                },
-                ],
-            });
-
-            /*get job detail list*/
-            getJobDetailsList(0);
-
+@section('pageSpecificJs')
+<script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/datatables/dataTables.buttons.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.flash.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jszip.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/datatables/pdfmake.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/datatables/vfs_fonts.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.html5.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.print.min.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var date = $('#formatedDate').val();
+        var value = 'Kitchen_job' + date;
+        $('#jobList').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+            {
+                extend: 'csv',
+                title: value,
+                exportOptions: {columns: [ 1,2,3,4 ]},
+            },
+            {
+                extend: 'excel',
+                title: value,
+                exportOptions: {columns: [ 1,2,3,4 ]},
+            },
+            {
+                extend: 'pdf',
+                pageSize: 'LEGAL',
+                title: value,
+                exportOptions: {columns: [ 1,2,3,4]},
+            },
+            {
+                extend: 'print',
+                title: value,
+                exportOptions: {columns: [ 1,2,3,4 ]},
+            },
+            ],
         });
 
         /*get job detail list*/
-        function getJobDetailsList(jobStatusId){
-            $.ajax({
-                url:'{{ route('showjobdetailstatus') }}',
-                data:{
-                    jobStatusId:jobStatusId,
-                },
-                type:'post',
-                dataType:'json',
-                success: function(data)
+        getJobDetailsList(0);
+
+    });
+
+    /*get job detail list*/
+    function getJobDetailsList(jobStatusId){
+        $('.jobDetailList').html('<div id="jobchart" class="box" style="padding: inherit;"><p style="text-align: center;margin: 10px;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px"></i></p></div>');
+        $.ajax({
+            url:'{{ route('showjobdetailstatus') }}',
+            data:{
+                jobStatusId:jobStatusId,
+            },
+            type:'post',
+            dataType:'json',
+            success: function(data)
+            {
+                if(data.html != '')
                 {
-                    if(data.html != '')
-                    {
-                       $('.jobDetailList').html(data.html);
-                       $('#jobList').DataTable();
-                   }
-               }
-           });
-        }
-    </script>
-    @stop
+                 $('.jobDetailList').html(data.html);
+                 $('#jobList').DataTable();
+             }
+         }
+     });
+    }
+
+    /*job status menu*/
+    $(".nav_toggle").click(function(){
+        $("#nav_menu").toggle();
+    });
+    
+</script>
+@stop

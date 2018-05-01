@@ -63,7 +63,7 @@
                         <div class="row">
                             <div class="col-md-3 col-sm-3 col-sx-3">
                                 <div class="form-group p-t-27">
-                                    <button type="submit" class="btn btn-info">DOWNLOAD REPORT&nbsp;<i class="fa fa-download"></i></button>
+                                    <button type="button" class="btn btn-info">DOWNLOAD REPORT&nbsp;<i class="fa fa-download"></i></button>
                                 </div>
                             </div>
                         </div>
