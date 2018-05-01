@@ -5,8 +5,10 @@ namespace App\Http\Controllers\admin;
 use App\Job;
 use DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class Exports implements FromCollection
+class Exports implements FromCollection, FromQuery, WithHeadings
 {
     public function collection()
     {
@@ -24,7 +26,7 @@ class Exports implements FromCollection
         //     $excelArray[] = json_decode(json_encode($job), true);
         // }
 
-        // return $getJobDetails;
+        return $getJobDetails;
         return Job::where('job_status_id',1)->get();
 
     }

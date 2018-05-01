@@ -25,7 +25,7 @@ tr th{
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All COMPANY</h3>
-           
+
             <a href="{{route('addclientcompany')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Company</span> <i class="fa fa-plus m-l-5"></i></a>
             <div class="table-responsive">
                 <table id="clientCompanyList" class="display nowrap" cellspacing="0" width="100%">
@@ -80,7 +80,7 @@ tr th{
 <script type="text/javascript">
     $(document).ready(function() {
         var date = $('#formatedDate').val();
-        var value = 'Kitchen_Client_Company' + date;
+        var value = 'Kitchen_Client_Company_' + date;
         $('#clientCompanyList').DataTable({
             dom: 'Bfrtip',
             buttons: [

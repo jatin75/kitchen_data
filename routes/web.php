@@ -23,7 +23,7 @@
   Route::group(array('middleware'=>'CheckUser'),function(){
     /*Dashboard*/
     Route::get('dashboard','admin\AdminHomeController@showDashboard')->name('dashboard');
-    Route::post('showjobdetailstatus','admin\AdminHomeController@showJobDetails')->name('showjobdetailstatus'); 
+    Route::post('showjobdetailstatus','admin\AdminHomeController@showJobDetails')->name('showjobdetailstatus');
 
     /*My Profile*/
     //Route::get('profile/{email}','admin\AdminHomeController@editMyProfile')->name('adminprofile');
@@ -34,6 +34,8 @@
     Route::get('jobs/activejobs','admin\JobsController@index')->name('activejobs');
     Route::get('jobs/deactivatedjobs','admin\JobsController@showDeactivated')->name('deactivatedjobs');
     Route::get('jobs/editjob/{job_id}','admin\JobsController@edit')->name('editjob');
+    Route::get('jobs/addjob','admin\JobsController@create')->name('addjob');
+    Route::post('jobs/storejob','admin\JobsController@store')->name('storejob');
     Route::get('jobs/deletejob/{job_id}','admin\JobsController@destroy')->name('deletejob');
     Route::get('jobs/deactivatejob/{job_id}','admin\JobsController@deactivateJob')->name('deactivatejob');
 

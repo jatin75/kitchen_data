@@ -26,7 +26,7 @@ tr th{
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All JOBS</h3>
 
-            <a href="{{route('addemployee')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Job</span> <i class="fa fa-plus m-l-5"></i></a>
+            <a href="{{route('addjob')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Job</span> <i class="fa fa-plus m-l-5"></i></a>
             <div class="table-responsive">
                 <table id="jobList" class="display nowrap" cellspacing="0" width="100%">
                     <thead>
@@ -77,7 +77,7 @@ tr th{
 <script type="text/javascript">
     $(document).ready(function() {
         var date = $('#formatedDate').val();
-        var value = 'Kitchen_employee' + date;
+        var value = 'Kitchen_employee_' + date;
         $('#jobList').DataTable({
             dom: 'Bfrtip',
             buttons: [

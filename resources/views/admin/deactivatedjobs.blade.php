@@ -75,7 +75,7 @@ tr th{
 <script type="text/javascript">
     $(document).ready(function() {
         var date = $('#formatedDate').val();
-        var value = 'Kitchen_employee' + date;
+        var value = 'Kitchen_employee_' + date;
         $('#jobList').DataTable({
             dom: 'Bfrtip',
             buttons: [

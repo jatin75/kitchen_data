@@ -1,7 +1,8 @@
-$(document).ready(function() {
+$(document).ready(function () {
 	$('#loginForm').bootstrapValidator({
 		fields: {
 			admin_email: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -12,6 +13,7 @@ $(document).ready(function() {
 				}
 			},
 			admin_password: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Password is required and can\'t be empty'
@@ -24,6 +26,7 @@ $(document).ready(function() {
 	$('#formForgotPassword').bootstrapValidator({
 		fields: {
 			txtemail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -95,6 +98,7 @@ $(document).ready(function() {
 		excluded: ':disabled',
 		fields: {
 			companyName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Company name is required and can\'t be empty.'
@@ -106,6 +110,7 @@ $(document).ready(function() {
 				}
 			},
 			companyEmail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -116,6 +121,7 @@ $(document).ready(function() {
 				}
 			},
 			companyPhoneNo: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Phone number is required and can\'t be empty'
@@ -131,36 +137,37 @@ $(document).ready(function() {
 					}
 				}
 			},
-			locationAddress:{
-				validators:{
+			locationAddress: {
+				trigger: 'blur',
+				validators: {
 					notEmpty: {
-						message:'Address is required and can\'t be empty.'
+						message: 'Address is required and can\'t be empty.'
 					}
 				}
 			},
-			subAddress:{
-				validators:{
+			subAddress: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			city:{
-				validators:{
+			city: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			state:{
-				validators:{
+			state: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			zipcode:{
-				validators:{
+			zipcode: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
@@ -169,14 +176,15 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#companyPhoneNo').on('keyup', function() {
+	$('#companyPhoneNo').on('keyup', function () {
 		$('#formAddClientCompany').bootstrapValidator('revalidateField', 'companyPhoneNo');
 	});
 
 	$('#formAddEmployee').bootstrapValidator({
 		excluded: ':disabled',
-		fields: {			
+		fields: {
 			employeeFirstName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Employee first name is required and can\'t be empty.'
@@ -188,6 +196,7 @@ $(document).ready(function() {
 				}
 			},
 			employeeLastName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Employee last name is required and can\'t be empty.'
@@ -199,6 +208,7 @@ $(document).ready(function() {
 				}
 			},
 			employeePhoneNo: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Phone number is required and can\'t be empty'
@@ -215,6 +225,7 @@ $(document).ready(function() {
 				}
 			},
 			employeeEmail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -224,24 +235,26 @@ $(document).ready(function() {
 					}
 				}
 			},
-			employeeType:{
-				validators:{
+			employeeType: {
+				trigger: 'blur',
+				validators: {
 					notEmpty: {
-						message:'Employee type is required and can\'t be empty.'
+						message: 'Employee type is required and can\'t be empty.'
 					}
 				}
 			},
 		}
 	});
 
-	$('#employeePhoneNo').on('keyup', function() {
+	$('#employeePhoneNo').on('keyup', function () {
 		$('#formAddEmployee').bootstrapValidator('revalidateField', 'employeePhoneNo');
 	});
 
 	$('#formAddClient').bootstrapValidator({
 		excluded: ':disabled',
-		fields: {			
+		fields: {
 			clientFirstName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Client first name is required and can\'t be empty.'
@@ -253,6 +266,7 @@ $(document).ready(function() {
 				}
 			},
 			clientLastName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Client last name is required and can\'t be empty.'
@@ -264,6 +278,7 @@ $(document).ready(function() {
 				}
 			},
 			clientContactNo: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Phone number is required and can\'t be empty'
@@ -280,6 +295,7 @@ $(document).ready(function() {
 				}
 			},
 			clientEmail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -289,66 +305,70 @@ $(document).ready(function() {
 					}
 				}
 			},
-			clientCompany:{
-				validators:{
+			clientCompany: {
+				trigger: 'blur',
+				validators: {
 					notEmpty: {
-						message:'Client company is required and can\'t be empty.'
+						message: 'Client company is required and can\'t be empty.'
 					}
 				}
 			},
-			locationAddress:{
-				validators:{
+			locationAddress: {
+				trigger: 'blur',
+				validators: {
 					notEmpty: {
-						message:'Address 1 is required and can\'t be empty.'
+						message: 'Address 1 is required and can\'t be empty.'
 					}
 				}
 			},
-			subAddress:{
-				validators:{
+			subAddress: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			city:{
-				validators:{
+			city: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			state:{
-				validators:{
+			state: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			zipcode:{
-				validators:{
+			zipcode: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			contactPreference:{
-				validators:{
+			contactPreference: {
+				trigger: 'blur',
+				validators: {
 					notEmpty: {
-						message:'Contact Preference is required and can\'t be empty.'
+						message: 'Contact Preference is required and can\'t be empty.'
 					}
 				}
 			},
 		}
 	});
 
-	$('#clientContactNo').on('keyup', function() {
+	$('#clientContactNo').on('keyup', function () {
 		$('#formAddClient').bootstrapValidator('revalidateField', 'clientContactNo');
 	});
 
 	$('#formAddAdmin').bootstrapValidator({
 		excluded: ':disabled',
-		fields: {			
+		fields: {
 			adminFirstName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Admin first name is required and can\'t be empty.'
@@ -360,6 +380,7 @@ $(document).ready(function() {
 				}
 			},
 			adminLastName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Admin last name is required and can\'t be empty.'
@@ -371,6 +392,7 @@ $(document).ready(function() {
 				}
 			},
 			adminPhoneNo: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Phone number is required and can\'t be empty'
@@ -383,6 +405,7 @@ $(document).ready(function() {
 				}
 			},
 			adminEmail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -395,10 +418,10 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#adminPhoneNo').on('keyup', function() {
+	$('#adminPhoneNo').on('keyup', function () {
 		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
 	});
 
-	
+
 
 });

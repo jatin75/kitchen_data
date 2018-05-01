@@ -6,6 +6,7 @@ date_default_timezone_set('UTC');
 use App\Admin;
 use App\Http\Controllers\Controller;
 use App\Job;
+use App\JobType;
 use Session;
 
 class JobsController extends Controller
@@ -30,9 +31,19 @@ class JobsController extends Controller
         return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails);
     }
 
+    public function create()
+    {
+        return view('admin.addjob')->with('jobDetails', Job::all())->with('employeeList', Admin::all())->with('jobList', JobType::all());
+    }
+
     public function edit($job_id)
     {
         return view('admin.deactivatedjobs');
+    }
+
+    public function store()
+    {
+
     }
 
     public function destroy($job_id)
