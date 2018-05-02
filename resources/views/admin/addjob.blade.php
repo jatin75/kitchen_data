@@ -318,9 +318,10 @@
 															</label>
 															<select id="jobCompanyName" name="jobCompanyName" class="form-control ">
 																<option value="2">NO</option>
-																@foreach($jobList as $job)
+																<option value="1">YES</option>
+																{{-- @foreach($jobList as $job)
 																<option value="1" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $job->job_status_id) {{"selected='selected'"}} @endif>YES</option>
-																@endforeach
+																@endforeach --}}
 															</select>
 														</div>
 														<div class="col-md-6">
@@ -329,9 +330,10 @@
 															</label>
 															<select id="jobCompanyName" name="jobCompanyName" class="form-control ">
 																<option value="2">NO</option>
-																@foreach($jobList as $job)
+																<option value="1">YES</option>
+																{{-- @foreach($jobList as $job)
 																<option value="1" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $job->job_status_id) {{"selected='selected'"}} @endif>YES</option>
-																@endforeach
+																@endforeach --}}
 															</select>
 														</div>
 													</div>
