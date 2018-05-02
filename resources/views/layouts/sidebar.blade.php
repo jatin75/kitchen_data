@@ -12,11 +12,11 @@
         <div class="user-profile">
             <div class="dropdown user-pro-body">
                 <div data-toggle="tooltip" data-placement="top" title="Edit Image">
-                    <img id="userImage" src="{{asset('plugins/images/users/avatar.png')}}" alt="user-img" class="img-circle" data-toggle="modal" data-target="#imageModel" data-ui-toggle-class="fade-right">
+                    <img id="userImage" src="{{asset('plugins/images/kitchen/A&S.jpg')}}" alt="user-img" class="" data-toggle="modal" data-target="#imageModel" data-ui-toggle-class="fade-right">
                 </div>
-                <a id="sessionName" style="text-transform: uppercase;" href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Session::get('name')}}<span class="caret"></span></a>
+                {{-- <a id="sessionName" style="text-transform: uppercase;" href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Session::get('name')}}<span class="caret"></span></a>
                 <ul class="dropdown-menu animated flipInY">
-                    {{-- <li><a href="{{ route('adminprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li> --}}
+                    
                     @if(Session::get('login_type_id') == 1 || Session::get('login_type_id') == 2)
                     <li><a href="{{ route('employeeprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
                     @endif
@@ -25,7 +25,7 @@
                     @endif
                     <li role="separator" class="divider"></li>
                     <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li>
-                </ul>
+                </ul>  --}}
             </div>
         </div>
         <ul class="nav" id="side-menu">
@@ -35,7 +35,7 @@
                     <i class="ti-home fa-fw" data-icon="v"></i>
                     <span class="hide-menu"> Dashboard </span>
                 </a>
-            @if(Session::get('login_type_id') != 9)    
+                @if(Session::get('login_type_id') != 9)    
             </li>
             <li>
                 <a id="staff" href="javascript:void(0);" class="waves-effect {!! (Request::is('jobs/*') ? 'active' : '') !!}"><i data-icon=")" class="ti-clipboard fa-fw"></i>

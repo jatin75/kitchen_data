@@ -43,7 +43,6 @@ class AdminHomeController extends Controller
 			Session::flash('invalid', 'Invalid email or password combination. Please try again.');
 			return back();
 		}
-
 	}
 
 	/*showdashboard*/

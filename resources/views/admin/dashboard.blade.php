@@ -21,6 +21,7 @@ tr th{
 @section('content')
 <!-- Page Content -->
 <div class="container-fluid">
+    <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
             <h4 class="page-title">Kitchen Dashboard</h4>
@@ -62,7 +63,7 @@ tr th{
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.print.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        var date = $('#formatedDate').val();
+        /*var date = $('#formatedDate').val();
         var value = 'Kitchen_job' + date;
         $('#jobList').DataTable({
             dom: 'Bfrtip',
@@ -89,7 +90,7 @@ tr th{
                 exportOptions: {columns: [ 1,2,3,4 ]},
             },
             ],
-        });
+        });*/
 
         /*get job detail list*/
         getJobDetailsList(0);
@@ -111,7 +112,34 @@ tr th{
                 if(data.html != '')
                 {
                  $('.jobDetailList').html(data.html);
-                 $('#jobList').DataTable();
+                 var date = $('#formatedDate').val();
+                 var value = 'Kitchen_job' + date;
+                 $('#jobList').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                    {
+                        extend: 'csv',
+                        title: value,
+                        exportOptions: {columns: [ 1,2,3,4 ]},
+                    },
+                    {
+                        extend: 'excel',
+                        title: value,
+                        exportOptions: {columns: [ 1,2,3,4 ]},
+                    },
+                    {
+                        extend: 'pdf',
+                        pageSize: 'LEGAL',
+                        title: value,
+                        exportOptions: {columns: [ 1,2,3,4]},
+                    },
+                    {
+                        extend: 'print',
+                        title: value,
+                        exportOptions: {columns: [ 1,2,3,4 ]},
+                    },
+                    ],
+                });
              }
          }
      });
