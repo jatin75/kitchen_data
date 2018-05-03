@@ -15292,6 +15292,7 @@ a.fc-event:not([href]):not([tabindex]){
     color: rgba(255, 255, 255, 0.87);
 }
 
+/*dashboard css*/
 .dashboard-job-list .nav-pills > li {
     float: left;
     width: 100%;

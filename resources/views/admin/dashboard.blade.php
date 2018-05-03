@@ -63,35 +63,6 @@ tr th{
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.print.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        /*var date = $('#formatedDate').val();
-        var value = 'Kitchen_job' + date;
-        $('#jobList').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-            {
-                extend: 'csv',
-                title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
-            },
-            {
-                extend: 'excel',
-                title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
-            },
-            {
-                extend: 'pdf',
-                pageSize: 'LEGAL',
-                title: value,
-                exportOptions: {columns: [ 1,2,3,4]},
-            },
-            {
-                extend: 'print',
-                title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
-            },
-            ],
-        });*/
-
         /*get job detail list*/
         getJobDetailsList(0);
 
@@ -111,10 +82,10 @@ tr th{
             {
                 if(data.html != '')
                 {
-                 $('.jobDetailList').html(data.html);
-                 var date = $('#formatedDate').val();
-                 var value = 'Kitchen_job' + date;
-                 $('#jobList').DataTable({
+                   $('.jobDetailList').html(data.html);
+                   var date = $('#formatedDate').val();
+                   var value = 'Kitchen_job' + date;
+                   $('#jobList').DataTable({
                     dom: 'Bfrtip',
                     buttons: [
                     {
@@ -140,9 +111,9 @@ tr th{
                     },
                     ],
                 });
-             }
-         }
-     });
+               }
+           }
+       });
     }
 
     /*job status menu*/

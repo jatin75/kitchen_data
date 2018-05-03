@@ -148,32 +148,15 @@ class AdminHomeController extends Controller
 		}else {
 			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
 		}
-		if(Session::get('login_type_id') == 9) {
-			$getDetail = Admin::where('email',$getSessionEmail)->first();
-			
-			$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0  {$jobStatusCond} AND jb.client_id = '{$getDetail->id}'");
+		
+		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,cmp.name,jt.job_status_name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 {$jobStatusCond}");
 
-			/*if($job_statusId == 0) {
-				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id  WHERE jb.is_deleted = 0 AND jb.client_id = '{$getDetail->id}' AND jb.is_active = 1 ");
-			}else {
-				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 AND jb.job_status_id = '{$job_statusId}' AND jb.client_id = '{$getDetail->id}'");
-			}*/
-		}else {
-			
-			$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 {$jobStatusCond}");
-
-			/*if($job_statusId == 0) {
-				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 AND jb.is_active = 1");
-			}else {
-				$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,au.first_name,au.last_name,jt.job_status_name FROM jobs AS jb JOIN admin_users AS au ON au.id = jb.client_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 AND jb.job_status_id = '{$job_statusId}'");
-			}*/
-		}
 		$html = '';
 		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
 		<thead>
 		<tr>
 		<th>Job Name</th>
-		<th>Client Name</th>
+		<th>Company Name</th>
 		<th>Status</th>
 		<th>Start Date</th>
 		<th>Expected Completion Date</th>
@@ -181,14 +164,32 @@ class AdminHomeController extends Controller
 		</thead>
 		<tbody>';
 		if(!empty($getJobDetails)) {
-			foreach($getJobDetails as $jobDetail) {
-				$html .='<tr>
-				<td>'.$jobDetail->job_title.'</td>
-				<td>'.$jobDetail->first_name.' '.$jobDetail->last_name.'</td>
-				<td>'.$jobDetail->job_status_name.'</td>
-				<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
-				<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
-				</tr>';
+			if(Session::get('login_type_id') == 9) {
+				foreach($getJobDetails as $jobDetail) {
+					$getDetail = Admin::where('email',$getSessionEmail)->first();
+					$session_userId = $getDetail->id;
+					$client_id_array = explode(',', $jobDetail->company_clients_id);
+					if(in_array($session_userId, $client_id_array)) {
+
+						$html .='<tr>
+						<td>'.$jobDetail->job_title.'</td>
+						<td>'.$jobDetail->name.'</td>
+						<td>'.$jobDetail->job_status_name.'</td>
+						<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+						<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+						</tr>';
+					}
+				}
+			}else {
+				foreach($getJobDetails as $jobDetail) {
+					$html .='<tr>
+					<td>'.$jobDetail->job_title.'</td>
+					<td>'.$jobDetail->name.'</td>
+					<td>'.$jobDetail->job_status_name.'</td>
+					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+					</tr>';
+				}
 			}
 		}
 		$html .='</tbody>
