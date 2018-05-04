@@ -31,7 +31,6 @@ tr th{
                         <tr>
                             <th class="text-center">Actions</th>
                             <th>Job Name</th>
-                            <th>Client Name</th>
                             <th>Start Date</th>
                             <th>Expected Completion Date</th>
                         </tr>
@@ -49,7 +48,6 @@ tr th{
                                 <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to remove this job?');" href="{{route('deletejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Remove Job"><i class="ti-trash"></i> </a>
                             </td>
                             <td>{{$job->job_title}}</td>
-                            <td>{{strtoupper($job->client_name)}}</td>
                             <td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
                             <td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
                         </tr>
@@ -82,23 +80,23 @@ tr th{
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4]},
+                exportOptions: {columns: [ 1,2,3]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3 ]},
             },
             ],
         });

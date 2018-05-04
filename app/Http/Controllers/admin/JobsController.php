@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers\admin;
 
-use App\Admin;
 date_default_timezone_set('UTC');
+use App\Admin;
 use App\Company;
 use App\Http\Controllers\Controller;
 use App\Job;
@@ -37,27 +36,93 @@ class JobsController extends Controller
 
     public function edit($job_id)
     {
-        return view('admin.deactivatedjobs');
+        $getJobDetails = Job::where('job_id', $job_id)->first();
+        $comapnyList = Company::selectRaw('company_id,name')->where('is_deleted', 0)->get();
+        $employeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0");
+        $stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+        $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+        $getCompanyClients = DB::select("SELECT CONCAT(au.first_name,' ',au.last_name) AS client_name,au.id FROM clients AS cl JOIN admin_users AS au ON au.id = cl.client_id WHERE cl.company_id = '{$getJobDetails->company_id}'");
+
+        $getJobDetails->start_date = date('m/d/Y', strtotime($getJobDetails->start_date));
+        $getJobDetails->end_date = date('m/d/Y', strtotime($getJobDetails->end_date));
+        $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
+        $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
+        $getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
+
+        $getJobDetails->installation_date = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
+        $getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
+
+        $getJobDetails->stone_installation_date = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
+        $getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
+
+        if (!empty($getJobDetails->company_clients_id)) {
+            $getJobDetails->company_clients_id = explode(",", $getJobDetails->company_clients_id);
+        }
+        if (!empty($getJobDetails->working_employee_id)) {
+            $getJobDetails->working_employee_id = explode(",", $getJobDetails->working_employee_id);
+        }
+        if (!empty($getJobDetails->installation_employee_id)) {
+            $getJobDetails->installation_employee_id = explode(",", $getJobDetails->installation_employee_id);
+        }
+        if (!empty($getJobDetails->stone_installation_employee_id)) {
+            $getJobDetails->stone_installation_employee_id = explode(",", $getJobDetails->stone_installation_employee_id);
+        }
+
+        return view('admin.addjob')->with('jobDetails', $getJobDetails)->with('comapnyList', $comapnyList)->with('employeeList', $employeeList)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('companyClientList', $getCompanyClients);
     }
 
     public function store(Request $request)
     {
         $hidden_job_id = $request->get('hidden_job_id');
-        // $working_employees = implode(',', $request->get('working_employee_id'));
-        // $comapny_clients = implode(',', $request->get('comapny_clients_id'));
-        // $installation_employees = implode(',', $request->get('installation_employees_id'));
-        // $stone_installation_employees = implode(',', $request->get('stone_installation_employees_id'));
-
-        $a = date('h:i:A', strtotime('12:00:00'));
-
-        echo '<pre>';
-        print_r($a);die;
-
-        // $stone_installation_date = $request->get('');
-        // $stone_installation_time = $request->get('');
-
+        $working_employees = implode(',', $request->get('working_employee_id'));
+        $comapny_clients = implode(',', $request->get('comapny_clients_id'));
+        $is_installation = $request->get('installation_select');
+        $is_stone_installation = $request->get('stone_installation_select');
         if (!empty($hidden_job_id)) {
+            $objJob = Job::where('job_id', $hidden_job_id)->first();
+            $objJob->company_id = $request->get('job_company_id');
+            $objJob->job_title = $request->get('job_title');
+            $objJob->address_1 = $request->get('address_1');
+            $objJob->address_2 = $request->get('address_2');
+            $objJob->city = $request->get('city');
+            $objJob->state = $request->get('state');
+            $objJob->zipcode = $request->get('zipcode');
+            $objJob->apartment_number = $request->get('apartment_no');
+            $objJob->super_name = $request->get('job_super_name');
+            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('super_phone_number'));
+            $objJob->contractor_name = $request->get('job_contractor_name');
+            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractor_phone_number'));
+            $objJob->contractor_email = $request->get('contractor_email');
+            $objJob->working_employee_id = $working_employees;
+            $objJob->company_clients_id = $comapny_clients;
 
+            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbing_installation_date')));
+            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_date') . ' ' . $request->get('delivery_time')));
+
+            $objJob->is_select_installation = $is_installation;
+            if ($is_installation == 1) {
+                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));
+                $objJob->installation_employee_id = implode(',', $request->get('installation_employees_id'));
+            } else {
+                $objJob->installation_datetime = null;
+                $objJob->installation_employee_id = null;
+            }
+
+            $objJob->is_select_stone_installation = $is_stone_installation;
+            if ($is_stone_installation == 1) {
+                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $request->get('stone_installation_time')));
+                $objJob->stone_installation_employee_id = implode(',', $request->get('stone_installation_employees_id'));
+            } else {
+                $objJob->stone_installation_datetime = null;
+                $objJob->stone_installation_employee_id = null;
+            }
+
+            $objJob->is_active = $request->get('job_status');
+            $objJob->start_date = date('Y-m-d', strtotime($request->get('job_start_date')));
+            $objJob->end_date = date('Y-m-d', strtotime($request->get('job_end_date')));
+            $objJob->save();
+            $response['key'] = 2;
+            return json_encode($response);
         } else {
             $newJobId = $this->getJobId();
             $objJob = new Job();
@@ -71,9 +136,9 @@ class JobsController extends Controller
             $objJob->zipcode = $request->get('zipcode');
             $objJob->apartment_number = $request->get('apartment_no');
             $objJob->super_name = $request->get('job_super_name');
-            $objJob->super_phone_number = $request->get('super_phone_number');
+            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('super_phone_number'));
             $objJob->contractor_name = $request->get('job_contractor_name');
-            $objJob->contractor_phone_number = $request->get('contractor_phone_number');
+            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractor_phone_number'));
             $objJob->contractor_email = $request->get('contractor_email');
             $objJob->working_employee_id = $working_employees;
             $objJob->company_clients_id = $comapny_clients;
@@ -83,13 +148,23 @@ class JobsController extends Controller
 
             $objJob->job_status_id = 1;
 
-            $objJob->is_select_installation = $request->get('installation_select');
-            $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));
-            $objJob->installation_employee_id = $installation_employees;
+            $objJob->is_select_installation = $is_installation;
+            if ($is_installation == 1) {
+                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));
+                $objJob->installation_employee_id = implode(',', $request->get('installation_employees_id'));
+            } else {
+                $objJob->installation_datetime = null;
+                $objJob->installation_employee_id = null;
+            }
 
-            $objJob->is_select_stone_installation = $request->get('stone_installation_select');
-            $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $request->get('stone_installation_time')));
-            $objJob->stone_installation_employee_id = $stone_installation_employees;
+            $objJob->is_select_stone_installation = $is_stone_installation;
+            if ($is_stone_installation == 1) {
+                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $request->get('stone_installation_time')));
+                $objJob->stone_installation_employee_id = implode(',', $request->get('stone_installation_employees_id'));
+            } else {
+                $objJob->stone_installation_datetime = null;
+                $objJob->stone_installation_employee_id = null;
+            }
 
             $objJob->is_active = $request->get('job_status');
             $objJob->is_deleted = 0;
@@ -97,6 +172,9 @@ class JobsController extends Controller
             $objJob->end_date = date('Y-m-d', strtotime($request->get('job_end_date')));
             $objJob->created_at = date('Y-m-d H:i:s');
             $objJob->save();
+            Session::put('successMessage', 'Job has been added Successfully');
+            $response['key'] = 1;
+            return json_encode($response);
         }
 
     }

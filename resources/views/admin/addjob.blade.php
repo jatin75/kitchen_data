@@ -93,7 +93,7 @@
 													<label class="control-label">
 														<b>JOB TITLE</b>
 													</label>
-													<input type="text" name="jobTitle" id="jobTitle" value="{{$jobDetails->first_name or ''}}" class="form-control" placeholder="Job Title">
+													<input type="text" name="jobTitle" id="jobTitle" value="{{$jobDetails->job_title or ''}}" class="form-control" placeholder="Job Title">
 												</div>
 											</div>
 											<div class="col-md-4">
@@ -102,11 +102,8 @@
 														<b>JOB STATUS</b>
 													</label>
 													<select id="jobStatus" name="jobStatus" class="form-control ">
-														<option value="1">ACTIVE</option>
-														<option value="2">INACTIVE</option>
-														{{-- @foreach($jobList as $job)
-														<option value="1" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $job->job_status_id) {{"selected='selected'"}} @endif>YES</option>
-														@endforeach --}}
+														<option value="1" @if(isset($jobDetails->is_active) && $jobDetails->is_active == '1') {{ "selected='selected'" }} @endif>ACTIVE</option>
+														<option value="2" @if(isset($jobDetails->is_active) && $jobDetails->is_active == '2') {{ "selected='selected'" }} @endif>INACTIVE</option>
 													</select>
 												</div>
 											</div>
@@ -212,13 +209,13 @@
 														<b>DELIVERY DATE AND TIME</b>
 													</label>
 													<div class="row">
-														<div class="col-md-3">
+														<div class="col-md-4">
 														<input type="text" name="deliveryDate" id="deliveryDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
-															maxlength="10" value="{{ $jobDetails->delivery_datetime or '' }}">
+															maxlength="10" value="{{ $jobDetails->delivery_date or '' }}">
 														</div>
-														<div class="col-md-9">
+														<div class="col-md-8">
 																<div class="input-group clockpicker " data-placement="top">
-																<input type="text" id="deliveryTime" name="deliveryTime" class="form-control" placeholder="hh:mm" value="@if(isset($jobDetails->delivery_datetime)){{date('H:i', strtotime($jobDetails->delivery_datetime)) }}@endif">
+																<input type="text" id="deliveryTime" name="deliveryTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->delivery_time or '' }}">
 															</div>
 														</div>
 													</div>
@@ -257,7 +254,7 @@
 													<label class="control-label">
 														<b>CONTRACTOR EMAIL ADDRESS</b>
 													</label>
-													<input style="text-transform: lowercase;" type="email" name="contractorEmail" id="contractorEmail" value="{{$jobDetails->email or ''}}"
+													<input style="text-transform: lowercase;" type="email" name="contractorEmail" id="contractorEmail" value="{{$jobDetails->contractor_email or ''}}"
 													    class="form-control" placeholder="Enter Contractor Email">
 												</div>
 											</div>
@@ -280,7 +277,7 @@
 													<select id="jobCompanyName" name="jobCompanyName" class="form-control select2">
 														<option value="">-- Select Company --</option>
 														@foreach($comapnyList as $company)
-														<option value="{{ $company->company_id }}" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $company->company_id) {{"selected='selected'"}} @endif>{{ $company->name }}</option>
+														<option value="{{ $company->company_id }}" @if(isset($jobDetails->company_id) && $jobDetails->company_id == $company->company_id) {{"selected='selected'"}} @endif>{{ $company->name }}</option>
 														@endforeach
 													</select>
 												</div>
@@ -289,14 +286,15 @@
 												<div class="form-group" style="overflow: visible!important;">
 													<label class="control-label"><b>COMPANY CLIENTS</b></label>
 													<select data-size="5" id="comapnyClients" name="comapnyClients" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
-														{{-- @foreach($employeeList as $employee)
-														<option value="{{ $employee->id }}"
-															@if(sizeof($jobDetails->working_employee_id) > 0)
-															@foreach($jobDetails->working_employee_id as $single_job)
-															@if($single_job == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif
-															>{{ $employee->first_name.' '}}{{ $employee->last_name }}
+														@if(isset($companyClientList) && sizeof($companyClientList) > 0)
+														@foreach($companyClientList as $client)
+														<option value="{{ $client->id }}"
+														@if(isset($jobDetails->company_clients_id) && sizeof($jobDetails->company_clients_id) > 0)
+														@foreach($jobDetails->company_clients_id as $single_client)
+														@if($single_client == $client->id) {{"selected='selected'"}}@endif @endforeach @endif>{{ $client->client_name }}
 														</option>
-														@endforeach --}}
+														@endforeach
+														@endif
 													</select>
 												</div>
 											</div>
@@ -306,9 +304,9 @@
 													<select data-size="5" id="workingEmployee" name="workingEmployee" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 														@foreach($employeeList as $employee)
 														<option value="{{ $employee->id }}"
-															{{-- @if(sizeof($jobDetails->working_employee_id) > 0)
-															@foreach($jobDetails->working_employee_id as $single_job)
-															@if($single_job == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif --}}
+															@if(isset($jobDetails->working_employee_id) && sizeof($jobDetails->working_employee_id) > 0)
+															@foreach($jobDetails->working_employee_id as $single_id)
+															@if($single_id == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif
 															>{{ $employee->employee_name }}
 														</option>
 														@endforeach
@@ -323,11 +321,8 @@
 														<b>INSTALLATION</b>
 													</label>
 													<select id="installationSelect" name="installationSelect" class="form-control ">
-														<option value="2">NO</option>
-														<option value="1">YES</option>
-														{{-- @foreach($jobList as $job)
-														<option value="1" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $job->job_status_id) {{"selected='selected'"}} @endif>YES</option>
-														@endforeach --}}
+														<option value="2" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '2') {{ "selected='selected'" }} @endif>NO</option>
+														<option value="1" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '1') {{ "selected='selected'" }} @endif>YES</option>
 													</select>
 												</div>
 											</div>
@@ -337,13 +332,13 @@
 														<b>INSTALLATION DATE AND TIME</b>
 													</label>
 													<div class="row">
-														<div class="col-md-3">
+														<div class="col-md-4">
 														<input type="text" name="installationDate" id="installationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
-															maxlength="10" value="{{ $jobDetails->delivery_datetime or '' }}">
+															maxlength="10" value="{{ $jobDetails->installation_date or '' }}">
 														</div>
-														<div class="col-md-9">
+														<div class="col-md-8">
 																<div class="input-group clockpicker " data-placement="top">
-																<input type="text" id="installationTime" name="installationTime" class="form-control" placeholder="hh:mm" value="@if(isset($jobDetails->delivery_datetime)){{date('H:i', strtotime($jobDetails->delivery_datetime)) }}@endif">
+																<input type="text" id="installationTime" name="installationTime" class="form-control" placeholder="hh:mm" value="{{$jobDetails->installation_time or ''}}">
 															</div>
 														</div>
 													</div>
@@ -355,10 +350,9 @@
 													<select data-size="5" id="installationEmployees" name="installationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 														@foreach($installEmployeeList as $installer)
 														<option value="{{ $installer->id }}"
-															{{-- @if(sizeof($jobDetails->working_employee_id) > 0)
-															@foreach($jobDetails->working_employee_id as $single_job)
-															@if($single_job == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif --}}
-															>{{ $installer->employee_name }}
+															@if(isset($jobDetails->installation_employee_id) && sizeof($jobDetails->installation_employee_id) > 0)
+															@foreach($jobDetails->installation_employee_id as $single_id)
+															@if($single_id == $installer->id) {{"selected='selected'"}}@endif @endforeach @endif>{{ $installer->employee_name }}
 														</option>
 														@endforeach
 													</select>
@@ -372,11 +366,8 @@
 														<b>STONE INSTALLATION</b>
 													</label>
 													<select id="stoneInstallationSelect" name="stoneInstallationSelect" class="form-control ">
-														<option value="2">NO</option>
-														<option value="1">YES</option>
-														{{-- @foreach($jobList as $job)
-														<option value="1" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $job->job_status_id) {{"selected='selected'"}} @endif>YES</option>
-														@endforeach --}}
+														<option value="2" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '2') {{ "selected='selected'" }} @endif>NO</option>
+														<option value="1" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '1') {{ "selected='selected'" }} @endif>YES</option>
 													</select>
 												</div>
 											</div>
@@ -386,13 +377,13 @@
 															<b>STONE INSTALLATION DATE AND TIME</b>
 														</label>
 														<div class="row">
-															<div class="col-md-3">
+															<div class="col-md-4">
 															<input type="text" name="stoneInstallationDate" id="stoneInstallationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
-																maxlength="10" value="{{ $jobDetails->delivery_datetime or '' }}">
+																maxlength="10" value="{{ $jobDetails->stone_installation_date or '' }}">
 															</div>
-															<div class="col-md-9">
+															<div class="col-md-8">
 																	<div class="input-group clockpicker " data-placement="top">
-																	<input type="text" id="stoneInstallationTime" name="stoneInstallationTime" class="form-control" placeholder="hh:mm" value="@if(isset($jobDetails->delivery_datetime)){{date('H:i', strtotime($jobDetails->delivery_datetime)) }}@endif">
+																	<input type="text" id="stoneInstallationTime" name="stoneInstallationTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->stone_installation_time or '' }}">
 																</div>
 															</div>
 														</div>
@@ -404,10 +395,9 @@
 													<select data-size="5" id="stoneInstallationEmployees" name="stoneInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 														@foreach($stoneEmployeeList as $stone)
 														<option value="{{ $stone->id }}"
-															{{-- @if(sizeof($jobDetails->working_employee_id) > 0)
-															@foreach($jobDetails->working_employee_id as $single_job)
-															@if($single_job == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif --}}
-															>{{ $stone->employee_name}}
+															@if(isset($jobDetails->stone_installation_employee_id) && sizeof($jobDetails->stone_installation_employee_id) > 0)
+															@foreach($jobDetails->stone_installation_employee_id as $single_id)
+															@if($single_id == $stone->id) {{"selected='selected'"}}@endif @endforeach @endif>{{ $stone->employee_name }}
 														</option>
 														@endforeach
 													</select>
@@ -415,9 +405,9 @@
 											</div>
 										</div>
 										<div class="form-group text-left p-t-md">
-											@if(!isset($jobDetails->client_id))
+											@if(!isset($jobDetails->job_id))
 											<button type="submit" class="btn btn-success">CREATE JOB</button>
-											@endif @if(isset($jobDetails->client_id))
+											@endif @if(isset($jobDetails->job_id))
 											<button type="submit" class="btn btn-info">UPDATE</button>
 											@endif &nbsp; &nbsp;
 											<button id="resetPermission" type="button" class="btn btn-danger">CANCEL</button>
@@ -481,7 +471,7 @@
 						for( var i = 0; i<len; i++){
 							var id = response.clients_data[i]['id'];
 							var name = response.clients_data[i]['client_name'];
-							$("#comapnyClients").append("<option value='"+id+"'>"+name+"</option>");
+							$("#comapnyClients").append("<option value='"+id+"' >"+name+"</option>");
 						}
 					}
 					else
@@ -599,16 +589,13 @@
 			dataType: 'json',
 			success: function (data) {
 				if (data.key == 1) {
-					location.href = '{{ route('showclients') }}';
-				} else if (data.key == 2) {
-					if (typeof (data.name) != "undefined" && data.name !== null) {
-						$('#sessionName').html(data.name);
-					}
+					location.href = '{{ route('activejobs') }}';
+				} else if(data.key == 2) {
 					$('#loader').hide();
-					notify('Client has been updated successfully', 'blackgloss');
-				} else if (data.key == 3) {
+					notify('Job has been updated Successfully.', 'blackgloss');
+				} else {
 					$('#loader').hide();
-					notify('Entered email address already exists.', 'blackgloss');
+					notify('Something went wrong.', 'blackgloss');
 				}
 			}
 		});
