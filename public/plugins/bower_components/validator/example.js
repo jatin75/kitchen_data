@@ -418,10 +418,216 @@ $(document).ready(function () {
 		}
 	});
 
+	$('#formAddJob').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {
+			jobTitle: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Job title is required and can\'t be empty.'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Job title can only consist of alphanumeric.'
+					}
+				}
+			},
+			jobStatus: {
+				validators: {
+					notEmpty: {
+						message: 'Job status is required and can\'t be empty.'
+					}
+				}
+			},
+			locationAddress: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Address is required and can\'t be empty.'
+					}
+				}
+			},
+			subAddress: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			city: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			state: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			zipcode: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			apartmentNo: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			jobStartDate: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Start date is required and can\'t be empty'
+					},
+				}
+			},
+			jobEndDate: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Expected completion date is required and can\'t be empty'
+					},
+				}
+			},
+			plumbingInstallationDate: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Plumbing installation date is required and can\'t be empty'
+					},
+				}
+			},
+			deliveryDate: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Delivery date is required.'
+					},
+				}
+			},
+			deliveryTime: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Delivery time is required.'
+					},
+				}
+			},
+			jobSuperName: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Job super name is required and can\'t be empty'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Job super name can only consist of alphanumeric.'
+					}
+				}
+			},
+			superPhoneNumber: {
+				trigger: 'keyup',
+				validators: {
+					notEmpty: {
+						message: 'Job super phone number is required and can\'t be empty'
+					},
+					stringLength: {
+						min: 16,
+						max: 16,
+						message: 'Job super phone number should be of 10 digits.'
+					}
+				}
+			},
+			jobContractorName: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Job contractor name is required and can\'t be empty'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Job contractor name can only consist of alphanumeric.'
+					}
+				}
+			},
+			contractorEmail: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Contractor email address is required and can\'t be empty'
+					},
+					emailAddress: {
+						message: 'Please enter valid email address.'
+					}
+				}
+			},
+			contractorPhoneNumber: {
+				trigger: 'keyup',
+				validators: {
+					notEmpty: {
+						message: 'Contractor phone number is required and can\'t be empty'
+					},
+					stringLength: {
+						min: 16,
+						max: 16,
+						message: 'Contractor phone number should be of 10 digits.'
+					}
+				}
+			},
+			jobCompanyName: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Job company name is required and can\'t be empty'
+					},
+				}
+			},
+			comapnyClients: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Company client is required and can\'t be empty'
+					},
+				}
+			},
+			workingEmployee: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Working employee is required and can\'t be empty'
+					},
+				}
+			},
+			installationSelect: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Installation status is required and can\'t be empty'
+					},
+				}
+			},
+			stoneInstallationSelect: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Stone installation status is required and can\'t be empty'
+					},
+				}
+			},
+		}
+	});
+
 	$('#adminPhoneNo').on('keyup', function () {
 		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
 	});
-
-
-
 });

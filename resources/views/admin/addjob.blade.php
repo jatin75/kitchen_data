@@ -11,9 +11,12 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
 <style type="text/css">
 <style type="text/css">
-	.nav-link.active {
+	 .nav-pills {
 		background: #4c5667 !important;
 	}
+	.nav-pills .nav-item.show .nav-link, .nav-pills .nav-link.active {
+    background: #4c5667 !important;
+}
 
 	.nav-pills>li.active>a,
 	.nav-pills>li.active>a:focus,
