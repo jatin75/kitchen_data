@@ -18,44 +18,42 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-       <h4 class="page-title">Jobs > Active</h4>
-   </div>
-</div>
-<div class="row">
+         <h4 class="page-title">Jobs</h4>
+     </div>
+ </div>
+ <div class="row">
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All JOBS</h3>
-
-            <a href="{{route('addjob')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Job</span> <i class="fa fa-plus m-l-5"></i></a>
-            <a href="{{route('viewjobdetails')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>View Jobs</span> <i class="ti-eye m-l-5"></i></a>
             <div class="table-responsive">
                 <table id="jobList" class="display nowrap" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th class="text-center">Actions</th>
-                            <th>Job Name</th>
-                            <th>Start Date</th>
-                            <th>Expected Completion Date</th>
+                            <th>Company Name</th>
+                            <th>Job Id</th>
+                            <th>Job Status</th>
+                            <th>Created Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($jobDetails as $job)
                         <tr>
                             <td class="text-center">
-                               {{--  <a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle" href="">
-                                    <i class="ti-eye"></i>
-                                </a>  --}}
-                                <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editjob',['job_id' => $job->job_id])}}">
-                                    <i class="ti-pencil-alt"></i>
-                                </a>
                                 <a data-toggle="modal" data-target="#jobNotesModel"  data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle" id="add-job-note" data-id="{{ $job->job_id }}" data-note="{{ $job->job_notes }}">
                                     <i class="ti-plus"></i>
                                 </a>
-                                <a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to deactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
+                                <a data-toggle="tooltip" data-placement="top" title="View Pictures" class="btn btn-info btn-circle" href="javascript:void(0)">
+                                    <i class="ti-gallery"></i>
+                                </a>
+                                <a data-toggle="modal" data-target="#Auditmodel"  data-placement="top" title="View Audit" class="btn btn-success btn-circle">
+                                    <i class="ti-receipt"></i>
+                                </a>
                             </td>
-                            <td>{{$job->job_title}}</td>
-                            <td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
-                            <td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
+                            <td>{{$job->name}}</td>
+                            <td>{{$job->job_id}}</td>
+                            <td>{{$job->job_status_name}}</td>
+                            <td>{{ date('m/d/Y',strtotime($job->created_at))}}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -65,9 +63,9 @@ tr th{
     </div>
 </div>
 </div>
-<!--model-->
+<!--Notes model-->
 <div class="modal fade" id="jobNotesModel" tabindex="-1" data-backdrop="true" style="display: none;">
-    <div class="modal-dialog">
+    <div class="modal-dialog model-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -101,6 +99,47 @@ tr th{
     </div>
 </div>
 <!--/.model-->
+<!--Audit model-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Auditmodel" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Audit Job</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="auditList" class="display nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Name Of Field</th>
+                                <th>Old Value</th>
+                                <th>New Value</th>
+                                <th>Date Of Edit</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>job_title</td>
+                                <td>Momai Costruction</td>
+                                <td>TATA Costruction</td>
+                                <td>05/04/2018</td>
+                                <th>Vivek Italiya</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--/.model-->
 @stop
 @section('pageSpecificJs')
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.js')}}"></script>
@@ -115,30 +154,57 @@ tr th{
 <script type="text/javascript">
     $(document).ready(function() {
         var date = $('#formatedDate').val();
-        var value = 'Kitchen_employee_' + date;
+        var value = 'Kitchen_job_' + date;
         $('#jobList').DataTable({
             dom: 'Bfrtip',
             buttons: [
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3 ]},
+                exportOptions: {columns: [ 1,2,3,4 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3 ]},
+                exportOptions: {columns: [ 1,2,3,4 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3 ]},
+                exportOptions: {columns: [ 1,2,3,4]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3 ]},
+                exportOptions: {columns: [ 1,2,3,4 ]},
+            },
+            ],
+        });
+
+        $('#auditList').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+            {
+                extend: 'csv',
+                title: value,
+                exportOptions: {columns: [ 0,1,2,3,4 ]},
+            },
+            {
+                extend: 'excel',
+                title: value,
+                exportOptions: {columns: [ 0,1,2,3,4 ]},
+            },
+            {
+                extend: 'pdf',
+                pageSize: 'LEGAL',
+                title: value,
+                exportOptions: {columns: [ 0,1,2,3,4]},
+            },
+            {
+                extend: 'print',
+                title: value,
+                exportOptions: {columns: [ 0,1,2,3,4 ]},
             },
             ],
         });

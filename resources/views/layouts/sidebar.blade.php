@@ -76,58 +76,6 @@
         </ul>
     </div>
 </div>
-<!--model-->
-<div class="modal fade" id="imageModel" tabindex="-1" data-backdrop="true" style="display: none;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="exampleModalLabel1">Edit&nbsp;Image</h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-body">
-                    <form method="POST" id="formAdmin" enctype="multipart/form-data">
-                        {{ csrf_field() }}
-                        <input type="hidden" id="hiddenEmail" name="hiddenEmail" value="{{Session::get('email')}}">
-                        <div class="row m-t-10">
-                            <div class="row col-md-12">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="col-sm-12">Choose an image file..</label>
-                                        <div class="col-sm-12">
-                                            <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-                                                <div class="form-control" data-trigger="fileinput">
-                                                    <i class="glyphicon glyphicon-file fileinput-exists"></i>
-                                                    <span class="fileinput-filename"></span>
-                                                </div>
-                                                <span class="input-group-addon btn btn-default btn-file">
-                                                    <span class="fileinput-new"><i class="fa fa-upload"></i></span>
-                                                    <span class="fileinput-exists">Change</span>
-                                                    <input type="file" name="editProfilePic" id="editProfilePic">
-                                                </span>
-                                                <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                               {{--  <div class="col-md-3">
-                                    <div class="form-group p-t-27">
-                                        <button type="submit" class="btn btn-success">Upload</button>
-                                    </div>
-                                </div> --}}
-                            </div>
-                        </div>
-                        <div class="modal-footer form-group">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                            <button id="profile_btn" type="submit" class="btn btn-success">Upload</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--/.model-->
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {

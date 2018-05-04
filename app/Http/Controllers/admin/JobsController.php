@@ -14,7 +14,7 @@ class JobsController extends Controller
 {
     public function index()
     {
-        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 1)->where('is_deleted', 0)->get();
+        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date,job_notes')->where('is_active', 1)->where('is_deleted', 0)->get();
         return view('admin.jobs')->with('jobDetails', $getJobDetails);
     }
 
@@ -191,6 +191,19 @@ class JobsController extends Controller
         Job::where('job_id', $job_id)->update(['is_active' => 0]);
         Session::flash('successMessage', 'Job has been deactivated Successfully');
         return redirect()->route('activejobs');
+    }
+
+    public function storeJobNote(Request $request) {
+        $hidden_job_id = $request->get('hidden_jobId');
+        $job_noteDesc = $request->get('job_noteDesc');
+        Job::where('job_id', $hidden_job_id)->update(['job_notes' => $job_noteDesc]);
+        $response['key'] = 1;
+        echo json_encode($response);
+    }
+
+    public function viewJobDetails(){
+        $getJobDetails = DB::select('SELECT jb.created_at,jb.job_id,jb.job_notes,jt.job_status_name,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.job_status_id IN ("2","5","6","7")');
+        return view('admin.jobdetailsview')->with('jobDetails', $getJobDetails);
     }
 
     public function getJobId()
