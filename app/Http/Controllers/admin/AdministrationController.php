@@ -16,7 +16,7 @@ use App\Company;
 class AdministrationController extends Controller
 {
 	public function index() {
-		$client_company = Company::selectRaw('name,phone_number,address_1,email,created_at,id')->where('is_deleted',0)->get();
+		$client_company = Company::selectRaw('name,phone_number,address_1,email,created_at,id,company_id')->where('is_deleted',0)->get();
 		return view('admin.clientcompany')->with('clientCompanyList',$client_company);
 	}
 

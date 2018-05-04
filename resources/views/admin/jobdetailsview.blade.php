@@ -40,15 +40,19 @@ tr th{
                         @foreach($jobDetails as $job)
                         <tr>
                             <td class="text-center">
-                                <a data-toggle="modal" data-target="#jobNotesModel"  data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle" id="add-job-note" data-id="{{ $job->job_id }}" data-note="{{ $job->job_notes }}">
-                                    <i class="ti-plus"></i>
-                                </a>
+                                <span data-toggle="modal" data-target="#jobNotesModel">
+                                    <a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note jobnote{{ $job->job_id }}" data-id="{{ $job->job_id }}" data-note="{{ $job->job_notes }}">
+                                        <i class="ti-plus"></i>
+                                    </a>
+                                </span>
                                 <a data-toggle="tooltip" data-placement="top" title="View Pictures" class="btn btn-info btn-circle" href="javascript:void(0)">
                                     <i class="ti-gallery"></i>
                                 </a>
-                                <a data-toggle="modal" data-target="#Auditmodel"  data-placement="top" title="View Audit" class="btn btn-success btn-circle">
-                                    <i class="ti-receipt"></i>
-                                </a>
+                                <span data-toggle="modal" data-target="#Auditmodel">
+                                    <a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-success btn-circle">
+                                        <i class="ti-receipt"></i>
+                                    </a>
+                                </span>
                             </td>
                             <td>{{$job->name}}</td>
                             <td>{{$job->job_id}}</td>
@@ -210,7 +214,7 @@ tr th{
         });
 
         /*set job id on models*/
-        $("#add-job-note").click(function(){
+        $(".add-job-note").click(function(){
             $jobId = $(this).attr('data-id');
             $jobNote = $(this).attr('data-note');
             if($jobNote == '') {
@@ -243,7 +247,7 @@ tr th{
                 if(data1.key == 1)
                 {
                     $('#loader').hide();
-                    $('#add-job-note').attr('data-note',job_noteDesc); //setter
+                    $('.jobnote'+hidden_jobId).attr('data-note',job_noteDesc); //setter
                     notify('Job note has been added successfully.','blackgloss');
                 }
             }

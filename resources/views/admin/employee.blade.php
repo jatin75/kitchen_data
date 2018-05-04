@@ -34,6 +34,7 @@ tr th{
                             <th class="text-center">Actions</th>
                             <th>First Name</th>
                             <th>Last Name</th>
+                            <th>Employee Id</th>
                             <th>Phone Number</th>
                             <th>Email Address</th>
                             <th>Employee Type</th>
@@ -51,6 +52,7 @@ tr th{
                             </td>
                             <td>{{strtoupper($employee_member->first_name)}}</td>
                             <td>{{strtoupper($employee_member->last_name)}}</td>
+                            <td>{{$employee_member->id}}</td>
                             @if(empty($employee_member->phone_number) || $employee_member->phone_number == "")
                             <td>{{'--'}}</td>
                             @else
@@ -89,23 +91,23 @@ tr th{
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5]},
+                exportOptions: {columns: [ 1,2,3,4,5,6]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
             },
             ],
         });

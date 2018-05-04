@@ -18,10 +18,10 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-       <h4 class="page-title">Jobs > Active</h4>
-   </div>
-</div>
-<div class="row">
+         <h4 class="page-title">Jobs > Active</h4>
+     </div>
+ </div>
+ <div class="row">
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All JOBS</h3>
@@ -34,6 +34,7 @@ tr th{
                         <tr>
                             <th class="text-center">Actions</th>
                             <th>Job Name</th>
+                            <th>Job Id</th>
                             <th>Start Date</th>
                             <th>Expected Completion Date</th>
                         </tr>
@@ -48,12 +49,15 @@ tr th{
                                 <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editjob',['job_id' => $job->job_id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
-                                <a data-toggle="modal" data-target="#jobNotesModel"  data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle" id="add-job-note" data-id="{{ $job->job_id }}" data-note="{{ $job->job_notes }}">
-                                    <i class="ti-plus"></i>
-                                </a>
+                                <span data-toggle="modal" data-target="#jobNotesModel">
+                                    <a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note jobnote{{ $job->job_id }}" data-id="{{ $job->job_id }}" data-note="{{ $job->job_notes }}">
+                                        <i class="ti-plus"></i>
+                                    </a>
+                                </span>
                                 <a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to deactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
                             </td>
                             <td>{{$job->job_title}}</td>
+                            <td>{{$job->job_id}}</td>
                             <td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
                             <td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
                         </tr>
@@ -122,29 +126,29 @@ tr th{
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3 ]},
+                exportOptions: {columns: [ 1,2,3,4 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3 ]},
+                exportOptions: {columns: [ 1,2,3,4 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3 ]},
+                exportOptions: {columns: [ 1,2,3,4 ]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3 ]},
+                exportOptions: {columns: [ 1,2,3,4 ]},
             },
             ],
         });
 
         /*set job id on models*/
-        $("#add-job-note").click(function(){
+        $(".add-job-note").click(function(){
             $jobId = $(this).attr('data-id');
             $jobNote = $(this).attr('data-note');
             if($jobNote == '') {
@@ -177,7 +181,7 @@ tr th{
                 if(data1.key == 1)
                 {
                     $('#loader').hide();
-                    $('#add-job-note').attr('data-note',job_noteDesc); //setter
+                    $('.jobnote'+hidden_jobId).attr('data-note',job_noteDesc); //setter
                     notify('Job note has been added successfully.','blackgloss');
                 }
             }

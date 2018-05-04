@@ -33,6 +33,7 @@ tr th{
                         <tr>
                             <th class="text-center">Actions</th>
                             <th>Name</th>
+                            <th>Company Id</th>
                             <th>Phone Number</th>
                             <th>Address</th>
                             <th>Email Address</th>
@@ -49,6 +50,7 @@ tr th{
                                 <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this company?');" href="{{route('deleteclientcompany',['company_id' => $comapnyList->id])}}" data-toggle="tooltip" data-placement="top" title="Delete Company"><i class="ti-trash"></i> </a>
                             </td>
                             <td>{{strtoupper($comapnyList->name)}}</td>
+                            <td>{{$comapnyList->company_id}}</td>
                             @if(empty($comapnyList->phone_number) || $comapnyList->phone_number == "")
                             <td>{{'--'}}</td>
                             @else
@@ -87,23 +89,23 @@ tr th{
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3,4,5 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3,4,5 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4]},
+                exportOptions: {columns: [ 1,2,3,4,5]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3,4,5 ]},
             },
             ],
         });
