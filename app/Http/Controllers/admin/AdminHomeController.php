@@ -30,6 +30,7 @@ class AdminHomeController extends Controller
 		$checkLogin = Admin::where('email',$email)->where('is_deleted',0)->whereIn('login_type_id', [1, 2, 9])->first();
 		if(!empty($checkLogin)) {
 			if($checkLogin->password == md5($password) || Hash::check($password, $checkLogin->password)) {
+				Session::put('employee_id', $checkLogin->id);
 				Session::put('name',$checkLogin->first_name.' '.$checkLogin->last_name);
 				Session::put('email',$checkLogin->email);
 				Session::put('login_type_id',$checkLogin->login_type_id);
@@ -148,7 +149,7 @@ class AdminHomeController extends Controller
 		}else {
 			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
 		}
-		
+
 		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,cmp.name,jt.job_status_name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 {$jobStatusCond}");
 
 		$html = '';

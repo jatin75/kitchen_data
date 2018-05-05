@@ -40,6 +40,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('jobs/deactivatejob/{job_id}', 'admin\JobsController@deactivateJob')->name('deactivatejob');
     Route::post('jobs/storejobnote', 'admin\JobsController@storeJobNote')->name('storejobnote');
     Route::get('jobs/viewjobdetails', 'admin\JobsController@viewJobDetails')->name('viewjobdetails');
+    Route::post('jobs/showaudittrail', 'admin\JobsController@showAuditTrail')->name('showaudittrail');
 
     /*Employees*/
     Route::get('employees/showemployees', 'admin\EmployeesController@index')->name('showemployees');

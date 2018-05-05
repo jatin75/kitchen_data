@@ -523,7 +523,7 @@
 	/* $('#formAddJob').on('success.form.bv', function (e) { */
 		$('#formAddJob').on('submit', function (e) {
 		e.preventDefault();
-		/* $('#loader').show(); */
+		$('#loader').show();
 		var hidden_job_id = $('#hiddenJobId').val();
 		var job_title = $('#jobTitle').val();
 		var job_status = $('#jobStatus').val();

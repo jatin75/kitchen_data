@@ -3,6 +3,7 @@ namespace App\Http\Controllers\admin;
 
 date_default_timezone_set('UTC');
 use App\Admin;
+use App\AuditTrail;
 use App\Company;
 use App\Http\Controllers\Controller;
 use App\Job;
@@ -80,6 +81,12 @@ class JobsController extends Controller
         $is_stone_installation = $request->get('stone_installation_select');
         if (!empty($hidden_job_id)) {
             $objJob = Job::where('job_id', $hidden_job_id)->first();
+            /*Audit Trail start*/
+            $oldValueArray = [];
+            $newValueArray = [];
+            $oldValueArray[] = $objJob->toArray();
+            $oldValueArray = call_user_func_array('array_merge', $oldValueArray);
+            /*Audit Trail end*/
             $objJob->company_id = $request->get('job_company_id');
             $objJob->job_title = $request->get('job_title');
             $objJob->address_1 = $request->get('address_1');
@@ -120,6 +127,27 @@ class JobsController extends Controller
             $objJob->is_active = $request->get('job_status');
             $objJob->start_date = date('Y-m-d', strtotime($request->get('job_start_date')));
             $objJob->end_date = date('Y-m-d', strtotime($request->get('job_end_date')));
+
+            /*Audit Trail start*/
+            $newValueArray[] = $objJob->toArray();
+            $newValueArray = call_user_func_array('array_merge', $newValueArray);
+            foreach ($oldValueArray as $key => $old) {
+                if ($newValueArray[$key] != $oldValueArray[$key]) {
+                    $finalArray[] = array (
+                        'job_id' => $hidden_job_id,
+                        'field_name' => $key,
+                        'old_value' => $oldValueArray[$key],
+                        'new_value' => $newValueArray[$key],
+                        'employee_id' => Session::get('employee_id'),
+                        'name' => Session::get('name'),
+                        'login_type_id' => Session::get('login_type_id')
+                    );
+                }
+            }
+            if(!empty($finalArray)){
+                AuditTrail::insert($finalArray);
+            }
+            /*Audit Trail end*/
             $objJob->save();
             $response['key'] = 2;
             return json_encode($response);
@@ -193,7 +221,8 @@ class JobsController extends Controller
         return redirect()->route('activejobs');
     }
 
-    public function storeJobNote(Request $request) {
+    public function storeJobNote(Request $request)
+    {
         $hidden_job_id = $request->get('hidden_jobId');
         $job_noteDesc = $request->get('job_noteDesc');
         Job::where('job_id', $hidden_job_id)->update(['job_notes' => $job_noteDesc]);
@@ -201,9 +230,41 @@ class JobsController extends Controller
         echo json_encode($response);
     }
 
-    public function viewJobDetails(){
+    public function viewJobDetails()
+    {
         $getJobDetails = DB::select('SELECT jb.created_at,jb.job_id,jb.job_notes,jt.job_status_name,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.job_status_id IN ("2","5","6","7")');
         return view('admin.jobdetailsview')->with('jobDetails', $getJobDetails);
+    }
+
+    public function showAuditTrail(Request $request)
+    {
+        $job_id = $request->get('job_id');
+        $html = '';
+        $auditList = DB::select("SELECT * FROM audit_trail WHERE job_id = '{$job_id}'");
+        $html .= '<table id="auditList" class="display nowrap" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Name Of Field</th>
+                        <th>Old Value</th>
+                        <th>New Value</th>
+                        <th>Date Of Edit</th>
+                        <th>User</th>
+                    </tr>
+                </thead><tbody>';
+            foreach($auditList as $audit)
+            {
+                $html .='<tr>
+                    <td>'.$audit->field_name.'</td>
+                    <td>'.$audit->old_value.'</td>
+                    <td>'.$audit->new_value.'</td>
+                    <td>'.date("m/d/Y", strtotime($audit->created_at)).'</td>
+                    <td>'.$audit->name.'</td>
+                </tr>';
+            }
+            $html .= '</tbody></table>';
+            $response['audit_data'] = $html;
+            $response['key'] = 1;
+        return json_encode($response);
     }
 
     public function getJobId()

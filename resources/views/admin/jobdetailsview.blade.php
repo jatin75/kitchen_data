@@ -49,7 +49,7 @@ tr th{
                                     <i class="ti-gallery"></i>
                                 </a>
                                 <span data-toggle="modal" data-target="#Auditmodel">
-                                    <a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-success btn-circle">
+                                    <a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-success btn-circle view-audit" data-id="{{ $job->job_id }}">
                                         <i class="ti-receipt"></i>
                                     </a>
                                 </span>
@@ -112,8 +112,8 @@ tr th{
                 <h4 class="modal-title">Audit Job</h4>
             </div>
             <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="auditList" class="display nowrap" cellspacing="0" width="100%">
+                <div class="table-responsive" id="auditData">
+                    {{-- <table id="auditList" class="display nowrap" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>Name Of Field</th>
@@ -132,7 +132,7 @@ tr th{
                                 <th>Vivek Italiya</th>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
@@ -185,47 +185,70 @@ tr th{
             },
             ],
         });
+    });
 
-        $('#auditList').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-            {
-                extend: 'csv',
-                title: value,
-                exportOptions: {columns: [ 0,1,2,3,4 ]},
-            },
-            {
-                extend: 'excel',
-                title: value,
-                exportOptions: {columns: [ 0,1,2,3,4 ]},
-            },
-            {
-                extend: 'pdf',
-                pageSize: 'LEGAL',
-                title: value,
-                exportOptions: {columns: [ 0,1,2,3,4]},
-            },
-            {
-                extend: 'print',
-                title: value,
-                exportOptions: {columns: [ 0,1,2,3,4 ]},
-            },
-            ],
-        });
-
-        /*set job id on models*/
-        $(".add-job-note").click(function(){
-            $jobId = $(this).attr('data-id');
-            $jobNote = $(this).attr('data-note');
-            if($jobNote == '') {
+     /*set job id on models*/
+     $(".add-job-note").click(function(){
+            var jobId = $(this).attr('data-id');
+            var jobNote = $(this).attr('data-note');
+            if(jobNote == '') {
                 $('#jobNoteSubmit').text('Add');
             }else {
                 $('#jobNoteSubmit').text('Update');
             }
-            $('#hiddenJobId').val($jobId);
-            $('#jobNote').val($jobNote);
+            $('#hiddenJobId').val(jobId);
+            $('#jobNote').val(jobNote);
         });
-    });
+
+        /*set audit*/
+        $(".view-audit").click(function(){
+            var jobId = $(this).attr('data-id');
+                $.ajax({
+                url:'{{ route('showaudittrail') }}',
+                data:{
+                    job_id:jobId,
+                },
+                type:'post',
+                dataType:'json',
+                success: function(data)
+                {
+                    if(data.key == 1)
+                    {
+                            $('#loader').hide();
+                            console.log(data.audit_data);
+                            $('#auditData').html(data.audit_data);
+                            var date = $('#formatedDate').val();
+                            var value = 'Audit_job_' + date;
+                            $('#auditList').DataTable({
+                            dom: 'Bfrtip',
+                            buttons: [
+                            {
+                                extend: 'csv',
+                                title: value,
+                                exportOptions: {columns: [ 0,1,2,3,4 ]},
+                            },
+                            {
+                                extend: 'excel',
+                                title: value,
+                                exportOptions: {columns: [ 0,1,2,3,4 ]},
+                            },
+                            {
+                                extend: 'pdf',
+                                pageSize: 'LEGAL',
+                                title: value,
+                                exportOptions: {columns: [ 0,1,2,3,4]},
+                            },
+                            {
+                                extend: 'print',
+                                title: value,
+                                exportOptions: {columns: [ 0,1,2,3,4 ]},
+                            },
+                            ],
+                        });
+                    }
+                }
+            });
+        });
 
     $('#formAddNote').on('submit', function(e) {
         e.preventDefault();
