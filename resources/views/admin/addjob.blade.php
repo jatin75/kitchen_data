@@ -11,48 +11,48 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
 <style type="text/css">
 <style type="text/css">
-	 .nav-pills {
-		background: #4c5667 !important;
-	}
-	.nav-pills .nav-item.show .nav-link, .nav-pills .nav-link.active {
-    background: #4c5667 !important;
+.nav-pills {
+	background: #4c5667 !important;
+}
+.nav-pills .nav-item.show .nav-link, .nav-pills .nav-link.active {
+	background: #4c5667 !important;
 }
 
-	.nav-pills>li.active>a,
-	.nav-pills>li.active>a:focus,
-	.nav-pills>li.active>a:hover {
-		background: #4c5667 !important;
-		color: #ffffff !important;
-	}
-	.disabled-color {
-		color: #90989c !important;
-	}
-	.bootstrap-select .dropdown-toggle:focus {
+.nav-pills>li.active>a,
+.nav-pills>li.active>a:focus,
+.nav-pills>li.active>a:hover {
+	background: #4c5667 !important;
+	color: #ffffff !important;
+}
+.disabled-color {
+	color: #90989c !important;
+}
+.bootstrap-select .dropdown-toggle:focus {
 	outline: 0px auto -webkit-focus-ring-color!important;
-	}
-	.dropdown-toggle::after {
-    display: inline-block;
-    position: relative;
-    right: 20px;
+}
+.dropdown-toggle::after {
+	display: inline-block;
+	position: relative;
+	right: 20px;
 }
 .previous-href{
 	background: #e4e7ea !important;
 	border: 1px solid #e4e7ea !important;
 	padding: 7px 5px !important;
-    font-size: 13px !important;
-    padding-bottom: 8px !important;
+	font-size: 13px !important;
+	padding-bottom: 8px !important;
 	font-weight: 100 !important;
 }
 .btn-default {
-    background: #ffffff !important;
-    border: 1px solid #e4e7ea;
-    padding: 10px 5px !important;
-    font-size: 13px !important;
-    padding-bottom: 8px !important;
+	background: #ffffff !important;
+	border: 1px solid #e4e7ea;
+	padding: 10px 5px !important;
+	font-size: 13px !important;
+	padding-bottom: 8px !important;
 	font-weight: 100 !important;
 }
 .btn-default:hover {
-    background: #e4e7ea !important;
+	background: #e4e7ea !important;
 }
 </style>
 @stop @section('content')
@@ -127,7 +127,7 @@
 														<b>ADDRESS 1</b>
 													</label>
 													<input type="text" name="locationAddress" id="locationAddress" value="{{$jobDetails->address_1 or ''}}" class="form-control"
-													    placeholder="Address line 1">
+													placeholder="Address line 1">
 												</div>
 											</div>
 											<div class="col-md-4">
@@ -146,7 +146,7 @@
 													</label>
 													<br>
 													<input type="text" name="apartmentNo" id="apartmentNo" value="{{$jobDetails->apartment_number or ''}}" class="form-control"
-													    placeholder="Apartment Number">
+													placeholder="Apartment Number">
 												</div>
 											</div>
 										</div>
@@ -183,7 +183,7 @@
 														<b>JOB START DATE</b>
 													</label>
 													<input type="text" name="jobStartDate" id="jobStartDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
-													    maxlength="10" value="{{ $jobDetails->start_date or '' }}">
+													maxlength="10" value="{{ $jobDetails->start_date or '' }}">
 												</div>
 											</div>
 											<div class="col-md-4">
@@ -192,7 +192,7 @@
 														<b>EXPECTED COMPLETION DATE</b>
 													</label>
 													<input type="text" name="jobEndDate" id="jobEndDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy" maxlength="10"
-													    value="{{ $jobDetails->end_date or '' }}">
+													value="{{ $jobDetails->end_date or '' }}">
 												</div>
 											</div>
 											<div class="col-md-4">
@@ -201,7 +201,7 @@
 														<b>PLUMBING INSTALLATION DATE</b>
 													</label>
 													<input type="text" name="plumbingInstallationDate" id="plumbingInstallationDate" class="form-control complex-colorpicker"
-													    placeholder="mm/dd/yyyy" maxlength="10" value="{{ $jobDetails->plumbing_installation_date or '' }}">
+													placeholder="mm/dd/yyyy" maxlength="10" value="{{ $jobDetails->plumbing_installation_date or '' }}">
 												</div>
 											</div>
 										</div>
@@ -213,11 +213,11 @@
 													</label>
 													<div class="row">
 														<div class="col-md-4">
-														<input type="text" name="deliveryDate" id="deliveryDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
+															<input type="text" name="deliveryDate" id="deliveryDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 															maxlength="10" value="{{ $jobDetails->delivery_date or '' }}">
 														</div>
 														<div class="col-md-8">
-																<div class="input-group clockpicker " data-placement="top">
+															<div class="input-group clockpicker " data-placement="top">
 																<input type="text" id="deliveryTime" name="deliveryTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->delivery_time or '' }}">
 															</div>
 														</div>
@@ -238,7 +238,7 @@
 														<b>JOB SUPER PHONE NUMBER</b>
 													</label>
 													<input type="text" placeholder="(xxx) xxx-xxxx" name="superPhoneNumber" id="superPhoneNumber" value="{{$jobDetails->super_phone_number or ''}}"
-													    class="form-control">
+													class="form-control">
 												</div>
 											</div>
 										</div>
@@ -249,7 +249,7 @@
 														<b>JOB CONTRACTOR NAME</b>
 													</label>
 													<input type="text" style="text-transform:uppercase" name="jobContractorName" id="jobContractorName" value="{{$jobDetails->contractor_name or ''}}"
-													    class="form-control" placeholder="Enter Job Contractor Name">
+													class="form-control" placeholder="Enter Job Contractor Name">
 												</div>
 											</div>
 											<div class="col-md-4">
@@ -258,7 +258,7 @@
 														<b>CONTRACTOR EMAIL ADDRESS</b>
 													</label>
 													<input style="text-transform: lowercase;" type="email" name="contractorEmail" id="contractorEmail" value="{{$jobDetails->contractor_email or ''}}"
-													    class="form-control" placeholder="Enter Contractor Email">
+													class="form-control" placeholder="Enter Contractor Email">
 												</div>
 											</div>
 											<div class="col-md-4">
@@ -267,7 +267,7 @@
 														<b>CONTRACTOR PHONE NUMBER</b>
 													</label>
 													<input type="text" placeholder="(xxx) xxx-xxxx" name="contractorPhoneNumber" id="contractorPhoneNumber" value="{{$jobDetails->contractor_phone_number or ''}}"
-														class="form-control">
+													class="form-control">
 												</div>
 											</div>
 										</div>
@@ -292,9 +292,9 @@
 														@if(isset($companyClientList) && sizeof($companyClientList) > 0)
 														@foreach($companyClientList as $client)
 														<option value="{{ $client->id }}"
-														@if(isset($jobDetails->company_clients_id) && sizeof($jobDetails->company_clients_id) > 0)
-														@foreach($jobDetails->company_clients_id as $single_client)
-														@if($single_client == $client->id) {{"selected='selected'"}}@endif @endforeach @endif>{{ $client->client_name }}
+															@if(isset($jobDetails->company_clients_id) && sizeof($jobDetails->company_clients_id) > 0)
+															@foreach($jobDetails->company_clients_id as $single_client)
+															@if($single_client == $client->id) {{"selected='selected'"}}@endif @endforeach @endif>{{ $client->client_name }}
 														</option>
 														@endforeach
 														@endif
@@ -336,11 +336,11 @@
 													</label>
 													<div class="row">
 														<div class="col-md-4">
-														<input type="text" name="installationDate" id="installationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
+															<input type="text" name="installationDate" id="installationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 															maxlength="10" value="{{ $jobDetails->installation_date or '' }}">
 														</div>
 														<div class="col-md-8">
-																<div class="input-group clockpicker " data-placement="top">
+															<div class="input-group clockpicker " data-placement="top">
 																<input type="text" id="installationTime" name="installationTime" class="form-control" placeholder="hh:mm" value="{{$jobDetails->installation_time or ''}}">
 															</div>
 														</div>
@@ -375,23 +375,23 @@
 												</div>
 											</div>
 											<div class="col-md-4 stoneInstallationRow">
-													<div class="form-group">
-														<label class="control-label">
-															<b>STONE INSTALLATION DATE AND TIME</b>
-														</label>
-														<div class="row">
-															<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label">
+														<b>STONE INSTALLATION DATE AND TIME</b>
+													</label>
+													<div class="row">
+														<div class="col-md-4">
 															<input type="text" name="stoneInstallationDate" id="stoneInstallationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
-																maxlength="10" value="{{ $jobDetails->stone_installation_date or '' }}">
-															</div>
-															<div class="col-md-8">
-																	<div class="input-group clockpicker " data-placement="top">
-																	<input type="text" id="stoneInstallationTime" name="stoneInstallationTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->stone_installation_time or '' }}">
-																</div>
+															maxlength="10" value="{{ $jobDetails->stone_installation_date or '' }}">
+														</div>
+														<div class="col-md-8">
+															<div class="input-group clockpicker " data-placement="top">
+																<input type="text" id="stoneInstallationTime" name="stoneInstallationTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->stone_installation_time or '' }}">
 															</div>
 														</div>
 													</div>
 												</div>
+											</div>
 											<div class="col-md-4 stoneInstallationRow">
 												<div class="form-group" style="overflow: visible!important;">
 													<label class="control-label"><b>STONE INSTALLATION EMPLOYEES</b></label>
@@ -438,90 +438,134 @@
 
 <script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 {{--
-<script type="text/javascript" src="{{asset('plugins/bower_components/switchery/dist/switchery.min.js')}}"></script> --}}
-<script src="{{ asset('scripts/jquery.maskedinput.min.js') }}"></script>
-<script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
-<script src="{{ asset('scripts/company-location.js') }}"></script>
-<script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.js')}}"></script>
-<script type="text/javascript">
-	$.ajaxSetup({
-		headers: {
-			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-		}
-	});
-	$(document).ready(function () {
+	<script type="text/javascript" src="{{asset('plugins/bower_components/switchery/dist/switchery.min.js')}}"></script> --}}
+	<script src="{{ asset('scripts/jquery.maskedinput.min.js') }}"></script>
+	<script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
+	<script src="{{ asset('scripts/company-location.js') }}"></script>
+	<script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.js')}}"></script>
+	<script type="text/javascript" src="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.js')}}"></script>
+	<script type="text/javascript">
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+		$(document).ready(function () {
 
-		if (typeof ($('#jobContractorName').val()) != "undefined" && $('#jobContractorName').val() !== null)
-			$('#jobContractorName').val($('#jobContractorName').val().toUpperCase());
-		if (typeof ($('#clientLastName').val()) != "undefined" && $('#clientLastName').val() !== null)
-			$('#clientLastName').val($('#clientLastName').val().toUpperCase());
-		if (typeof ($('#contractorEmail').val()) != "undefined" && $('#contractorEmail').val() !== null)
-			$('#contractorEmail').val($('#contractorEmail').val().toLowerCase());
+			if (typeof ($('#jobContractorName').val()) != "undefined" && $('#jobContractorName').val() !== null)
+				$('#jobContractorName').val($('#jobContractorName').val().toUpperCase());
+			if (typeof ($('#clientLastName').val()) != "undefined" && $('#clientLastName').val() !== null)
+				$('#clientLastName').val($('#clientLastName').val().toUpperCase());
+			if (typeof ($('#contractorEmail').val()) != "undefined" && $('#contractorEmail').val() !== null)
+				$('#contractorEmail').val($('#contractorEmail').val().toLowerCase());
 
 			$("#jobCompanyName").change(function(){
-			var company_id = $(this).val();
-			$.ajax({
-				url: '{{ route('getcompanyclients') }}',
-				data: {company_id:company_id},
-				type: 'post',
-				dataType: 'json',
-				success:function(response){
-					if(response.key == 1)
-					{
-						var len = response.clients_data.length;
-						$("#comapnyClients").empty();
-						for( var i = 0; i<len; i++){
-							var id = response.clients_data[i]['id'];
-							var name = response.clients_data[i]['client_name'];
-							$("#comapnyClients").append("<option value='"+id+"' >"+name+"</option>");
+				var company_id = $(this).val();
+				$.ajax({
+					url: '{{ route('getcompanyclients') }}',
+					data: {company_id:company_id},
+					type: 'post',
+					dataType: 'json',
+					success:function(response){
+						if(response.key == 1)
+						{
+							var len = response.clients_data.length;
+							$("#comapnyClients").empty();
+							for( var i = 0; i<len; i++){
+								var id = response.clients_data[i]['id'];
+								var name = response.clients_data[i]['client_name'];
+								$("#comapnyClients").append("<option value='"+id+"' >"+name+"</option>");
+							}
 						}
+						else
+						{
+							$("#comapnyClients").empty();
+							$('#formAddJob').bootstrapValidator('revalidateField', 'comapnyClients');
+						}
+						$('#comapnyClients').selectpicker('refresh');
 					}
-					else
-					{
-						$("#comapnyClients").empty();
-					}
-					$('#comapnyClients').selectpicker('refresh');
-				}
+				});
+			});
+
+			/*installation status*/
+			var installationStatus = $("#installationSelect").val();
+			(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
+			/*if(installationStatus == 1) {
+				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
+				bootstrapValidator.enableFieldValidators('installationDate', true);
+				bootstrapValidator.enableFieldValidators('installationTime', true);
+				bootstrapValidator.enableFieldValidators('installationEmployees', true);
+			}else{
+				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
+				bootstrapValidator.enableFieldValidators('installationDate', false);
+				bootstrapValidator.enableFieldValidators('installationTime', false);
+				bootstrapValidator.enableFieldValidators('installationEmployees', false);
+			}*/
+				
+			/**/
+			/* stone installation status*/
+			var stoneInstallationStatus = $("#stoneInstallationSelect").val();
+			(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
+			
+			/*if(stoneInstallationStatus == 1) {
+				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
+				bootstrapValidator.enableFieldValidators('stoneInstallationDate', true);
+				bootstrapValidator.enableFieldValidators('stoneInstallationTime', true);
+				bootstrapValidator.enableFieldValidators('stoneInstallationEmployees', true);
+			}else{
+				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
+				bootstrapValidator.enableFieldValidators('stoneInstallationDate', false);
+				bootstrapValidator.enableFieldValidators('stoneInstallationTime', false);
+				bootstrapValidator.enableFieldValidators('stoneInstallationEmployees', false);
+			}*/   
+			/**/
+			$('#resetPermission').click(function () {
+				location.reload();
 			});
 		});
 
-		var installationStatus = $("#installationSelect").val();
-		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-		var stoneInstallationStatus = $("#stoneInstallationSelect").val();
-		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-
-		$('#resetPermission').click(function () {
-			location.reload();
+		$("#installationSelect").change(function(){
+			var installationStatus = $(this).val();
+			(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
+			/*if(installationStatus == 1) {
+				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
+				bootstrapValidator.enableFieldValidators('installationDate', true);
+				bootstrapValidator.enableFieldValidators('installationTime', true);
+				bootstrapValidator.enableFieldValidators('installationEmployees', true);
+			}else{
+				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
+				bootstrapValidator.enableFieldValidators('installationDate', false);
+				bootstrapValidator.enableFieldValidators('installationTime', false);
+				bootstrapValidator.enableFieldValidators('installationEmployees', false);
+			}*/
 		});
-	});
+		$("#stoneInstallationSelect").change(function(){
+			var stoneInstallationStatus = $(this).val();
+			(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
+			/*if(stoneInstallationStatus == 1) {
+				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
+				bootstrapValidator.enableFieldValidators('stoneInstallationDate', true);
+				bootstrapValidator.enableFieldValidators('stoneInstallationTime', true);
+				bootstrapValidator.enableFieldValidators('stoneInstallationEmployees', true);
+			}else{
+				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
+				bootstrapValidator.enableFieldValidators('stoneInstallationDate', false);
+				bootstrapValidator.enableFieldValidators('stoneInstallationTime', false);
+				bootstrapValidator.enableFieldValidators('stoneInstallationEmployees', false);
+			} */   
+		});
 
-	$("#installationSelect").change(function(){
-		var installationStatus = $(this).val();
-		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-	});
-	$("#stoneInstallationSelect").change(function(){
-		var stoneInstallationStatus = $(this).val();
-		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-	});
-
-	/* For select 2*/
-	$(".select2").select2();
-	$('.selectpicker').selectpicker();
-	$('.clockpicker').clockpicker({
-		twelvehour: true,
-		autoclose: true,
-	});
+		
+		/* For select 2*/
+		$(".select2").select2();
+		$('.selectpicker').selectpicker();
+		$('.clockpicker').clockpicker({
+			twelvehour: true,
+			autoclose: true,
+		});
 
 
-	/* Switchery*/
-	/* var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
-	$('.js-switch').each(function () {
-		new Switchery($(this)[0], $(this).data());
-	}); */
-
-	/* $('#formAddJob').on('success.form.bv', function (e) { */
-		$('#formAddJob').on('submit', function (e) {
+	$('#formAddJob').on('success.form.bv', function (e) {
 		e.preventDefault();
 		$('#loader').show();
 		var hidden_job_id = $('#hiddenJobId').val();
@@ -554,6 +598,7 @@
 		var stone_installation_date = $('#stoneInstallationDate').val();
 		var stone_installation_time = $('#stoneInstallationTime').val();
 		var stone_installation_employees_id = $('#stoneInstallationEmployees').val();
+
 		$.ajax({
 			url: '{{ route('storejob') }}',
 			data: {
@@ -720,8 +765,8 @@
 		autoclose: true,
 		todayHighlight: true,
 	}).on('changeDate', function() {
-			$('#jobEndDate').datepicker('setStartDate', new Date($(this).val()))
-		});
+		$('#jobEndDate').datepicker('setStartDate', new Date($(this).val()))
+	});
 
 	function changePermission(id) {
 		var value = $('#access_' + id).val();

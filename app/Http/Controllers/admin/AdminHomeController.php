@@ -149,8 +149,8 @@ class AdminHomeController extends Controller
 		}else {
 			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
 		}
-
-		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,cmp.name,jt.job_status_name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 {$jobStatusCond}");
+		
+		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,cmp.name,jt.job_status_name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 And jb.is_active = 1 {$jobStatusCond}");
 
 		$html = '';
 		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">

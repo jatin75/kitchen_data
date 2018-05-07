@@ -484,7 +484,7 @@ $(document).ready(function () {
 				}
 			},
 			jobStartDate: {
-				trigger: 'blur',
+				trigger: 'change',
 				validators: {
 					notEmpty: {
 						message: 'Start date is required and can\'t be empty'
@@ -492,7 +492,7 @@ $(document).ready(function () {
 				}
 			},
 			jobEndDate: {
-				trigger: 'blur',
+				trigger: 'change',
 				validators: {
 					notEmpty: {
 						message: 'Expected completion date is required and can\'t be empty'
@@ -500,7 +500,7 @@ $(document).ready(function () {
 				}
 			},
 			plumbingInstallationDate: {
-				trigger: 'blur',
+				trigger: 'change',
 				validators: {
 					notEmpty: {
 						message: 'Plumbing installation date is required and can\'t be empty'
@@ -508,7 +508,7 @@ $(document).ready(function () {
 				}
 			},
 			deliveryDate: {
-				trigger: 'blur',
+				trigger: 'change',
 				validators: {
 					notEmpty: {
 						message: 'Delivery date is required.'
@@ -516,7 +516,7 @@ $(document).ready(function () {
 				}
 			},
 			deliveryTime: {
-				trigger: 'blur',
+				trigger: 'change',
 				validators: {
 					notEmpty: {
 						message: 'Delivery time is required.'
@@ -524,7 +524,7 @@ $(document).ready(function () {
 				}
 			},
 			jobSuperName: {
-				trigger: 'blur',
+				//trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Job super name is required and can\'t be empty'
@@ -545,6 +545,10 @@ $(document).ready(function () {
 						min: 16,
 						max: 16,
 						message: 'Job super phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
 					}
 				}
 			},
@@ -581,11 +585,15 @@ $(document).ready(function () {
 						min: 16,
 						max: 16,
 						message: 'Contractor phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
 					}
 				}
 			},
 			jobCompanyName: {
-				trigger: 'blur',
+				//trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Job company name is required and can\'t be empty'
@@ -593,7 +601,7 @@ $(document).ready(function () {
 				}
 			},
 			comapnyClients: {
-				trigger: 'blur',
+				//trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Company client is required and can\'t be empty'
@@ -601,7 +609,7 @@ $(document).ready(function () {
 				}
 			},
 			workingEmployee: {
-				trigger: 'blur',
+				//trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Working employee is required and can\'t be empty'
@@ -624,10 +632,53 @@ $(document).ready(function () {
 					},
 				}
 			},
+			/*installationDate: {
+				validators: {
+					notEmpty: {
+						message: 'Installation Date is required and can\'t be empty'
+					},
+				}
+			},
+			installationTime: {
+				validators: {
+					notEmpty: {
+						message: 'Installation Time is required and can\'t be empty'
+					},
+				}
+			},
+			installationEmployees: {
+				validators: {
+					notEmpty: {
+						message: 'Installation Employee is required and can\'t be empty'
+					},
+				}
+			},
+			stoneInstallationDate: {
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Date is required and can\'t be empty'
+					},
+				}
+			},
+			stoneInstallationTime: {
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Time is required and can\'t be empty'
+					},
+				}
+			},
+			stoneInstallationEmployees: {
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Employee is required and can\'t be empty'
+					},
+				}
+			},*/
 		}
 	});
 
 	$('#adminPhoneNo').on('keyup', function () {
 		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
 	});
+
 });
