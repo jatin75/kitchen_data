@@ -254,10 +254,20 @@ class JobsController extends Controller
             foreach($auditList as $audit)
             {
                 $html .='<tr>
-                    <td>'.$audit->field_name.'</td>
-                    <td>'.$audit->old_value.'</td>
-                    <td>'.$audit->new_value.'</td>
-                    <td>'.date("m/d/Y", strtotime($audit->created_at)).'</td>
+                    <td>'.$audit->field_name.'</td>';
+                    if(empty($audit->old_value)) {
+                        $html .='<td>--</td>';
+                    }else { 
+                        $html .='<td>'.$audit->old_value.' </td>';
+                    }
+
+                    if(empty($audit->new_value)) {
+                        $html .='<td>--</td>';
+                    }else { 
+                        $html .='<td>'.$audit->new_value.'</td>';
+                    }
+                    
+                $html .='<td>'.date("m/d/Y", strtotime($audit->created_at)).'</td>
                     <td>'.$audit->name.'</td>
                 </tr>';
             }
