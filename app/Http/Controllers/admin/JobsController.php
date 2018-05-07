@@ -105,7 +105,7 @@ class JobsController extends Controller
 
             $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbing_installation_date')));
             $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_date') . ' ' . $request->get('delivery_time')));
-
+            
             $objJob->is_select_installation = $is_installation;
             if ($is_installation == 1) {
                 $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));

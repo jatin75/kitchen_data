@@ -73,6 +73,8 @@ class ClientsController extends Controller
             if ($getSessionEmail == $objAdmin->email) {
                 Session::pull('name');
                 Session::put('name', $request->get('client_first_name') . " " . $request->get('client_last_name'));
+                Session::pull('email');
+                Session::put('email',$client_email);
                 $response['name'] = Session::get('name');
             }
             $objAdmin->first_name = $request->get('client_first_name');
@@ -103,6 +105,7 @@ class ClientsController extends Controller
             $objClient->zipcode = $request->get('zipcode');
             $objClient->contact_preference = $request->get('contact_preference');
             $objClient->is_deleted = 0;
+            $objClient->created_at = date('Y-m-d H:i:s');
             $objClient->save();
 
             $objAdmin = new Admin();
@@ -114,6 +117,7 @@ class ClientsController extends Controller
             $objAdmin->phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('client_contactNo'));
             $objAdmin->login_type_id = 9;
             $objAdmin->is_deleted = 0;
+            $objAdmin->created_at = date('Y-m-d H:i:s');
             $objAdmin->save();
 
             /*send Mail*/

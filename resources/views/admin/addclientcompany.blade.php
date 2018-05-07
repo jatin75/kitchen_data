@@ -50,7 +50,7 @@
 										{{ csrf_field() }}
 										{{-- <input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$accountDetail->email or ''}}"> --}}
 										{{-- <input type="show" name="hiddenStatus" id="hiddenStatus" value="{{$new_account or ''}}"> --}}
-										<input type="hidden" name="hiddenCompanyId" id="hiddenCompanyId" value="{{$companyDetail->id or ''}}">
+										<input type="hidden" name="hiddenCompanyId" id="hiddenCompanyId" value="{{$companyDetail->company_id or ''}}">
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
@@ -223,7 +223,6 @@
 	});
 
 	/*Mask phone Number Digits*/
-	/*$("#leagueContactNo").mask("999-999-999-9?999999");*/
 	$("#companyPhoneNo").mask("(999) 999 - 9999");
 
 	@if(Session::has('successMessage'))

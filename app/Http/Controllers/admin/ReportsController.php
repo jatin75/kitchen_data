@@ -62,8 +62,9 @@ class ReportsController extends Controller
     $writer->save('assets/excel_files/kitchen_Jobs_'.time().'.xlsx');
 
     $path = public_path('assets/excel_files/kitchen_Jobs_'.time().'.xlsx');
+    $headers = array('Content-Type' => 'application/octet-stream');
     if(File::exists($path)){
-      return response()->download($path,'kitchen_Jobs_'.date('Y_m_d').'.xlsx');
+      return response()->download($path,'kitchen_Jobs_'.date('Y_m_d').'.xlsx',$headers);
     }else{
       return back();
     }

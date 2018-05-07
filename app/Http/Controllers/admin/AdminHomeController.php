@@ -128,8 +128,8 @@ class AdminHomeController extends Controller
 
 		$current_password = $request->get('current_password');
 		$new_password = $request->get('new_password');
-		$hidden_email = $request->get('hidden_email');
-		$checkPassword = Admin::where('email',$hidden_email)->first();
+		$hidden_Id = $request->get('hidden_Id');
+		$checkPassword = Admin::where('id',$hidden_Id)->first();
 		if(!empty($checkPassword)) {
 			if(Hash::check($current_password,$checkPassword->password)) {
 				$checkPassword->password = Hash::make($new_password);

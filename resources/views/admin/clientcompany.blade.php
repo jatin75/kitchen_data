@@ -18,10 +18,10 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-         <h4 class="page-title">Administration > Company</h4>
-     </div>
- </div>
- <div class="row">
+       <h4 class="page-title">Administration > Company</h4>
+   </div>
+</div>
+<div class="row">
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All COMPANY</h3>
@@ -44,10 +44,10 @@ tr th{
                         @foreach($clientCompanyList as $comapnyList)
                         <tr>
                             <td class="text-center">
-                                <a data-toggle="tooltip" data-placement="top" title="Edit Company" class="btn btn-info btn-circle" href="{{route('editclientcompany',['company_id' => $comapnyList->id])}}">
+                                <a data-toggle="tooltip" data-placement="top" title="Edit Company" class="btn btn-info btn-circle" href="{{route('editclientcompany',['company_id' => $comapnyList->company_id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
-                                <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this company?');" href="{{route('deleteclientcompany',['company_id' => $comapnyList->id])}}" data-toggle="tooltip" data-placement="top" title="Delete Company"><i class="ti-trash"></i> </a>
+                                <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this company?');" href="{{route('deleteclientcompany',['company_id' => $comapnyList->company_id])}}" data-toggle="tooltip" data-placement="top" title="Delete Company"><i class="ti-trash"></i> </a>
                             </td>
                             <td>{{strtoupper($comapnyList->name)}}</td>
                             <td>{{$comapnyList->company_id}}</td>
@@ -63,10 +63,10 @@ tr th{
                         @endforeach
                     </tbody>
                 </table>
-                </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 @stop
 @section('pageSpecificJs')

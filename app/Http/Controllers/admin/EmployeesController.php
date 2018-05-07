@@ -48,6 +48,8 @@ class EmployeesController extends Controller
                 if ($getSessionEmail == $getDetail->email) {
                     Session::pull('name');
                     Session::put('name', $employee_firstName . ' ' . $employee_lastName);
+                    Session::pull('email');
+                    Session::put('email',$employee_email);
                     $response['name'] = $employee_firstName . ' ' . $employee_lastName;
                 }
 
@@ -80,6 +82,7 @@ class EmployeesController extends Controller
                 $objEmployee->password = Hash::make($employee_password);
                 $objEmployee->phone_number = (new AdminHomeController)->replacePhoneNumber($employee_contactNo);
                 $objEmployee->login_type_id = $employee_type;
+                $objEmployee->created_at = date('Y-m-d H:i:s');
                 $objEmployee->save();
 
                 /*send Mail*/

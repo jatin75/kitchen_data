@@ -37,7 +37,7 @@ class AdministrationController extends Controller
 
 		if(!empty($hidden_companyId))
 		{
-			$getDetail = Company::where('id',$hidden_companyId)->first();
+			$getDetail = Company::where('company_id',$hidden_companyId)->first();
 			$getDetail->name = $company_name;
 			$getDetail->phone_number = (new AdminHomeController)->replacePhoneNumber($company_contactNo);
 			$getDetail->email = $company_email;
@@ -65,6 +65,7 @@ class AdministrationController extends Controller
 			$objCompany->state = $state;
 			$objCompany->zipcode = $zipcode;
 			$objCompany->is_deleted = 0;
+			$objCompany->created_at = date('Y-m-d H:i:s');
 			$objCompany->save();
 			$response['key'] = 1;
 			Session::put('successMessage', 'Company detail has been added successfully.');
@@ -74,14 +75,14 @@ class AdministrationController extends Controller
 
 	public function destroy($company_id)
 	{
-		Company::where('id',$company_id)->update(['is_deleted' => 1]);
+		Company::where('company_id',$company_id)->update(['is_deleted' => 1]);
 		$msg = 'Company deleted successfully.';
 		Session::flash('successMessage',$msg);
 		return back();
 	}
 
 	public function edit($company_id) {
-		$getCompanyDetail = Company::selectRaw('name,phone_number,address_1,address_2,city,state,zipcode,email,created_at,company_id,id')->where('id',$company_id)->get();
+		$getCompanyDetail = Company::selectRaw('name,phone_number,address_1,address_2,city,state,zipcode,email,created_at,company_id,id')->where('company_id',$company_id)->get();
 		if(sizeof($getCompanyDetail) > 0)
 		{
 			$getCompanyDetail = $getCompanyDetail[0];

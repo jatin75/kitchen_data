@@ -633,17 +633,19 @@ $(document).ready(function () {
 					},
 				}
 			},
-			/*installationDate: {
+			installationDate: {
+				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Installation Date is required and can\'t be empty'
+						message: 'Installation Date is required.'
 					},
 				}
 			},
 			installationTime: {
+				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Installation Time is required and can\'t be empty'
+						message: 'Installation Time is required.'
 					},
 				}
 			},
@@ -655,16 +657,18 @@ $(document).ready(function () {
 				}
 			},
 			stoneInstallationDate: {
+				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Stone Installation Date is required and can\'t be empty'
+						message: 'Stone Installation Date is required.'
 					},
 				}
 			},
 			stoneInstallationTime: {
+				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Stone Installation Time is required and can\'t be empty'
+						message: 'Stone Installation Time is required.'
 					},
 				}
 			},
@@ -674,7 +678,7 @@ $(document).ready(function () {
 						message: 'Stone Installation Employee is required and can\'t be empty'
 					},
 				}
-			},*/
+			},
 		}
 	});
 

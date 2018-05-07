@@ -166,7 +166,7 @@
 								<div id="tab2" class="tab-pane">
 									<form id="formAccountSetting" method="post">
 										{{ csrf_field() }}
-										<input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$clientDetails->email or ''}}">
+										<input type="hidden" name="hiddenId" id="hiddenId" value="{{$clientDetails->client_id or ''}}">
 										{{-- <input type="show" name="hiddenStatus" id="hiddenStatus" value="{{$new_account or ''}}"> --}}
 										{{-- <input type="hidden" name="hiddenClientId" id="hiddenClientId" value="{{$staffDetail->staff_id or ''}}"> --}}
 										<div class="row">
@@ -306,7 +306,7 @@
 			var current_password = $("#currentPassword").val();
 			var new_password = $('#newPassword').val();
 			var retype_password = $('#retypePassword').val();
-			var hidden_email = $('#hiddenMail').val();
+			var hidden_Id = $('#hiddenId').val();
 			if(new_password != retype_password) {
 				$("#loader").hide();
 				notify('New password and  Retype password is not match. Please try again.','blackgloss');
@@ -317,7 +317,7 @@
 				data:{
 					current_password:current_password,
 					new_password:new_password,
-					hidden_email:hidden_email,
+					hidden_Id:hidden_Id,
 				},
 				type:'post',
 				success: function(data)

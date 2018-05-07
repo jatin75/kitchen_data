@@ -109,7 +109,7 @@ tr th{
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">Audit Job</h4>
+                <h4 class="modal-title">Job Audit</h4>
             </div>
             <div class="modal-body">
                 <div class="table-responsive" id="auditData">
