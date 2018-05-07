@@ -473,6 +473,7 @@ $(document).ready(function () {
 				validators: {
 					stringLength: {
 						min: 0,
+						max: 7,
 					}
 				}
 			},

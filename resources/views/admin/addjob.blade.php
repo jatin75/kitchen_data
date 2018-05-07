@@ -501,12 +501,12 @@
 				bootstrapValidator.enableFieldValidators('installationTime', false);
 				bootstrapValidator.enableFieldValidators('installationEmployees', false);
 			}*/
-				
+
 			/**/
 			/* stone installation status*/
 			var stoneInstallationStatus = $("#stoneInstallationSelect").val();
 			(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-			
+
 			/*if(stoneInstallationStatus == 1) {
 				var bootstrapValidator = $('#formAddJob').data('bootstrapValidator');
 				bootstrapValidator.enableFieldValidators('stoneInstallationDate', true);
@@ -517,7 +517,7 @@
 				bootstrapValidator.enableFieldValidators('stoneInstallationDate', false);
 				bootstrapValidator.enableFieldValidators('stoneInstallationTime', false);
 				bootstrapValidator.enableFieldValidators('stoneInstallationEmployees', false);
-			}*/   
+			}*/
 			/**/
 			$('#resetPermission').click(function () {
 				location.reload();
@@ -552,10 +552,10 @@
 				bootstrapValidator.enableFieldValidators('stoneInstallationDate', false);
 				bootstrapValidator.enableFieldValidators('stoneInstallationTime', false);
 				bootstrapValidator.enableFieldValidators('stoneInstallationEmployees', false);
-			} */   
+			} */
 		});
 
-		
+
 		/* For select 2*/
 		$(".select2").select2();
 		$('.selectpicker').selectpicker();
@@ -713,6 +713,9 @@
 	$('#contractorEmail').keyup(function () {
 		this.value = this.value.toLowerCase();
 	});
+
+	$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
+
 
 	// hide previous button
 	$(document).ready(function () {
