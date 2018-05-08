@@ -41,6 +41,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::post('jobs/storejobnote', 'admin\JobsController@storeJobNote')->name('storejobnote');
     Route::get('jobs/viewjobdetails', 'admin\JobsController@viewJobDetails')->name('viewjobdetails');
     Route::post('jobs/showaudittrail', 'admin\JobsController@showAuditTrail')->name('showaudittrail');
+    Route::post('jobs/changejobstatus','admin\JobsController@changeJobStatus')->name('changejobstatus');
 
     /*Employees*/
     Route::get('employees/showemployees', 'admin\EmployeesController@index')->name('showemployees');

@@ -10,19 +10,23 @@ use App\Job;
 use DB;
 use Illuminate\Http\Request;
 use Session;
-
+use App\JobType;
 class JobsController extends Controller
 {
     public function index()
     {
         $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date,job_notes')->where('is_active', 1)->where('is_deleted', 0)->get();
-        return view('admin.jobs')->with('jobDetails', $getJobDetails);
+
+        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
+        return view('admin.jobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails',$getJobType);
     }
 
     public function showDeactivated()
     {
         $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->get();
-        return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails);
+
+        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
+        return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails',$getJobType);
     }
 
     public function create()
@@ -204,7 +208,6 @@ class JobsController extends Controller
             $response['key'] = 1;
             return json_encode($response);
         }
-
     }
 
     public function destroy($job_id)
@@ -257,7 +260,7 @@ class JobsController extends Controller
                     <td>'.$audit->field_name.'</td>';
                     if(empty($audit->old_value)) {
                         $html .='<td>--</td>';
-                    }else { 
+                    }else {
                         $html .='<td>'.$audit->old_value.' </td>';
                     }
 
@@ -275,6 +278,28 @@ class JobsController extends Controller
             $response['audit_data'] = $html;
             $response['key'] = 1;
         return json_encode($response);
+    }
+
+    public function changeJobStatus(Request $request) {
+        $jobId = $request->get('jobId');
+        $jobStatusId = $request->get('jobStatusId');
+        $checkJob = $request->get('checkJob');
+
+        if($jobStatusId == 8) {
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId,'is_active' => 0]);
+            $response['key'] = 1;
+            if($checkJob == 1){
+                Session::put('successMessage', 'Job Status has been Changed Successfully');
+            }
+        }else {
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId,'is_active' => 1]);
+            $response['key'] = 2;
+            
+            if($checkJob == 2){
+                Session::put('successMessage', 'Job Status has been Changed Successfully');
+            }
+        }
+        echo json_encode($response);
     }
 
     public function getJobId()

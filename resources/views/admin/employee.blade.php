@@ -91,23 +91,23 @@ tr th{
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
             },
             ],
         });
