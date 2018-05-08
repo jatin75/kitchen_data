@@ -96,7 +96,7 @@ tr th{
                                     <div class="form-group">
                                         <label class="col-md-12">Add job note</label>
                                         <div class="col-md-12">
-                                            <textarea class="form-control" rows="5" name="jobNote" id="jobNote" placeholder="Enter notes..."></textarea>
+                                            <textarea class="form-control" rows="5" name="jobNote" id="jobNote" placeholder="Enter notes . . ."></textarea>
                                         </div>
                                     </div>
                                 </div>

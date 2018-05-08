@@ -49,7 +49,7 @@ tr th{
         </div>
     </div>
     <!-- row -->
-</div>    
+</div>
 @stop
 
 @section('pageSpecificJs')
@@ -89,6 +89,9 @@ tr th{
                     dom: 'Bfrtip',
                     buttons: [
                     {
+                        extend:'pageLength',
+                    },
+                    {
                         extend: 'csv',
                         title: value,
                         exportOptions: {columns: [ 1,2,3,4 ]},
@@ -108,7 +111,7 @@ tr th{
                         extend: 'print',
                         title: value,
                         exportOptions: {columns: [ 1,2,3,4 ]},
-                    },
+                    }
                     ],
                 });
                }
@@ -120,6 +123,6 @@ tr th{
     $(".nav_toggle").click(function(){
         $("#nav_menu").toggle();
     });
-    
+
 </script>
 @stop
