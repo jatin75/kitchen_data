@@ -302,6 +302,16 @@ class JobsController extends Controller
         echo json_encode($response);
     }
 
+    public function jobStatusChange(Request $request) {
+        $jobId = $request->get('jobId');
+        $jobStatusId = $request->get('jobStatusId');
+        
+        $is_active = ($jobStatusId == 8) ? 0 : 1;
+        $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId,'is_active' => $is_active]);
+        $response['key'] = 1;
+        echo json_encode($response);
+    }
+
     public function getJobId()
     {
         $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

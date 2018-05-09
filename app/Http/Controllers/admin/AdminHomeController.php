@@ -150,7 +150,9 @@ class AdminHomeController extends Controller
 			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
 		}
 		
-		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,cmp.name,jt.job_status_name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0 And jb.is_active = 1 {$jobStatusCond}");
+		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond}");
+
+		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
 
 		$html = '';
 		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
@@ -158,7 +160,7 @@ class AdminHomeController extends Controller
 		<tr>
 		<th>Job Name</th>
 		<th>Company Name</th>
-		<th>Status</th>
+		<th>Job Status</th>
 		<th>Start Date</th>
 		<th>Expected Completion Date</th>
 		</tr>
@@ -175,7 +177,16 @@ class AdminHomeController extends Controller
 						$html .='<tr>
 						<td>'.$jobDetail->job_title.'</td>
 						<td>'.$jobDetail->name.'</td>
-						<td>'.$jobDetail->job_status_name.'</td>
+						<td>
+							<select class="form-control select2 jobType" name="jobType" id="jobType" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+
+		                        foreach($getJobTypeDetails as $jobType) {
+		                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+		                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+		                        }
+		                            
+		                    $html .='</select>
+	                    </td>
 						<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 						<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
 						</tr>';
@@ -186,7 +197,16 @@ class AdminHomeController extends Controller
 					$html .='<tr>
 					<td>'.$jobDetail->job_title.'</td>
 					<td>'.$jobDetail->name.'</td>
-					<td>'.$jobDetail->job_status_name.'</td>
+					<td>
+						<select class="form-control select2 jobType" name="jobType" id="jobType" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+
+	                        foreach($getJobTypeDetails as $jobType) {
+	                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+	                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+	                        }
+	                            
+	                    $html .='</select>
+                    </td>
 					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
 					</tr>';

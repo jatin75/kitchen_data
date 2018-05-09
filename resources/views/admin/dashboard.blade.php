@@ -2,6 +2,7 @@
 @section('pageSpecificCss')
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
 <style type="text/css">
 .nav-link.active {
     background: #4c5667 !important;
@@ -40,6 +41,13 @@ tr th{
                             <li data-id="{{ $jobType->job_status_id }}" class="nav-item"> <a href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})" class="nav-link" data-toggle="tab" aria-expanded="true">{{ strtoupper($jobType->job_status_name) }}</a> </li>
                             @endforeach
                         </ul>
+                        {{-- <div class="row button-box">
+                            @foreach($jobTypeDetails as $jobType)
+                            <div class="col-lg-2 col-sm-4 col-xs-12">
+                                <button class="btn btn-block btn-default" data-id="{{ $jobType->job_status_id }}" onclick="getJobDetailsList({{ $jobType->job_status_id }})">{{ strtoupper($jobType->job_status_name) }}</button>
+                            </div>
+                            @endforeach
+                        </div> --}}
                         <div class="table-responsive jobDetailList">
 
                         </div>
@@ -61,6 +69,7 @@ tr th{
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/vfs_fonts.js')}}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.html5.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.print.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         /*get job detail list*/
@@ -82,10 +91,10 @@ tr th{
             {
                 if(data.html != '')
                 {
-                   $('.jobDetailList').html(data.html);
-                   var date = $('#formatedDate').val();
-                   var value = 'Kitchen_job' + date;
-                   $('#jobList').DataTable({
+                 $('.jobDetailList').html(data.html);
+                 var date = $('#formatedDate').val();
+                 var value = 'Kitchen_job' + date;
+                 $('#jobList').DataTable({
                     dom: 'Bfrtip',
                     buttons: [
                     {
@@ -94,35 +103,123 @@ tr th{
                     {
                         extend: 'csv',
                         title: value,
-                        exportOptions: {columns: [ 1,2,3,4 ]},
+                        exportOptions: {
+                            columns: [ 0,1,2,3,4 ],
+                            format: {
+                                body: (data, row, col, node) => {
+                                    let node_text = '';
+                                    const spacer = node.childNodes.length > 1 ? ' ' : '';
+                                    node.childNodes.forEach(child_node => {
+                                        const temp_text = child_node.nodeName == "SELECT" ? '' : child_node.textContent;
+                                        node_text += temp_text ? `${temp_text}${spacer}` : '';
+                                        if(child_node.nodeName == "SELECT"){
+                                            node_text = node_text.trim();
+                                        }
+                                    });
+                                    return node_text;
+                                }
+                            },
+                        },
                     },
                     {
                         extend: 'excel',
                         title: value,
-                        exportOptions: {columns: [ 1,2,3,4 ]},
+                        exportOptions: {
+                            columns: [ 0,1,2,3,4 ],
+                            format: {
+                                body: (data, row, col, node) => {
+                                    let node_text = '';
+                                    const spacer = node.childNodes.length > 1 ? ' ' : '';
+                                    node.childNodes.forEach(child_node => {
+                                        const temp_text = child_node.nodeName == "SELECT" ? '' : child_node.textContent;
+                                        node_text += temp_text ? `${temp_text}${spacer}` : '';
+                                        if(child_node.nodeName == "SELECT"){
+                                            node_text = node_text.trim();
+                                        }
+                                    });
+                                    return node_text;
+                                }
+                            },
+                        },
                     },
                     {
                         extend: 'pdf',
                         pageSize: 'LEGAL',
                         title: value,
-                        exportOptions: {columns: [ 1,2,3,4]},
+                        exportOptions: {
+                            columns: [ 0,1,2,3,4],
+                            format: {
+                                body: (data, row, col, node) => {
+                                    let node_text = '';
+                                    const spacer = node.childNodes.length > 1 ? ' ' : '';
+                                    node.childNodes.forEach(child_node => {
+                                        const temp_text = child_node.nodeName == "SELECT" ? /*child_node.selectedOptions[0].textContent*/ '' : child_node.textContent;
+                                        node_text += temp_text ? `${temp_text}${spacer}` : '';
+                                        if(child_node.nodeName == "SELECT"){
+                                            node_text = node_text.trim();
+                                        }
+                                    });
+                                    return node_text;
+                                }
+                            },
+                        },
                     },
                     {
                         extend: 'print',
                         title: value,
-                        exportOptions: {columns: [ 1,2,3,4 ]},
+                        exportOptions: {
+                            columns: [ 0,1,2,3,4 ],
+                            format: {
+                                body: (data, row, col, node) => {
+                                    let node_text = '';
+                                    const spacer = node.childNodes.length > 1 ? ' ' : '';
+                                    node.childNodes.forEach(child_node => {
+                                        const temp_text = child_node.nodeName == "SELECT" ? /*child_node.selectedOptions[0].textContent*/ '' : child_node.textContent;
+                                        node_text += temp_text ? `${temp_text}${spacer}` : '';
+                                        if(child_node.nodeName == "SELECT"){
+                                            node_text = node_text.trim();
+                                        }
+                                    });
+                                    return node_text;
+                                }
+                            },
+                        },
                     }
                     ],
                 });
-               }
-           }
-       });
+                /* For select 2*/
+                $(".select2").select2();
+                }
+            }
+        });
     }
 
-    /*job status menu*/
-    $(".nav_toggle").click(function(){
-        $("#nav_menu").toggle();
-    });
+/*job status menu*/
+$(".nav_toggle").click(function(){
+    $("#nav_menu").toggle();
+});
 
+/*change job status*/
+$(document).on('change','.jobType',function(){
+    var jobStatusId = $(this).val();
+    var jobId = $(this).attr('data-id');
+    $("#loader").show();
+    $.ajax({
+        url:'{{ route('jobstatuschange') }}',
+        data:{jobStatusId:jobStatusId,jobId:jobId},
+        type: 'post',
+        dataType: 'json',
+        success:function(data){
+            if(data.key == 1 ) {
+                location.reload();
+            }
+        }
+    });
+});
+
+@if(Session::has('successMessage'))
+notify('{{  Session::get('successMessage') }}','blackgloss');
+{{ Session::forget('successMessage') }}
+@endif
 </script>
 @stop

@@ -18,10 +18,10 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-       <h4 class="page-title">Jobs > Deactivated</h4>
-   </div>
-</div>
-<div class="row">
+         <h4 class="page-title">Jobs > Deactivated</h4>
+     </div>
+ </div>
+ <div class="row">
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All JOBS</h3>
@@ -157,55 +157,53 @@ tr th{
                 exportOptions: {
                     columns: [ 1,2,3,4,5 ],
                     format: {
-                     body: function(data, row, col,node) {
-                        var elementType = node.firstChild;
-                        if (elementType != null) {
-                            if (elementType.nodeName == "SELECT"){
-                                return;
-                                $(elementType).find(':selected').text();
-                            }else {
-                                return data;
-                            }
-                        }
-                        else { 
-                            return data;
+                        body: (data, row, col, node) => {
+                            let node_text = '';
+                            const spacer = node.childNodes.length > 1 ? ' ' : '';
+                            node.childNodes.forEach(child_node => {
+                                const temp_text = child_node.nodeName == "SELECT" ? /*child_node.selectedOptions[0].textContent*/ '' : child_node.textContent;
+                                node_text += temp_text ? `${temp_text}${spacer}` : '';
+                                if(child_node.nodeName == "SELECT"){
+                                    node_text = node_text.trim();
+                                }
+                            });
+                            return node_text;
                         }
                     },
-                },
                 },
             },
             ],
         });
 
-        /*change job status*/
-        $(".jobType").change(function() {
-            var jobStatusId = $(this).val();
-            var jobId = $(this).attr('data-id');
-            var checkJob;
-            $("#loader").show();
-            $.ajax({
-                url:'{{ route('changejobstatus') }}',
-                data:{jobStatusId:jobStatusId,jobId:jobId,checkJob:2},
-                type: 'post',
-                dataType: 'json',
-                success:function(data){
-                    if(data.key == 1 ) {
-                        $("#loader").hide();
-                        notify('Job Status has been Changed Successfully.','blackgloss');
-                    }else {
-                        location.reload();
-                    }
-                }
-            });
-        });
+/*change job status*/
+$(".jobType").change(function() {
+    var jobStatusId = $(this).val();
+    var jobId = $(this).attr('data-id');
+    var checkJob;
+    $("#loader").show();
+    $.ajax({
+        url:'{{ route('changejobstatus') }}',
+        data:{jobStatusId:jobStatusId,jobId:jobId,checkJob:2},
+        type: 'post',
+        dataType: 'json',
+        success:function(data){
+            if(data.key == 1 ) {
+                $("#loader").hide();
+                notify('Job Status has been Changed Successfully.','blackgloss');
+            }else {
+                location.reload();
+            }
+        }
     });
+});
+});
 
-    /* For select 2*/
-    $(".select2").select2();
+/* For select 2*/
+$(".select2").select2();
 
-    @if(Session::has('successMessage'))
-    notify('{{  Session::get('successMessage') }}','blackgloss');
-    {{ Session::forget('successMessage') }}
-    @endif
+@if(Session::has('successMessage'))
+notify('{{  Session::get('successMessage') }}','blackgloss');
+{{ Session::forget('successMessage') }}
+@endif
 </script>
 @stop
