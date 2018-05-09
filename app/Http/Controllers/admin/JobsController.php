@@ -7,6 +7,7 @@ use App\AuditTrail;
 use App\Company;
 use App\Http\Controllers\Controller;
 use App\Job;
+use App\JobNote;
 use DB;
 use Illuminate\Http\Request;
 use Session;
@@ -109,7 +110,7 @@ class JobsController extends Controller
 
             $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbing_installation_date')));
             $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_date') . ' ' . $request->get('delivery_time')));
-            
+
             $objJob->is_select_installation = $is_installation;
             if ($is_installation == 1) {
                 $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));
@@ -228,15 +229,23 @@ class JobsController extends Controller
     {
         $hidden_job_id = $request->get('hidden_jobId');
         $job_noteDesc = $request->get('job_noteDesc');
-        Job::where('job_id', $hidden_job_id)->update(['job_notes' => $job_noteDesc]);
+        $ObjJobNote = new JobNote();
+        $ObjJobNote->job_id = $hidden_job_id;
+        $ObjJobNote->employee_id = Session::get('employee_id');
+        $ObjJobNote->name = Session::get('name');
+        $ObjJobNote->job_note = $job_noteDesc;
+        $ObjJobNote->login_type_id = Session::get('login_type_id');
+        $ObjJobNote->created_at = date('Y-m-d H:i:s');
+        JobNote::where('job_id', $hidden_job_id)->update(['job_notes' => $job_noteDesc]);
         $response['key'] = 1;
         echo json_encode($response);
     }
 
-    public function viewJobDetails()
+    public function viewJobDetails(Request $request)
     {
+        $job_id = $request->get('job_id');
+        $getJobDetails = Job::where('job_id', $job_id)->first();
         $getJobDetails = DB::select('SELECT jb.created_at,jb.job_id,jb.job_notes,jt.job_status_name,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.job_status_id IN ("2","5","6","7")');
-        return view('admin.jobdetailsview')->with('jobDetails', $getJobDetails);
     }
 
     public function showAuditTrail(Request $request)
@@ -266,10 +275,10 @@ class JobsController extends Controller
 
                     if(empty($audit->new_value)) {
                         $html .='<td>--</td>';
-                    }else { 
+                    }else {
                         $html .='<td>'.$audit->new_value.'</td>';
                     }
-                    
+
                 $html .='<td>'.date("m/d/Y", strtotime($audit->created_at)).'</td>
                     <td>'.$audit->name.'</td>
                 </tr>';
@@ -294,7 +303,7 @@ class JobsController extends Controller
         }else {
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId,'is_active' => 1]);
             $response['key'] = 2;
-            
+
             if($checkJob == 2){
                 Session::put('successMessage', 'Job Status has been Changed Successfully');
             }

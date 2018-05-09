@@ -40,9 +40,9 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('jobs/deletejob/{job_id}', 'admin\JobsController@destroy')->name('deletejob');
     Route::get('jobs/deactivatejob/{job_id}', 'admin\JobsController@deactivateJob')->name('deactivatejob');
     Route::post('jobs/storejobnote', 'admin\JobsController@storeJobNote')->name('storejobnote');
-    Route::get('jobs/viewjobdetails', 'admin\JobsController@viewJobDetails')->name('viewjobdetails');
+    Route::post('jobs/viewjobdetails', 'admin\JobsController@viewJobDetails')->name('viewjobdetails');
     Route::post('jobs/showaudittrail', 'admin\JobsController@showAuditTrail')->name('showaudittrail');
-    Route::post('jobs/changejobstatus','admin\JobsController@changeJobStatus')->name('changejobstatus');
+    Route::post('jobs/changejobstatus', 'admin\JobsController@changeJobStatus')->name('changejobstatus');
 
     /*Employees*/
     Route::get('employees/showemployees', 'admin\EmployeesController@index')->name('showemployees');

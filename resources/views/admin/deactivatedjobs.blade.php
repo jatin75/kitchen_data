@@ -18,10 +18,10 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-         <h4 class="page-title">Jobs > Deactivated</h4>
-     </div>
- </div>
- <div class="row">
+       <h4 class="page-title">Jobs > Deactivated</h4>
+   </div>
+</div>
+<div class="row">
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All JOBS</h3>
@@ -83,7 +83,7 @@ tr th{
 <script type="text/javascript">
     $(document).ready(function() {
         var date = $('#formatedDate').val();
-        var value = 'Kitchen_employee_' + date;
+        var value = 'Kitchen_job_' + date;
         $('#jobList').DataTable({
             dom: 'Bfrtip',
             buttons: [
@@ -174,6 +174,7 @@ tr th{
             },
             ],
         });
+});
 
 /*change job status*/
 $(".jobType").change(function() {
@@ -195,7 +196,6 @@ $(".jobType").change(function() {
             }
         }
     });
-});
 });
 
 /* For select 2*/
