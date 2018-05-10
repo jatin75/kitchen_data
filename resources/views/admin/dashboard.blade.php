@@ -244,7 +244,7 @@ tr th{
 		var jobId = $(this).attr('data-id');
 		$("#loader").show();
 		$.ajax({
-			url:'{{ route('jobstatuschange') }}',
+			url:'{{ route('changedashboardjobstatus') }}',
 			data:{jobStatusId:jobStatusId,jobId:jobId},
 			type: 'post',
 			dataType: 'json',

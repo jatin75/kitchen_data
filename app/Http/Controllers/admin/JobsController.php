@@ -1,17 +1,18 @@
 <?php
 namespace App\Http\Controllers\admin;
-
 date_default_timezone_set('UTC');
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\admin\AdminHomeController;
+use App\Job;
+use App\JobNote;
+use App\JobType;
 use App\Admin;
 use App\AuditTrail;
 use App\Company;
-use App\Http\Controllers\Controller;
-use App\Job;
-use App\JobNote;
 use DB;
 use Illuminate\Http\Request;
 use Session;
-use App\JobType;
+
 class JobsController extends Controller
 {
     public function index()
@@ -19,7 +20,7 @@ class JobsController extends Controller
         $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date,job_notes')->where('is_active', 1)->where('is_deleted', 0)->get();
 
         $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
-        return view('admin.jobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails',$getJobType);
+        return view('admin.jobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType);
     }
 
     public function showDeactivated()
@@ -27,7 +28,7 @@ class JobsController extends Controller
         $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->get();
 
         $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
-        return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails',$getJobType);
+        return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType);
     }
 
     public function create()
@@ -138,18 +139,18 @@ class JobsController extends Controller
             $newValueArray = call_user_func_array('array_merge', $newValueArray);
             foreach ($oldValueArray as $key => $old) {
                 if ($newValueArray[$key] != $oldValueArray[$key]) {
-                    $finalArray[] = array (
+                    $finalArray[] = array(
                         'job_id' => $hidden_job_id,
                         'field_name' => $key,
                         'old_value' => $oldValueArray[$key],
                         'new_value' => $newValueArray[$key],
                         'employee_id' => Session::get('employee_id'),
                         'name' => Session::get('name'),
-                        'login_type_id' => Session::get('login_type_id')
+                        'login_type_id' => Session::get('login_type_id'),
                     );
                 }
             }
-            if(!empty($finalArray)){
+            if (!empty($finalArray)) {
                 AuditTrail::insert($finalArray);
             }
             /*Audit Trail end*/
@@ -227,16 +228,16 @@ class JobsController extends Controller
 
     public function storeJobNote(Request $request)
     {
-        $hidden_job_id = $request->get('hidden_jobId');
-        $job_noteDesc = $request->get('job_noteDesc');
+        $hidden_job_id = $request->get('hidden_job_id');
+        $job_note_desc = $request->get('job_note_desc');
         $ObjJobNote = new JobNote();
         $ObjJobNote->job_id = $hidden_job_id;
         $ObjJobNote->employee_id = Session::get('employee_id');
         $ObjJobNote->name = Session::get('name');
-        $ObjJobNote->job_note = $job_noteDesc;
+        $ObjJobNote->job_note = $job_note_desc;
         $ObjJobNote->login_type_id = Session::get('login_type_id');
         $ObjJobNote->created_at = date('Y-m-d H:i:s');
-        JobNote::where('job_id', $hidden_job_id)->update(['job_notes' => $job_noteDesc]);
+        $ObjJobNote->save();
         $response['key'] = 1;
         echo json_encode($response);
     }
@@ -244,8 +245,71 @@ class JobsController extends Controller
     public function viewJobDetails(Request $request)
     {
         $job_id = $request->get('job_id');
-        $getJobDetails = Job::where('job_id', $job_id)->first();
-        $getJobDetails = DB::select('SELECT jb.created_at,jb.job_id,jb.job_notes,jt.job_status_name,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.job_status_id IN ("2","5","6","7")');
+        $getJobDetails = DB::select("SELECT j.job_id,j.company_id,j.job_title,j.address_1,j.address_2,j.city,j.state,j.zipcode,j.apartment_number,j.super_name,j.super_phone_number,j.contractor_name,j.contractor_phone_number,j.contractor_email,j.working_employee_id,j.company_clients_id,j.plumbing_installation_date,j.delivery_datetime,j.job_status_id,j.is_select_installation,j.installation_datetime,j.installation_employee_id,j.is_select_stone_installation,j.stone_installation_datetime,j.stone_installation_employee_id,j.is_active,j.start_date,j.end_date,j.created_at,cmp.name AS company_name,jbt.job_status_name
+        FROM jobs AS j
+        JOIN companies AS cmp ON cmp.company_id = j.company_id
+        JOIN job_types AS jbt ON jbt.job_status_id = j.job_status_id
+        WHERE j.job_id = '{$job_id}'");
+        if (sizeof($getJobDetails) > 0) {
+            $getJobDetails = $getJobDetails[0];
+            $getJobDetails->is_active = ($getJobDetails->is_active == 1) ? 'Active':'Inactive' ;
+            $getJobDetails->super_phone_number = (!empty($getJobDetails->super_phone_number)) ? (new AdminHomeController)->formatPhoneNumber($getJobDetails->super_phone_number) : '--';
+            $getJobDetails->contractor_phone_number = (!empty($getJobDetails->contractor_phone_number)) ? (new AdminHomeController)->formatPhoneNumber($getJobDetails->contractor_phone_number) : '--';
+
+            $getJobDetails->start_date = date('m/d/Y', strtotime($getJobDetails->start_date));
+            $getJobDetails->end_date = date('m/d/Y', strtotime($getJobDetails->end_date));
+            $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
+            $getJobDetails->delivery_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->delivery_datetime));
+
+            $getJobDetails->installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->installation_datetime));
+
+            $getJobDetails->stone_installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->stone_installation_datetime));
+            if (!empty($getJobDetails->working_employee_id)) {
+                $getJobDetails->working_employee_name = $this->commonViewJobDetails($getJobDetails->working_employee_id);
+            }
+            if (!empty($getJobDetails->company_clients_id)) {
+                $getJobDetails->company_clients_name  = $this->commonViewJobDetails($getJobDetails->company_clients_id);
+            }
+            if (!empty($getJobDetails->installation_employee_id)) {
+                $getJobDetails->installation_employee_name  = $this->commonViewJobDetails($getJobDetails->installation_employee_id);
+            }
+            if (!empty($getJobDetails->stone_installation_employee_id)) {
+                $getJobDetails->stone_installation_employee_name  = $this->commonViewJobDetails($getJobDetails->stone_installation_employee_id);
+            }
+        }
+        $getJobNotes = DB::select("SELECT id,name,job_note,updated_at FROM job_notes WHERE is_deleted = 0 AND job_id = '{$job_id}'");
+        $html = '';
+        if (sizeof($getJobNotes) > 0)
+        {
+            foreach($getJobNotes as $single_note)
+            {
+                $html .= '<div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" class="word-wrap">
+                    <span id="note">'. $single_note->job_note .'</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                    <span id="updated_by">'. $single_note->name .'</span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                    <span id="updated_date">'. $single_note->updated_at .'</span>
+                </div>
+                <div class="col-xs-2">
+                    <a class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
+                        <i class="ti-pencil-alt"></i>
+                    </a>
+                </div>
+                <div class="col-xs-2">
+                    <a class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
+                        <i class="ti-trash"></i>
+                    </a>
+                </div>
+                </div>';
+            }
+        }
+        $response['employee_detail'] = $getJobDetails;
+        $response['job_notes_detail'] = $html;
+        $response['key'] = 1;
+        return json_encode($response);
     }
 
     public function showAuditTrail(Request $request)
@@ -263,62 +327,81 @@ class JobsController extends Controller
                         <th>User</th>
                     </tr>
                 </thead><tbody>';
-            foreach($auditList as $audit)
-            {
-                $html .='<tr>
-                    <td>'.$audit->field_name.'</td>';
-                    if(empty($audit->old_value)) {
-                        $html .='<td>--</td>';
-                    }else {
-                        $html .='<td>'.$audit->old_value.' </td>';
-                    }
-
-                    if(empty($audit->new_value)) {
-                        $html .='<td>--</td>';
-                    }else {
-                        $html .='<td>'.$audit->new_value.'</td>';
-                    }
-
-                $html .='<td>'.date("m/d/Y", strtotime($audit->created_at)).'</td>
-                    <td>'.$audit->name.'</td>
-                </tr>';
+        foreach ($auditList as $audit) {
+            $html .= '<tr>
+                    <td>' . $audit->field_name . '</td>';
+            if (empty($audit->old_value)) {
+                $html .= '<td>--</td>';
+            } else {
+                $html .= '<td>' . $audit->old_value . ' </td>';
             }
-            $html .= '</tbody></table>';
-            $response['audit_data'] = $html;
-            $response['key'] = 1;
+
+            if (empty($audit->new_value)) {
+                $html .= '<td>--</td>';
+            } else {
+                $html .= '<td>' . $audit->new_value . '</td>';
+            }
+
+            $html .= '<td>' . date("m/d/Y", strtotime($audit->created_at)) . '</td>
+                    <td>' . $audit->name . '</td>
+                </tr>';
+        }
+        $html .= '</tbody></table>';
+        $response['audit_data'] = $html;
+        $response['key'] = 1;
         return json_encode($response);
     }
 
-    public function changeJobStatus(Request $request) {
+    public function changeJobStatus(Request $request)
+    {
         $jobId = $request->get('jobId');
         $jobStatusId = $request->get('jobStatusId');
         $checkJob = $request->get('checkJob');
 
-        if($jobStatusId == 8) {
-            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId,'is_active' => 0]);
+        if ($jobStatusId == 8) {
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => 0]);
             $response['key'] = 1;
-            if($checkJob == 1){
+            if ($checkJob == 1) {
                 Session::put('successMessage', 'Job Status has been Changed Successfully');
             }
-        }else {
-            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId,'is_active' => 1]);
+        } else {
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => 1]);
             $response['key'] = 2;
 
-            if($checkJob == 2){
+            if ($checkJob == 2) {
                 Session::put('successMessage', 'Job Status has been Changed Successfully');
             }
         }
         echo json_encode($response);
     }
 
-    public function jobStatusChange(Request $request) {
+    public function changeDashboardJobStatus(Request $request)
+    {
         $jobId = $request->get('jobId');
         $jobStatusId = $request->get('jobStatusId');
-        
+
         $is_active = ($jobStatusId == 8) ? 0 : 1;
-        $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId,'is_active' => $is_active]);
+        $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
         $response['key'] = 1;
         echo json_encode($response);
+    }
+
+    function commonViewJobDetails($ids)
+    {
+        $allEmployeeId = explode(",", $ids);
+        $employeeNames = [];
+        foreach($allEmployeeId as $employeeId)
+        {
+            $getEmployeeName = DB::select("SELECT CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE id = '{$employeeId}'");
+            if(sizeof($getEmployeeName) > 0)
+            {
+                $employeeNames[] = $getEmployeeName[0]->employee_name;
+            }
+        }
+        if(sizeof($employeeNames) > 0)
+        {
+            return implode(", ", $employeeNames);
+        }
     }
 
     public function getJobId()

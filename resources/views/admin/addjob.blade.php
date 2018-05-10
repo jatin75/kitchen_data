@@ -506,7 +506,6 @@
 			.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
 			.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
 			.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
-			
 			$('#resetPermission').click(function () {
 				location.reload();
 			});
@@ -520,14 +519,14 @@
 			.enableFieldValidators('installationDate', installStatus)
 			.enableFieldValidators('installationTime', installStatus)
 			.enableFieldValidators('installationEmployees', installStatus);
-			
+
 			if(installationStatus == 1) {
 				$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate')
 				.bootstrapValidator('revalidateField', 'installationTime')
 				.bootstrapValidator('revalidateField', 'installationEmployees');
 			}
 		});
-		
+
 		$("#stoneInstallationSelect").change(function(){
 			var stoneInstallationStatus = $(this).val();
 			(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
