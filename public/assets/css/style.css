@@ -15315,17 +15315,20 @@ a.fc-event:not([href]):not([tabindex]){
     display: none;
 }
 
-@media screen and (max-width: 1120px) and (min-width: 110px){
+@media screen and (max-width: 767px) and (min-width: 110px){
     .nav_toggle{
         display: block;
+    }
+    .nav_toolbar_menu {
+        display: none;
     }
     .dashboard-job-list .nav-pills > li{
         border: none;
     }
-    #nav_menu {
+    /*#nav_menu {
         display: none;
         background: #4c556724;
-    }
+    }*/
 }
 @media screen and (max-width: 1240px) and (min-width: 110px){
     .user_profile_wrapper {

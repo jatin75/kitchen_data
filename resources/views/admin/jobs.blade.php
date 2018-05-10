@@ -241,6 +241,7 @@ tr th{
 						}
 					},
 				},
+				//mColumns: "visible",
 			},
 			{
 				extend: 'excel',

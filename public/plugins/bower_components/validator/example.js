@@ -650,6 +650,7 @@ $(document).ready(function () {
 				}
 			},
 			installationEmployees: {
+				/*trigger: 'blur',*/
 				validators: {
 					notEmpty: {
 						message: 'Installation Employee is required and can\'t be empty'
@@ -685,5 +686,4 @@ $(document).ready(function () {
 	$('#adminPhoneNo').on('keyup', function () {
 		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
 	});
-
 });

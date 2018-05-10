@@ -409,9 +409,9 @@
 										</div>
 										<div class="form-group text-left p-t-md">
 											@if(!isset($jobDetails->job_id))
-											<button type="submit" class="btn btn-success">CREATE JOB</button>
+											<button type="submit" class="btn btn-success jobformsubmit">CREATE JOB</button>
 											@endif @if(isset($jobDetails->job_id))
-											<button type="submit" class="btn btn-info">UPDATE</button>
+											<button type="submit" class="btn btn-info jobformsubmit">UPDATE</button>
 											@endif &nbsp; &nbsp;
 											<button id="resetPermission" type="button" class="btn btn-danger">CANCEL</button>
 										</div>
@@ -493,9 +493,9 @@
 
 			var installStatus = (installationStatus == 1) ? true : false;
 			$('#formAddJob').data('bootstrapValidator')
-				.enableFieldValidators('installationDate', installStatus)
-				.enableFieldValidators('installationTime', installStatus)
-				.enableFieldValidators('installationEmployees', installStatus);
+			.enableFieldValidators('installationDate', installStatus)
+			.enableFieldValidators('installationTime', installStatus)
+			.enableFieldValidators('installationEmployees', installStatus);
 
 			/* stone installation status*/
 			var stoneInstallationStatus = $("#stoneInstallationSelect").val();
@@ -503,9 +503,9 @@
 
 			var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
 			$('#formAddJob').data('bootstrapValidator')
-				.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
-				.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
-				.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
+			.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
+			.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
+			.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
 			
 			$('#resetPermission').click(function () {
 				location.reload();
@@ -516,11 +516,11 @@
 			var installationStatus = $(this).val();
 			(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
 			var installStatus = (installationStatus == 1) ? true : false;
-
 			$('#formAddJob').data('bootstrapValidator')
-				.enableFieldValidators('installationDate', installStatus)
-				.enableFieldValidators('installationTime', installStatus)
-				.enableFieldValidators('installationEmployees', installStatus);
+			.enableFieldValidators('installationDate', installStatus)
+			.enableFieldValidators('installationTime', installStatus)
+			.enableFieldValidators('installationEmployees', installStatus);
+			
 			if(installationStatus == 1) {
 				$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate')
 				.bootstrapValidator('revalidateField', 'installationTime')
@@ -535,9 +535,9 @@
 			var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
 
 			$('#formAddJob').data('bootstrapValidator')
-				.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
-				.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
-				.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
+			.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
+			.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
+			.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
 
 			if(stoneInstallationStatus == 1) {
 				$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate')
@@ -671,15 +671,15 @@
 			});
 		});
 
-	$('#jobContractorName').keyup(function () {
-		this.value = this.value.toUpperCase();
-	});
+		$('#jobContractorName').keyup(function () {
+			this.value = this.value.toUpperCase();
+		});
 
-	$('#contractorEmail').keyup(function () {
-		this.value = this.value.toLowerCase();
-	});
+		$('#contractorEmail').keyup(function () {
+			this.value = this.value.toLowerCase();
+		});
 
-	$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
+		$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
 
 
 	// hide previous button
