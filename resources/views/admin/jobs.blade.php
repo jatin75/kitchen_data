@@ -46,92 +46,92 @@ tr th{
 							@foreach($jobDetails as $job)
 							<tr>
 								<td class="text-center">
-										<span data-toggle="modal" data-target="#jobDetailModel">
-											<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="{{ $job->job_id }}">
-												<i class="ti-eye"></i>
-											</a>
-										</span>
-										<a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editjob',['job_id' => $job->job_id])}}">
-											<i class="ti-pencil-alt"></i>
+									<span data-toggle="modal" data-target="#jobDetailModel">
+										<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="{{ $job->job_id }}">
+											<i class="ti-eye"></i>
 										</a>
-										<span data-toggle="modal" data-target="#jobNotesModel">
-											<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="{{ $job->job_id }}">
-												<i class="ti-plus"></i>
-											</a>
-										</span>
-										<span data-toggle="modal" data-target="#Auditmodel">
-											<a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-primary btn-circle view-audit" data-id="{{ $job->job_id }}">
-												<i class="ti-receipt"></i>
-											</a>
-										</span>
-										<a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to deactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
-									</td>
-									<td>{{$job->job_title}}</td>
-									<td>{{$job->job_id}}</td>
-									<td>
-										<select class="form-control select2 jobType" name="jobType" id="jobType" placeholder="Select your job type" data-id="{{$job->job_id}}">
-											@foreach($jobTypeDetails as $jobType)
-											<option value="{{ $jobType->job_status_id }}" @if(isset($job->job_status_id) && $job->job_status_id == $jobType->job_status_id) {{"selected='selected'"}} @endif> {{ $jobType->job_status_name }}</option>
-											@endforeach
-										</select>
-									</td>
-									<td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
-									<td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
-								</tr>
-								@endforeach
-							</tbody>
-						</table>
-					</div>
+									</span>
+									<a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editjob',['job_id' => $job->job_id])}}">
+										<i class="ti-pencil-alt"></i>
+									</a>
+									<span data-toggle="modal" data-target="#jobNotesModel">
+										<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="{{ $job->job_id }}">
+											<i class="ti-plus"></i>
+										</a>
+									</span>
+									<span data-toggle="modal" data-target="#Auditmodel">
+										<a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-primary btn-circle view-audit" data-id="{{ $job->job_id }}">
+											<i class="ti-receipt"></i>
+										</a>
+									</span>
+									<a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to deactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
+								</td>
+								<td>{{$job->job_title}}</td>
+								<td>{{$job->job_id}}</td>
+								<td>
+									<select class="form-control select2 jobType" name="jobType" id="jobType" placeholder="Select your job type" data-id="{{$job->job_id}}">
+										@foreach($jobTypeDetails as $jobType)
+										<option value="{{ $jobType->job_status_id }}" @if(isset($job->job_status_id) && $job->job_status_id == $jobType->job_status_id) {{"selected='selected'"}} @endif> {{ $jobType->job_status_name }}</option>
+										@endforeach
+									</select>
+								</td>
+								<td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
+								<td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
+							</tr>
+							@endforeach
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!--jobNotes model-->
-	<div class="modal fade" id="jobNotesModel" tabindex="-1" data-backdrop="true" style="display: none;">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="exampleModalLabel1">Add&nbsp;Note</h4>
-				</div>
-				<div class="modal-body">
-					<div class="form-body">
-						<form method="POST" id="formAddNote">
-							{{ csrf_field() }}
+</div>
+<!--jobNotes model-->
+<div class="modal fade" id="jobNotesModel" tabindex="-1" data-backdrop="true" style="display: none;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="exampleModalLabel1">Add&nbsp;Note</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-body">
+					<form method="POST" id="formAddNote">
+						{{ csrf_field() }}
 						<input type="hidden" id="hiddenJobId" name="hiddenJobId" value="">
-							<div class="row m-t-10">
-								<div class="row col-md-12">
-									<div class="col-md-12">
-										<div class="form-group">
-											<label class="col-md-12">ADD JOB NOTE</label>
-											<div class="col-md-12">
-												<textarea class="form-control" rows="5" name="jobNote" id="jobNote" placeholder="Enter notes . . ."></textarea>
-											</div>
+						<div class="row m-t-10">
+							<div class="row col-md-12">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="col-md-12">ADD JOB NOTE</label>
+										<div class="col-md-12">
+											<textarea class="form-control" rows="5" name="jobNote" id="jobNote" placeholder="Enter notes . . ."></textarea>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="modal-footer form-group">
-								<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>&nbsp;
-								<button type="submit" id="jobNoteSubmit" class="btn btn-success">Add</button>
-							</div>
-						</form>
-					</div>
+						</div>
+						<div class="modal-footer form-group">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>&nbsp;
+							<button type="submit" id="jobNoteSubmit" class="btn btn-success">Add</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!--/.jobNotes model-->
-	<!--Audit model-->
-	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Auditmodel" style="display: none; z-index:100000;">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">Job Audit</h4>
-				</div>
-				<div class="modal-body">
-					<div class="table-responsive" id="auditData">
+</div>
+<!--/.jobNotes model-->
+<!--Audit model-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Auditmodel" style="display: none; z-index:100000;">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Job Audit</h4>
+			</div>
+			<div class="modal-body">
+				<div class="table-responsive" id="auditData">
                     {{-- <table id="auditList" class="display nowrap" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -179,7 +179,7 @@ tr th{
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB STATUS</label>
-					<br><span id="jobStatus"></span>
+						<br><span id="jobStatus"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB ID</label>
@@ -300,23 +300,23 @@ tr th{
 				</div>
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="scrollit p-l-10">
-						<div class="text-center p-b-10"><span><b>Job Notes</b></span></div>
-						<div class="row p-b-10">
-							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-								<span><b>Job Note</b></span>
+						<div class="scrollit p-l-10">
+							<div class="text-center p-b-10"><span><b>Job Notes</b></span></div>
+							<div class="row p-b-10">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+									<span><b>Job Note</b></span>
+								</div>
+								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+									<span><b>Updated By</b></span>
+								</div>
+								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+									<span><b>Date</b></span>
+								</div>
+								<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+									<span><b>Action</b></span>
+								</div>
 							</div>
-							<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-								<span><b>Updated By</b></span>
-							</div>
-							<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-								<span><b>Date</b></span>
-							</div>
-							<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-								<span><b>Action</b></span>
-							</div>
-						</div>
-						<div id="notesData">
+							<div id="notesData">
 							{{-- <div class="row">
 								<div class="col-md-4 col-sm-4 col-xs-4" class="word-wrap">
 									<span id="note"></span>
@@ -340,16 +340,16 @@ tr th{
 							</div> --}}
 						</div>
 					</div>
-					</div>
 				</div>
-                <div class="modal-footer">
-                	<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+	<!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
 </div>
 <!--/.jobDetail model-->
 @stop
@@ -376,21 +376,20 @@ tr th{
 				exportOptions: {
 					columns: [ 1,2,3,4,5 ],
 					format: {
-						body: (data, row, col, node) => {
-							let node_text = '';
-							const spacer = node.childNodes.length > 1 ? ' ' : '';
-							node.childNodes.forEach(child_node => {
-								const temp_text = child_node.nodeName == "SELECT" ? '' : child_node.textContent;
-								node_text += temp_text ? `${temp_text}${spacer}` : '';
-								if(child_node.nodeName == "SELECT"){
-									node_text = node_text.trim();
-								}
-							});
-							return node_text;
+						body: function( data, row, col, node ) {
+							if (col == 2) {
+								return $('#jobList').DataTable()
+								.cell( {row: row, column: 3} )
+								.nodes()
+								.to$()
+								.find(':selected')
+								.text().trim();
+							} else {
+								return data;
+							}
 						}
 					},
 				},
-				//mColumns: "visible",
 			},
 			{
 				extend: 'excel',
@@ -398,17 +397,17 @@ tr th{
 				exportOptions: {
 					columns: [ 1,2,3,4,5 ],
 					format: {
-						body: (data, row, col, node) => {
-							let node_text = '';
-							const spacer = node.childNodes.length > 1 ? ' ' : '';
-							node.childNodes.forEach(child_node => {
-								const temp_text = child_node.nodeName == "SELECT" ? '' : child_node.textContent;
-								node_text += temp_text ? `${temp_text}${spacer}` : '';
-								if(child_node.nodeName == "SELECT"){
-									node_text = node_text.trim();
-								}
-							});
-							return node_text;
+						body: function( data, row, col, node ) {
+							if (col == 2) {
+								return $('#jobList').DataTable()
+								.cell( {row: row, column: 3} )
+								.nodes()
+								.to$()
+								.find(':selected')
+								.text().trim();
+							} else {
+								return data;
+							}
 						}
 					},
 				},
@@ -420,17 +419,17 @@ tr th{
 				exportOptions: {
 					columns: [ 1,2,3,4,5 ],
 					format: {
-						body: (data, row, col, node) => {
-							let node_text = '';
-							const spacer = node.childNodes.length > 1 ? ' ' : '';
-							node.childNodes.forEach(child_node => {
-								const temp_text = child_node.nodeName == "SELECT" ? /*child_node.selectedOptions[0].textContent*/ '' : child_node.textContent;
-								node_text += temp_text ? `${temp_text}${spacer}` : '';
-								if(child_node.nodeName == "SELECT"){
-									node_text = node_text.trim();
-								}
-							});
-							return node_text;
+						body: function( data, row, col, node ) {
+							if (col == 2) {
+								return $('#jobList').DataTable()
+								.cell( {row: row, column: 3} )
+								.nodes()
+								.to$()
+								.find(':selected')
+								.text().trim();
+							} else {
+								return data;
+							}
 						}
 					},
 				},
@@ -441,17 +440,17 @@ tr th{
 				exportOptions: {
 					columns: [ 1,2,3,4,5 ],
 					format: {
-						body: (data, row, col, node) => {
-							let node_text = '';
-							const spacer = node.childNodes.length > 1 ? ' ' : '';
-							node.childNodes.forEach(child_node => {
-								const temp_text = child_node.nodeName == "SELECT" ? /*child_node.selectedOptions[0].textContent*/ '' : child_node.textContent;
-								node_text += temp_text ? `${temp_text}${spacer}` : '';
-								if(child_node.nodeName == "SELECT"){
-									node_text = node_text.trim();
-								}
-							});
-							return node_text;
+						body: function( data, row, col, node ) {
+							if (col == 2) {
+								return $('#jobList').DataTable()
+								.cell( {row: row, column: 3} )
+								.nodes()
+								.to$()
+								.find(':selected')
+								.text().trim();
+							} else {
+								return data;
+							}
 						}
 					},
 				},
@@ -625,10 +624,10 @@ tr th{
 				if(data.key == 1)
 				{
 					$('#loader').hide();
-                    notify('Job note has been added successfully.','blackgloss');
-                }
-            }
-        });
+					notify('Job note has been added successfully.','blackgloss');
+				}
+			}
+		});
 	});
 
 	@if(Session::has('successMessage'))

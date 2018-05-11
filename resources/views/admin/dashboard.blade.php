@@ -63,11 +63,9 @@ tr th{
 						<div class="nav_toggle user-profile" style="padding-top: 0;padding-bottom: 20px;text-align: left">
 							<div class="dropdown user-pro-body" style="margin: 0px  !important">
 								<a href="#" class="u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></a>
-								
 								<ul class="dropdown-menu animated flipInY" style="margin-left: 0;top:30px;padding: 0;">
 									<li><a class="toolbar_dropdownbtn toolbaractive" href="javascript:void(0)" onclick="getJobDetailsList(0)"> All </a></li>
 									@foreach($jobTypeDetails as $jobType)
-									{{-- <li role="separator" class="divider"></li> --}}
 									<li><a class="toolbar_dropdownbtn" href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})"> {{ strtoupper($jobType->job_status_name) }} </a></li>
 									@endforeach
 								</ul>
@@ -145,17 +143,17 @@ tr th{
 							exportOptions: {
 								columns: [ 0,1,2,3,4 ],
 								format: {
-									body: (data, row, col, node) => {
-										let node_text = '';
-										const spacer = node.childNodes.length > 1 ? ' ' : '';
-										node.childNodes.forEach(child_node => {
-											const temp_text = child_node.nodeName == "SELECT" ? '' : child_node.textContent;
-											node_text += temp_text ? `${temp_text}${spacer}` : '';
-											if(child_node.nodeName == "SELECT"){
-												node_text = node_text.trim();
-											}
-										});
-										return node_text;
+									body: function( data, row, col, node ) {
+										if (col == 2) {
+											return $('#jobList').DataTable()
+											.cell( {row: row, column: col} )
+											.nodes()
+											.to$()
+											.find(':selected')
+											.text()
+										} else {
+											return data;
+										}
 									}
 								},
 							},
@@ -166,17 +164,17 @@ tr th{
 							exportOptions: {
 								columns: [ 0,1,2,3,4 ],
 								format: {
-									body: (data, row, col, node) => {
-										let node_text = '';
-										const spacer = node.childNodes.length > 1 ? ' ' : '';
-										node.childNodes.forEach(child_node => {
-											const temp_text = child_node.nodeName == "SELECT" ? '' : child_node.textContent;
-											node_text += temp_text ? `${temp_text}${spacer}` : '';
-											if(child_node.nodeName == "SELECT"){
-												node_text = node_text.trim();
-											}
-										});
-										return node_text;
+									body: function( data, row, col, node ) {
+										if (col == 2) {
+											return $('#jobList').DataTable()
+											.cell( {row: row, column: col} )
+											.nodes()
+											.to$()
+											.find(':selected')
+											.text()
+										} else {
+											return data;
+										}
 									}
 								},
 							},
@@ -188,17 +186,17 @@ tr th{
 							exportOptions: {
 								columns: [ 0,1,2,3,4],
 								format: {
-									body: (data, row, col, node) => {
-										let node_text = '';
-										const spacer = node.childNodes.length > 1 ? ' ' : '';
-										node.childNodes.forEach(child_node => {
-											const temp_text = child_node.nodeName == "SELECT" ? /*child_node.selectedOptions[0].textContent*/ '' : child_node.textContent;
-											node_text += temp_text ? `${temp_text}${spacer}` : '';
-											if(child_node.nodeName == "SELECT"){
-												node_text = node_text.trim();
-											}
-										});
-										return node_text;
+									body: function( data, row, col, node ) {
+										if (col == 2) {
+											return $('#jobList').DataTable()
+											.cell( {row: row, column: col} )
+											.nodes()
+											.to$()
+											.find(':selected')
+											.text()
+										} else {
+											return data;
+										}
 									}
 								},
 							},
@@ -209,17 +207,17 @@ tr th{
 							exportOptions: {
 								columns: [ 0,1,2,3,4 ],
 								format: {
-									body: (data, row, col, node) => {
-										let node_text = '';
-										const spacer = node.childNodes.length > 1 ? ' ' : '';
-										node.childNodes.forEach(child_node => {
-											const temp_text = child_node.nodeName == "SELECT" ? /*child_node.selectedOptions[0].textContent*/ '' : child_node.textContent;
-											node_text += temp_text ? `${temp_text}${spacer}` : '';
-											if(child_node.nodeName == "SELECT"){
-												node_text = node_text.trim();
-											}
-										});
-										return node_text;
+									body: function( data, row, col, node ) {
+										if (col == 2) {
+											return $('#jobList').DataTable()
+											.cell( {row: row, column: col} )
+											.nodes()
+											.to$()
+											.find(':selected')
+											.text()
+										} else {
+											return data;
+										}
 									}
 								},
 							},
