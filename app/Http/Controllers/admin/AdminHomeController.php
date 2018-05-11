@@ -149,7 +149,7 @@ class AdminHomeController extends Controller
 		}else {
 			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
 		}
-		
+
 		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond}");
 
 		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
@@ -158,6 +158,7 @@ class AdminHomeController extends Controller
 		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
 		<thead>
 		<tr>
+		<th class="text-center">Actions</th>
 		<th>Job Name</th>
 		<th>Company Name</th>
 		<th>Job Status</th>
@@ -175,6 +176,13 @@ class AdminHomeController extends Controller
 					if(in_array($session_userId, $client_id_array)) {
 
 						$html .='<tr>
+						<td class="text-center">
+							<span data-toggle="modal" data-target="#jobDetailModel">
+								<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
+									<i class="ti-eye"></i>
+								</a>
+							</span>
+						</td>
 						<td>'.$jobDetail->job_title.'</td>
 						<td>'.$jobDetail->name.'</td>
 						<td>
@@ -184,7 +192,7 @@ class AdminHomeController extends Controller
 		                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
 		                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
 		                        }
-		                            
+
 		                    $html .='</select>
 	                    </td>
 						<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
@@ -195,6 +203,13 @@ class AdminHomeController extends Controller
 			}else {
 				foreach($getJobDetails as $jobDetail) {
 					$html .='<tr>
+					<td class="text-center">
+						<span data-toggle="modal" data-target="#jobDetailModel">
+							<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
+								<i class="ti-eye"></i>
+							</a>
+						</span>
+					</td>
 					<td>'.$jobDetail->job_title.'</td>
 					<td>'.$jobDetail->name.'</td>
 					<td>
@@ -204,7 +219,7 @@ class AdminHomeController extends Controller
 	                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
 	                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
 	                        }
-	                            
+
 	                    $html .='</select>
                     </td>
 					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>

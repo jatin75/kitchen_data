@@ -437,248 +437,230 @@
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.print.min.js')}}"></script>
 
 <script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
-{{--
-	<script type="text/javascript" src="{{asset('plugins/bower_components/switchery/dist/switchery.min.js')}}"></script> --}}
-	<script src="{{ asset('scripts/jquery.maskedinput.min.js') }}"></script>
-	<script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
-	<script src="{{ asset('scripts/company-location.js') }}"></script>
-	<script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.js')}}"></script>
-	<script type="text/javascript" src="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.js')}}"></script>
-	<script type="text/javascript">
-		$.ajaxSetup({
+<script src="{{ asset('scripts/jquery.maskedinput.min.js') }}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
+<script src="{{ asset('scripts/company-location.js') }}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.js')}}"></script>
+<script type="text/javascript">
+	$.ajaxSetup({
 			headers: {
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			}
-		});
-		$(document).ready(function () {
+	});
+	$(document).ready(function () {
 
-			if (typeof ($('#jobContractorName').val()) != "undefined" && $('#jobContractorName').val() !== null)
+		if (typeof ($('#jobContractorName').val()) != "undefined" && $('#jobContractorName').val() !== null)
 				$('#jobContractorName').val($('#jobContractorName').val().toUpperCase());
-			if (typeof ($('#clientLastName').val()) != "undefined" && $('#clientLastName').val() !== null)
+		if (typeof ($('#clientLastName').val()) != "undefined" && $('#clientLastName').val() !== null)
 				$('#clientLastName').val($('#clientLastName').val().toUpperCase());
-			if (typeof ($('#contractorEmail').val()) != "undefined" && $('#contractorEmail').val() !== null)
+		if (typeof ($('#contractorEmail').val()) != "undefined" && $('#contractorEmail').val() !== null)
 				$('#contractorEmail').val($('#contractorEmail').val().toLowerCase());
 
-			$("#jobCompanyName").change(function(){
-				var company_id = $(this).val();
-				$.ajax({
-					url: '{{ route('getcompanyclients') }}',
-					data: {company_id:company_id},
-					type: 'post',
-					dataType: 'json',
-					success:function(response){
-						if(response.key == 1)
-						{
-							var len = response.clients_data.length;
-							$("#comapnyClients").empty();
-							for( var i = 0; i<len; i++){
-								var id = response.clients_data[i]['id'];
-								var name = response.clients_data[i]['client_name'];
-								$("#comapnyClients").append("<option value='"+id+"' >"+name+"</option>");
-							}
-						}
-						else
-						{
-							$("#comapnyClients").empty();
-							$('#formAddJob').bootstrapValidator('revalidateField', 'comapnyClients');
-						}
-						$('#comapnyClients').selectpicker('refresh');
-					}
-				});
-			});
-
-			/*installation status*/
-			var installationStatus = $("#installationSelect").val();
-			(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-
-			var installStatus = (installationStatus == 1) ? true : false;
-			$('#formAddJob').data('bootstrapValidator')
-			.enableFieldValidators('installationDate', installStatus)
-			.enableFieldValidators('installationTime', installStatus)
-			.enableFieldValidators('installationEmployees', installStatus);
-
-			/* stone installation status*/
-			var stoneInstallationStatus = $("#stoneInstallationSelect").val();
-			(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-
-			var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
-			$('#formAddJob').data('bootstrapValidator')
-			.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
-			.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
-			.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
-			$('#resetPermission').click(function () {
-				location.reload();
-			});
-		});
-
-		$("#installationSelect").change(function(){
-			var installationStatus = $(this).val();
-			(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-			var installStatus = (installationStatus == 1) ? true : false;
-			$('#formAddJob').data('bootstrapValidator')
-			.enableFieldValidators('installationDate', installStatus)
-			.enableFieldValidators('installationTime', installStatus)
-			.enableFieldValidators('installationEmployees', installStatus);
-
-			if(installationStatus == 1) {
-				$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate')
-				.bootstrapValidator('revalidateField', 'installationTime')
-				.bootstrapValidator('revalidateField', 'installationEmployees');
-			}
-		});
-
-		$("#stoneInstallationSelect").change(function(){
-			var stoneInstallationStatus = $(this).val();
-			(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-
-			var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
-
-			$('#formAddJob').data('bootstrapValidator')
-			.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
-			.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
-			.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
-
-			if(stoneInstallationStatus == 1) {
-				$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate')
-				.bootstrapValidator('revalidateField', 'stoneInstallationTime')
-				.bootstrapValidator('revalidateField', 'stoneInstallationEmployees');
-			}
-		});
-
-		/* For select 2*/
-		$(".select2").select2();
-		$('.selectpicker').selectpicker();
-		$('.clockpicker').clockpicker({
-			twelvehour: true,
-			autoclose: true,
-		});
-
-
-		$('#formAddJob').on('success.form.bv', function (e) {
-			e.preventDefault();
-			$('#loader').show();
-			var hidden_job_id = $('#hiddenJobId').val();
-			var job_title = $('#jobTitle').val();
-			var job_status = $('#jobStatus').val();
-			var address_1 = $('#locationAddress').val();
-			var address_2 = $('#subAddress').val();
-			var apartment_no = $('#apartmentNo').val();
-			var city = $('#city').val();
-			var state = $('#state').val();
-			var zipcode = $('#zipcode').val();
-			var job_start_date = $('#jobStartDate').val();
-			var job_end_date = $('#jobEndDate').val();
-			var plumbing_installation_date = $('#plumbingInstallationDate').val();
-			var delivery_date = $('#deliveryDate').val();
-			var delivery_time = $('#deliveryTime').val();
-			var job_super_name = $('#jobSuperName').val();
-			var super_phone_number = $('#superPhoneNumber').val();
-			var job_contractor_name = $('#jobContractorName').val();
-			var contractor_email = $('#contractorEmail').val();
-			var contractor_phone_number = $('#contractorPhoneNumber').val();
-			var job_company_id = $('#jobCompanyName').val();
-			var comapny_clients_id = $('#comapnyClients').val();
-			var working_employee_id = $('#workingEmployee').val();
-			var installation_select = $('#installationSelect').val();
-			var installation_date = $('#installationDate').val();
-			var installation_time = $('#installationTime').val();
-			var installation_employees_id = $('#installationEmployees').val();
-			var stone_installation_select = $('#stoneInstallationSelect').val();
-			var stone_installation_date = $('#stoneInstallationDate').val();
-			var stone_installation_time = $('#stoneInstallationTime').val();
-			var stone_installation_employees_id = $('#stoneInstallationEmployees').val();
-
+		$("#jobCompanyName").change(function(){
+			var company_id = $(this).val();
 			$.ajax({
-				url: '{{ route('storejob') }}',
-				data: {
-					hidden_job_id: hidden_job_id,
-					job_title: job_title,
-					job_status: job_status,
-					address_1: address_1,
-					address_2: address_2,
-					apartment_no: apartment_no,
-					city: city,
-					state: state,
-					zipcode: zipcode,
-					job_start_date: job_start_date,
-					job_end_date: job_end_date,
-					plumbing_installation_date: plumbing_installation_date,
-					delivery_date: delivery_date,
-					delivery_time: delivery_time,
-					job_super_name: job_super_name,
-					super_phone_number: super_phone_number,
-					job_contractor_name: job_contractor_name,
-					contractor_email: contractor_email,
-					contractor_phone_number: contractor_phone_number,
-					job_company_id: job_company_id,
-					comapny_clients_id: comapny_clients_id,
-					working_employee_id: working_employee_id,
-					installation_select: installation_select,
-					installation_date: installation_date,
-					installation_time: installation_time,
-					installation_employees_id: installation_employees_id,
-					stone_installation_select: stone_installation_select,
-					stone_installation_date: stone_installation_date,
-					stone_installation_time: stone_installation_time,
-					stone_installation_employees_id: stone_installation_employees_id,
-				},
+				url: '{{ route('getcompanyclients') }}',
+				data: {company_id:company_id},
 				type: 'post',
 				dataType: 'json',
-				success: function (data) {
-					if (data.key == 1) {
-						location.href = '{{ route('activejobs') }}';
-					} else if(data.key == 2) {
-						$('#loader').hide();
-						notify('Job has been updated Successfully.', 'blackgloss');
-					} else {
-						$('#loader').hide();
-						notify('Something went wrong.', 'blackgloss');
+				success:function(response){
+					if(response.key == 1)
+					{
+						var len = response.clients_data.length;
+						$("#comapnyClients").empty();
+						for( var i = 0; i<len; i++){
+							var id = response.clients_data[i]['id'];
+							var name = response.clients_data[i]['client_name'];
+							$("#comapnyClients").append("<option value='"+id+"' >"+name+"</option>");
+						}
 					}
+					else
+					{
+						$("#comapnyClients").empty();
+						$('#formAddJob').bootstrapValidator('revalidateField', 'comapnyClients');
+					}
+					$('#comapnyClients').selectpicker('refresh');
 				}
 			});
 		});
 
-		$("#formAccountSetting").on('success.form.bv', function (e) {
-			e.preventDefault();
-			$("#loader").show();
-			var current_password = $("#currentPassword").val();
-			var new_password = $('#newPassword').val();
-			var retype_password = $('#retypePassword').val();
-			var hidden_email = $('#hiddenMail').val();
-			if (new_password != retype_password) {
-				$("#loader").hide();
-				notify('New password and  Retype password is not match. Please try again.', 'blackgloss');
-				return;
+		/*installation status*/
+		var installationStatus = $("#installationSelect").val();
+		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
+		var installStatus = (installationStatus == 1) ? true : false;
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('installationDate', installStatus)
+		.enableFieldValidators('installationTime', installStatus)
+		.enableFieldValidators('installationEmployees', installStatus);
+
+		/* stone installation status*/
+		var stoneInstallationStatus = $("#stoneInstallationSelect").val();
+		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
+		var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
+		.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
+		.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
+		$('#resetPermission').click(function () {
+			location.reload();
+		});
+	});
+
+	$("#installationSelect").change(function(){
+		var installationStatus = $(this).val();
+		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
+		var installStatus = (installationStatus == 1) ? true : false;
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('installationDate', installStatus)
+		.enableFieldValidators('installationTime', installStatus)
+		.enableFieldValidators('installationEmployees', installStatus);
+	});
+
+	$("#stoneInstallationSelect").change(function(){
+		var stoneInstallationStatus = $(this).val();
+		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
+		var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
+		.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
+		.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
+	});
+
+	/* For select 2*/
+	$(".select2").select2();
+	$('.selectpicker').selectpicker();
+	$('.clockpicker').clockpicker({
+		twelvehour: true,
+		autoclose: true,
+	});
+
+
+	$('#formAddJob').on('success.form.bv', function (e) {
+		e.preventDefault();
+		$('#loader').show();
+		var hidden_job_id = $('#hiddenJobId').val();
+		var job_title = $('#jobTitle').val();
+		var job_status = $('#jobStatus').val();
+		var address_1 = $('#locationAddress').val();
+		var address_2 = $('#subAddress').val();
+		var apartment_no = $('#apartmentNo').val();
+		var city = $('#city').val();
+		var state = $('#state').val();
+		var zipcode = $('#zipcode').val();
+		var job_start_date = $('#jobStartDate').val();
+		var job_end_date = $('#jobEndDate').val();
+		var plumbing_installation_date = $('#plumbingInstallationDate').val();
+		var delivery_date = $('#deliveryDate').val();
+		var delivery_time = $('#deliveryTime').val();
+		var job_super_name = $('#jobSuperName').val();
+		var super_phone_number = $('#superPhoneNumber').val();
+		var job_contractor_name = $('#jobContractorName').val();
+		var contractor_email = $('#contractorEmail').val();
+		var contractor_phone_number = $('#contractorPhoneNumber').val();
+		var job_company_id = $('#jobCompanyName').val();
+		var comapny_clients_id = $('#comapnyClients').val();
+		var working_employee_id = $('#workingEmployee').val();
+		var installation_select = $('#installationSelect').val();
+		var installation_date = $('#installationDate').val();
+		var installation_time = $('#installationTime').val();
+		var installation_employees_id = $('#installationEmployees').val();
+		var stone_installation_select = $('#stoneInstallationSelect').val();
+		var stone_installation_date = $('#stoneInstallationDate').val();
+		var stone_installation_time = $('#stoneInstallationTime').val();
+		var stone_installation_employees_id = $('#stoneInstallationEmployees').val();
+
+		$.ajax({
+			url: '{{ route('storejob') }}',
+			data: {
+				hidden_job_id: hidden_job_id,
+				job_title: job_title,
+				job_status: job_status,
+				address_1: address_1,
+				address_2: address_2,
+				apartment_no: apartment_no,
+				city: city,
+				state: state,
+				zipcode: zipcode,
+				job_start_date: job_start_date,
+				job_end_date: job_end_date,
+				plumbing_installation_date: plumbing_installation_date,
+				delivery_date: delivery_date,
+				delivery_time: delivery_time,
+				job_super_name: job_super_name,
+				super_phone_number: super_phone_number,
+				job_contractor_name: job_contractor_name,
+				contractor_email: contractor_email,
+				contractor_phone_number: contractor_phone_number,
+				job_company_id: job_company_id,
+				comapny_clients_id: comapny_clients_id,
+				working_employee_id: working_employee_id,
+				installation_select: installation_select,
+				installation_date: installation_date,
+				installation_time: installation_time,
+				installation_employees_id: installation_employees_id,
+				stone_installation_select: stone_installation_select,
+				stone_installation_date: stone_installation_date,
+				stone_installation_time: stone_installation_time,
+				stone_installation_employees_id: stone_installation_employees_id,
+			},
+			type: 'post',
+			dataType: 'json',
+			success: function (data) {
+				if (data.key == 1) {
+					location.href = '{{ route('activejobs') }}';
+				} else if(data.key == 2) {
+					$('#loader').hide();
+					notify('Job has been updated Successfully.', 'blackgloss');
+				} else {
+					$('#loader').hide();
+					notify('Something went wrong.', 'blackgloss');
+				}
 			}
-			$.ajax({
-				url: '{{ route('changepassword') }}',
-				data: {
-					current_password: current_password,
-					new_password: new_password,
-					hidden_email: hidden_email,
-				},
-				type: 'post',
-				success: function (data) {
-					if (data == 1) {
-						$('#loader').hide();
-						notify('Your password has been reset.', 'blackgloss');
-					} else if (data == 2) {
-						$('#loader').hide();
-						notify('Current password is invalid. Please try again.', 'blackgloss');
-					}
+		});
+	});
+
+	$("#formAccountSetting").on('success.form.bv', function (e) {
+		e.preventDefault();
+		$("#loader").show();
+		var current_password = $("#currentPassword").val();
+		var new_password = $('#newPassword').val();
+		var retype_password = $('#retypePassword').val();
+		var hidden_email = $('#hiddenMail').val();
+		if (new_password != retype_password) {
+			$("#loader").hide();
+			notify('New password and  Retype password is not match. Please try again.', 'blackgloss');
+			return;
+		}
+		$.ajax({
+			url: '{{ route('changepassword') }}',
+			data: {
+				current_password: current_password,
+				new_password: new_password,
+				hidden_email: hidden_email,
+			},
+			type: 'post',
+			success: function (data) {
+				if (data == 1) {
+					$('#loader').hide();
+					notify('Your password has been reset.', 'blackgloss');
+				} else if (data == 2) {
+					$('#loader').hide();
+					notify('Current password is invalid. Please try again.', 'blackgloss');
 				}
-			});
+			}
 		});
+	});
 
-		$('#jobContractorName').keyup(function () {
-			this.value = this.value.toUpperCase();
-		});
+	$('#jobContractorName').keyup(function () {
+		this.value = this.value.toUpperCase();
+	});
 
-		$('#contractorEmail').keyup(function () {
-			this.value = this.value.toLowerCase();
-		});
+	$('#contractorEmail').keyup(function () {
+		this.value = this.value.toLowerCase();
+	});
 
-		$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
+	$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
 
 
 	// hide previous button

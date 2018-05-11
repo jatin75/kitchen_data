@@ -85,27 +85,28 @@ tr th{
 			</div>
 		</div>
 	</div>
-</div>
-<!--jobNotes model-->
-<div class="modal fade" id="jobNotesModel" tabindex="-1" data-backdrop="true" style="display: none;">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="exampleModalLabel1">Add&nbsp;Note</h4>
-			</div>
-			<div class="modal-body">
-				<div class="form-body">
-					<form method="POST" id="formAddNote">
-						{{ csrf_field() }}
-						<input type="hidden" id="hiddenJobId" name="hiddenJobId" value="">
-						<div class="row m-t-10">
-							<div class="row col-md-12">
-								<div class="col-md-12">
-									<div class="form-group">
-										<label class="col-md-12">ADD JOB NOTE</label>
-										<div class="col-md-12">
-											<textarea class="form-control" rows="5" name="jobNote" id="jobNote" placeholder="Enter notes . . ."></textarea>
+	<!--jobNotes model-->
+	<div class="modal fade" id="jobNotesModel" tabindex="-1" data-backdrop="true" style="display: none;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="exampleModalLabel1">Add&nbsp;Note</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-body">
+						<form method="POST" id="formAddNote">
+							{{ csrf_field() }}
+						<input type="hidden" id="hiddenJobId" name="hiddenJobId">
+						<input type="hidden" id="hiddenJobStatus" name="hiddenJobStatus">
+							<div class="row m-t-10">
+								<div class="row col-md-12">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="col-md-12">ADD JOB NOTE</label>
+											<div class="col-md-12">
+												<textarea class="form-control" rows="5" name="jobNote" id="jobNote" placeholder="Enter notes . . ."></textarea>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -120,38 +121,17 @@ tr th{
 			</div>
 		</div>
 	</div>
-</div>
-<!--/.jobNotes model-->
-<!--Audit model-->
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Auditmodel" style="display: none; z-index:100000;">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h4 class="modal-title">Job Audit</h4>
-			</div>
-			<div class="modal-body">
-				<div class="table-responsive" id="auditData">
-                    {{-- <table id="auditList" class="display nowrap" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Name Of Field</th>
-                                <th>Old Value</th>
-                                <th>New Value</th>
-                                <th>Date Of Edit</th>
-                                <th>User</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>job_title</td>
-                                <td>Momai Costruction</td>
-                                <td>TATA Costruction</td>
-                                <td>05/04/2018</td>
-                                <th>Vivek Italiya</th>
-                            </tr>
-                        </tbody>
-                    </table> --}}
+	<!--/.jobNotes model-->
+	<!--Audit model-->
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Auditmodel" style="display: none; z-index:100000;">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">Job Audit</h4>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive" id="auditData">
                 </div>
                 <div class="modal-footer">
                 	<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
@@ -463,6 +443,8 @@ tr th{
 	$(".add-job-note").click(function(){
 		var jobId = $(this).attr('data-id');
 		$('#hiddenJobId').val(jobId);
+		$('#hiddenJobStatus').val(1);
+		$('#jobNoteSubmit').html('Add');
 	});
 
 	/*change job status*/
@@ -551,6 +533,7 @@ tr th{
 			{
 				if(data.key == 1)
 				{
+					$('#notesData').html(data.job_notes_detail);
 					$('#jobTitle').html(data.employee_detail.job_title);
 					$('#jobStatus').html(data.employee_detail.is_active);
 					$('#jobId').html(data.employee_detail.job_id);
@@ -596,10 +579,58 @@ tr th{
 						$('#stoneInstallationDateTime').html('--');
 						$('#stoneInstallationEmployees').html('--');
 					}
-					$('#notesData').html(data.job_notes_detail);
 				}
 			}
 		});
+	});
+
+	/*edit Note*/
+	$(document).on('click','.edit-note', function(){
+		var jobId = $(this).attr('data-id');
+		$.ajax({
+			url:'{{ route('editnote') }}',
+			data:{
+				job_id:jobId,
+			},
+			type:'post',
+			dataType:'json',
+			success: function(data)
+			{
+				if(data.key == 1)
+				{
+					$('#hiddenJobId').val(data.job_note_detail.id);
+					$('#jobNote').val(data.job_note_detail.job_note);
+					$('#hiddenJobStatus').val(2);
+					$('#jobNoteSubmit').html('Update');
+					$('#jobDetailModel').modal('hide');
+					$('#jobNotesModel').modal('show');
+				}
+			}
+		});
+	});
+
+	/*delete Note*/
+	$(document).on('click','.delete-note', function(){
+		if(confirm(' Are you sure you want to remove this note?')){
+			var jobId = $(this).attr('data-id');
+			$.ajax({
+				url:'{{ route('destroynote') }}',
+				data:{
+					job_id:jobId,
+				},
+				type:'post',
+				dataType:'json',
+				success: function(data)
+				{
+					if(data.key == 1)
+					{
+						$('#row_'+jobId).fadeOut(300, function(){
+							$(this).remove();
+						});
+					}
+				}
+			});
+		}
 	});
 
 	/* For select 2*/
@@ -611,11 +642,13 @@ tr th{
 		$('#jobNotesModel').modal('hide');
 		var hidden_job_id = $('#hiddenJobId').val();
 		var job_note_desc = $('#jobNote').val();
+		var job_note_status = $('#hiddenJobStatus').val();
 		$.ajax({
 			url:'{{ route('storejobnote') }}',
 			data:{
 				hidden_job_id:hidden_job_id,
 				job_note_desc:job_note_desc,
+				job_note_status:job_note_status
 			},
 			type:'post',
 			dataType:'json',

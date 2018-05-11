@@ -55,12 +55,27 @@ class JobsController extends Controller
         $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
         $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
         $getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
+        if(empty($getJobDetails->installation_datetime))
+        {
+            $getJobDetails->installation_date = null;
+            $getJobDetails->installation_time = null;
+        }
+        else
+        {
+            $getJobDetails->installation_date = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
+            $getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
+        }
 
-        $getJobDetails->installation_date = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
-        $getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
-
-        $getJobDetails->stone_installation_date = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
-        $getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
+        if(empty($getJobDetails->stone_installation_datetime))
+        {
+            $getJobDetails->stone_installation_date = null;
+            $getJobDetails->stone_installation_time = null;
+        }
+        else
+        {
+            $getJobDetails->stone_installation_date = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
+            $getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
+        }
 
         if (!empty($getJobDetails->company_clients_id)) {
             $getJobDetails->company_clients_id = explode(",", $getJobDetails->company_clients_id);
@@ -230,14 +245,27 @@ class JobsController extends Controller
     {
         $hidden_job_id = $request->get('hidden_job_id');
         $job_note_desc = $request->get('job_note_desc');
-        $ObjJobNote = new JobNote();
-        $ObjJobNote->job_id = $hidden_job_id;
-        $ObjJobNote->employee_id = Session::get('employee_id');
-        $ObjJobNote->name = Session::get('name');
-        $ObjJobNote->job_note = $job_note_desc;
-        $ObjJobNote->login_type_id = Session::get('login_type_id');
-        $ObjJobNote->created_at = date('Y-m-d H:i:s');
-        $ObjJobNote->save();
+        $job_note_status = $request->get('job_note_status');
+
+        if($job_note_status == 1)
+        {
+            $ObjJobNote = new JobNote();
+            $ObjJobNote->job_id = $hidden_job_id;
+            $ObjJobNote->employee_id = Session::get('employee_id');
+            $ObjJobNote->name = Session::get('name');
+            $ObjJobNote->job_note = $job_note_desc;
+            $ObjJobNote->login_type_id = Session::get('login_type_id');
+            $ObjJobNote->created_at = date('Y-m-d H:i:s');
+            $ObjJobNote->save();
+        }
+        else
+        {
+            JobNote::where('id',$hidden_job_id)->update([
+                'employee_id'=>Session::get('employee_id'),
+                'name'=>Session::get('name'),
+                'login_type_id'=>Session::get('login_type_id'),
+                'job_note'=>$job_note_desc]);
+        }
         $response['key'] = 1;
         echo json_encode($response);
     }
@@ -283,7 +311,7 @@ class JobsController extends Controller
         {
             foreach($getJobNotes as $single_note)
             {
-                $html .= '<div class="row">
+                $html .= '<div class="row" id="row_'. $single_note->id .'">
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" class="word-wrap">
                     <span id="note">'. $single_note->job_note .'</span>
                 </div>
@@ -291,7 +319,7 @@ class JobsController extends Controller
                     <span id="updated_by">'. $single_note->name .'</span>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                    <span id="updated_date">'. $single_note->updated_at .'</span>
+                    <span id="updated_date">'. date('m/d/Y', strtotime($single_note->updated_at)) .'</span>
                 </div>
                 <div class="col-xs-2">
                     <a class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
@@ -308,6 +336,27 @@ class JobsController extends Controller
         }
         $response['employee_detail'] = $getJobDetails;
         $response['job_notes_detail'] = $html;
+        $response['key'] = 1;
+        return json_encode($response);
+    }
+
+    public function editNote(Request $request)
+    {
+        $job_id = $request->get('job_id');
+        $getJobNote = DB::select("SELECT id,name,job_note FROM job_notes WHERE is_deleted = 0 AND id = '{$job_id}'");
+        if (sizeof($getJobNote) > 0)
+        {
+            $getJobNote = $getJobNote[0];
+            $response['key'] = 1;
+            $response['job_note_detail'] = $getJobNote;
+            return json_encode($response);
+        }
+    }
+
+    public function destroyNote(Request $request)
+    {
+        $job_id = $request->get('job_id');
+        JobNote::where('id',$job_id)->update(['is_deleted'=>1]);
         $response['key'] = 1;
         return json_encode($response);
     }

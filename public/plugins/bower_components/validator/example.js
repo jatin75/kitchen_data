@@ -634,7 +634,7 @@ $(document).ready(function () {
 				}
 			},
 			installationDate: {
-				trigger: 'change',
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Installation Date is required.'
@@ -642,7 +642,7 @@ $(document).ready(function () {
 				}
 			},
 			installationTime: {
-				trigger: 'change',
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Installation Time is required.'
@@ -650,7 +650,7 @@ $(document).ready(function () {
 				}
 			},
 			installationEmployees: {
-				/*trigger: 'blur',*/
+				trigger: 'change',
 				validators: {
 					notEmpty: {
 						message: 'Installation Employee is required and can\'t be empty'
