@@ -34,7 +34,6 @@ class ReportsController extends Controller
       JOIN job_types AS jbt ON jbt.job_status_id = jb.job_status_id
       {$jobStatusCond}");
 
-
     $getJobDetails = json_decode(json_encode($getJobDetails), true);
     array_unshift($getJobDetails,array('job_id'=>'Job id','company_id'=>'Company id','job_title'=>'Job title','address_1'=>'Address1','address_2'=>'Address2','city'=>'City','state'=>'State','zipcode'=>'Zipcode','apartment_number'=>'Apartment number','super_name'=>'Super name','super_phone_number'=>'Super phone number','contractor_name'=>'Contractor name','contractor_phone_number'=>'Contractor phone number','contractor_email'=>'Contractor email','working_employee_id'=>'Working employee id','company_clients_id'=>'Company client id','plumbing_installation_date'=>'Plumbing installation date','delivery_datetime'=>'Delivery datetime','installation_datetime'=>'Installation datetime','installation_employee_id'=>'Installation employee id','stone_installation_datetime'=>'Stone installation datetime','Stone_installation_employee_id'=>'Stone installation employee id','start_date'=>'Start date','end_date'=>'End date','job_status_name'=>'Job status name'));
 
