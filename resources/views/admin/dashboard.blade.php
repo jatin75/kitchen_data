@@ -352,7 +352,7 @@ tr th{
 									body: function( data, row, col, node ) {
 										if (col == 2) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: col} )
+											.cell( {row: row, column: 3} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -373,7 +373,7 @@ tr th{
 									body: function( data, row, col, node ) {
 										if (col == 2) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: col} )
+											.cell( {row: row, column: 3} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -395,7 +395,7 @@ tr th{
 									body: function( data, row, col, node ) {
 										if (col == 2) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: col} )
+											.cell( {row: row, column: 3} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -416,7 +416,7 @@ tr th{
 									body: function( data, row, col, node ) {
 										if (col == 2) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: col} )
+											.cell( {row: row, column: 3} )
 											.nodes()
 											.to$()
 											.find(':selected')
