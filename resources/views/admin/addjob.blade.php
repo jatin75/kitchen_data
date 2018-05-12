@@ -444,18 +444,18 @@
 <script type="text/javascript" src="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.js')}}"></script>
 <script type="text/javascript">
 	$.ajaxSetup({
-			headers: {
-				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			}
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		}
 	});
 	$(document).ready(function () {
 
 		if (typeof ($('#jobContractorName').val()) != "undefined" && $('#jobContractorName').val() !== null)
-				$('#jobContractorName').val($('#jobContractorName').val().toUpperCase());
+			$('#jobContractorName').val($('#jobContractorName').val().toUpperCase());
 		if (typeof ($('#clientLastName').val()) != "undefined" && $('#clientLastName').val() !== null)
-				$('#clientLastName').val($('#clientLastName').val().toUpperCase());
+			$('#clientLastName').val($('#clientLastName').val().toUpperCase());
 		if (typeof ($('#contractorEmail').val()) != "undefined" && $('#contractorEmail').val() !== null)
-				$('#contractorEmail').val($('#contractorEmail').val().toLowerCase());
+			$('#contractorEmail').val($('#contractorEmail').val().toLowerCase());
 
 		$("#jobCompanyName").change(function(){
 			var company_id = $(this).val();
@@ -478,7 +478,6 @@
 					else
 					{
 						$("#comapnyClients").empty();
-						$('#formAddJob').bootstrapValidator('revalidateField', 'comapnyClients');
 					}
 					$('#comapnyClients').selectpicker('refresh');
 				}
@@ -510,21 +509,54 @@
 	$("#installationSelect").change(function(){
 		var installationStatus = $(this).val();
 		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-		var installStatus = (installationStatus == 1) ? true : false;
+		
 		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('installationDate', installStatus)
-		.enableFieldValidators('installationTime', installStatus)
-		.enableFieldValidators('installationEmployees', installStatus);
+		.enableFieldValidators('installationDate', false)
+		.enableFieldValidators('installationTime', false)
+		.enableFieldValidators('installationEmployees', false);
+		$('.jobformsubmit').prop("disabled", false);
 	});
 
 	$("#stoneInstallationSelect").change(function(){
 		var stoneInstallationStatus = $(this).val();
 		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-		var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
+		
 		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('stoneInstallationDate', false)
+		.enableFieldValidators('stoneInstallationTime', false)
+		.enableFieldValidators('stoneInstallationEmployees', false);
+		$('.jobformsubmit').prop("disabled", false);
+	});
+
+	/*check revalidation*/
+	$(".jobformsubmit").click(function(){
+		var installationStatus = $("#installationSelect").val();
+		var stoneInstallationStatus = $("#stoneInstallationSelect").val();
+		var hiddenJobId = $("#hiddenJobId").val();
+		var installStatus = (installationStatus == 1) ? true : false;
+		var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
+
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('installationDate', installStatus)
+		.enableFieldValidators('installationTime', installStatus)
+		.enableFieldValidators('installationEmployees', installStatus)
 		.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
 		.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
 		.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
+
+		$('#formAddJob').bootstrapValidator('validate', $(this).prop('name'));
+		if(installationStatus == 1) {
+			$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate')
+			.bootstrapValidator('revalidateField', 'installationTime')
+			.bootstrapValidator('revalidateField', 'installationEmployees');
+		}
+
+		if(stoneInstallationStatus == 1) {
+			$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate')
+			.bootstrapValidator('revalidateField', 'stoneInstallationTime')
+			.bootstrapValidator('revalidateField', 'stoneInstallationEmployees');
+		}
+
 	});
 
 	/* For select 2*/

@@ -647,6 +647,10 @@ $(document).ready(function () {
 					notEmpty: {
 						message: 'Installation Time is required.'
 					},
+					/*regexp: {
+						regexp: /^(05|1[0-7]{1}):[0-5]{1}[0-9]{1}PM$/,
+						message: 'Installation Time must be between 01:00 and 11:59'
+					}*/
 				}
 			},
 			installationEmployees: {
