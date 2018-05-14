@@ -14,10 +14,9 @@
 .nav-pills {
 	background: #4c5667 !important;
 }
-.nav-pills .nav-item.show .nav-link, .nav-pills .nav-link.active {
+.nav-link.active {
 	background: #4c5667 !important;
 }
-
 .nav-pills>li.active>a,
 .nav-pills>li.active>a:focus,
 .nav-pills>li.active>a:hover {
@@ -515,7 +514,7 @@
 		.enableFieldValidators('installationDate', false)
 		.enableFieldValidators('installationTime', false)
 		.enableFieldValidators('installationEmployees', false);
-		$('.jobformsubmit').prop("disabled", false);
+		//$('.jobformsubmit').prop("disabled", false);
 	});
 
 	$("#stoneInstallationSelect").change(function(){
@@ -526,14 +525,13 @@
 		.enableFieldValidators('stoneInstallationDate', false)
 		.enableFieldValidators('stoneInstallationTime', false)
 		.enableFieldValidators('stoneInstallationEmployees', false);
-		$('.jobformsubmit').prop("disabled", false);
+		//$('.jobformsubmit').prop("disabled", false);
 	});
 
 	/*check revalidation*/
 	$(".jobformsubmit").click(function(){
 		var installationStatus = $("#installationSelect").val();
 		var stoneInstallationStatus = $("#stoneInstallationSelect").val();
-		var hiddenJobId = $("#hiddenJobId").val();
 		var installStatus = (installationStatus == 1) ? true : false;
 		var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
 
@@ -566,7 +564,6 @@
 		twelvehour: true,
 		autoclose: true,
 	});
-
 
 	$('#formAddJob').on('success.form.bv', function (e) {
 		e.preventDefault();
