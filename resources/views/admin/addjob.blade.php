@@ -478,6 +478,7 @@
 					else
 					{
 						$("#comapnyClients").empty();
+						$('#formAddJob').bootstrapValidator('revalidateField', 'comapnyClients');
 					}
 					$('#comapnyClients').selectpicker('refresh');
 				}
@@ -544,8 +545,8 @@
 		.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
 		.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
 
-		$('#formAddJob').bootstrapValidator('validate', $(this).prop('name'));
-		if(installationStatus == 1) {
+		//$('#formAddJob').bootstrapValidator('validate', $(this).prop('name'));
+		/*if(installationStatus == 1) {
 			$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate')
 			.bootstrapValidator('revalidateField', 'installationTime')
 			.bootstrapValidator('revalidateField', 'installationEmployees');
@@ -555,8 +556,7 @@
 			$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate')
 			.bootstrapValidator('revalidateField', 'stoneInstallationTime')
 			.bootstrapValidator('revalidateField', 'stoneInstallationEmployees');
-		}
-
+		}*/
 	});
 
 	/* For select 2*/

@@ -111,12 +111,12 @@ tr th{
 									</div>
 								</div>
 							</div>
-						</div>
 						<div class="modal-footer form-group">
 							<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>&nbsp;
 							<button type="submit" id="jobNoteSubmit" class="btn btn-success">Add</button>
 						</div>
 					</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -131,7 +131,7 @@ tr th{
 					<h4 class="modal-title">Job Audit</h4>
 				</div>
 				<div class="modal-body">
-					<div class="table-responsive" id="auditData">
+					<div class="table-responsive" id="auditData"></div>
                 </div>
                 <div class="modal-footer">
                 	<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
