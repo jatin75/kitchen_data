@@ -509,7 +509,7 @@
 	$("#installationSelect").change(function(){
 		var installationStatus = $(this).val();
 		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-		
+
 		$('#formAddJob').data('bootstrapValidator')
 		.enableFieldValidators('installationDate', false)
 		.enableFieldValidators('installationTime', false)
@@ -520,7 +520,7 @@
 	$("#stoneInstallationSelect").change(function(){
 		var stoneInstallationStatus = $(this).val();
 		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-		
+
 		$('#formAddJob').data('bootstrapValidator')
 		.enableFieldValidators('stoneInstallationDate', false)
 		.enableFieldValidators('stoneInstallationTime', false)
