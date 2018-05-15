@@ -13,7 +13,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>KITCHEN | Forgot Password</title>
+	<title>A&amp;S KITCHEN | Forgot Password</title>
 
 	<style type="text/css">
 	p{
@@ -439,7 +439,7 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<div style="text-align: center;"><span style="font-size:16px"><strong>Welcome to KITCHEN</strong></span><br>
+							<div style="text-align: center;"><span style="font-size:16px"><strong>Welcome to A&amp;S KITCHEN</strong></span><br>
 								<span style="font-size:14px"><font color="#808080"><em>a construction job management software company</em></font></span></div>
 
 							</td>
@@ -492,15 +492,15 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif">Looks like you are having some issues logging in. Enter this temporary password&nbsp;into your KITCHEN Admin Panel to set a new password.<br>
+							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif">Looks like you are having some issues logging in. Enter this temporary password&nbsp;into your A&amp;S KITCHEN Admin Panel to set a new password.<br>
 								<br>
 								Temporary Password: <strong>{{ $temp_password }}</strong><br>
 								<br>
 								<br>
 								Regards,<br>
 								<br>
-								<strong>KITCHEN&nbsp;ADMIN</strong><br>
-								<a href="http://askitchen.shopostreet.in/">www.askitchen.shopostreet.in</a></span></span></p>
+								<strong>A&amp;S KITCHEN&nbsp;ADMIN</strong><br>
+								<a href="http://askitchen.shopostreet.in/" target="_blank">www.askitchen.shopostreet.in</a></span></span></p>
 
 							</td>
 						</tr>
@@ -593,7 +593,7 @@
 
                                         	<tbody><tr>
                                         		<td align="center" valign="top" class="mcnFollowIconContent" style="padding-right:10px; padding-bottom:9px;">
-                                        			<a href="#" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-instagram-96.png" alt="KITCHEN on Instagram" class="mcnFollowBlockIcon" width="48" style="width:48px; max-width:48px; display:block;"></a>
+                                        			<a href="#" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-instagram-96.png" alt="A&amp;S KITCHEN on Instagram" class="mcnFollowBlockIcon" width="48" style="width:48px; max-width:48px; display:block;"></a>
                                         		</td>
                                         	</tr>
 
@@ -613,7 +613,7 @@
 
                                         	<tbody><tr>
                                         		<td align="center" valign="top" class="mcnFollowIconContent" style="padding-right:10px; padding-bottom:9px;">
-                                        			<a href="#" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-facebook-96.png" alt="KITCHEN on Facebook" class="mcnFollowBlockIcon" width="48" style="width:48px; max-width:48px; display:block;"></a>
+                                        			<a href="#" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-facebook-96.png" alt="A&amp;S KITCHEN on Facebook" class="mcnFollowBlockIcon" width="48" style="width:48px; max-width:48px; display:block;"></a>
                                         		</td>
                                         	</tr>
 
@@ -633,7 +633,7 @@
 
                                         	<tbody><tr>
                                         		<td align="center" valign="top" class="mcnFollowIconContent" style="padding-right:0; padding-bottom:9px;">
-                                        			<a href="#" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-twitter-96.png" alt="KITCHEN on Twitter" class="mcnFollowBlockIcon" width="48" style="width:48px; max-width:48px; display:block;"></a>
+                                        			<a href="#" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-twitter-96.png" alt="A&amp;S KITCHEN on Twitter" class="mcnFollowBlockIcon" width="48" style="width:48px; max-width:48px; display:block;"></a>
                                         		</td>
                                         	</tr>
 
@@ -679,10 +679,10 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<em>Copyright © {{ date('Y') }} KITCHEN Inc<br>
+							<em>Copyright © {{ date('Y') }} A&amp;S KITCHEN Inc<br>
 							All rights reserved.</em><br>
 							<br>
-							<a href="http://askitchen.shopostreet.in/" target="_blank"><img data-file-id="161807" height="32" src="http://askitchen.shopostreet.in/plugins/images/kitchen/A&S.jpg" style="border: 0px initial ; width: 32px; height: 32px; margin: 0px;" width="32"></a><br>
+							<a href="http://askitchen.shopostreet.in/" target="_blank"><img data-file-id="161807" height="32" src="http://askitchen.shopostreet.in/plugins/images/kitchen/A&S.jpg" style="border: 0px initial ; width: 86px; height: 32px; margin: 0px;" width="32"></a><br>
 							&nbsp;
 						</td>
 					</tr>
