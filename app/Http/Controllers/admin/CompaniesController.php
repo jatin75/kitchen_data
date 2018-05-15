@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Company;
 use App\Http\Controllers\Controller;
+use Mail;
 
 class CompaniesController extends Controller
 {

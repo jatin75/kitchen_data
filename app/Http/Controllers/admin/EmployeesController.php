@@ -11,6 +11,7 @@ use DB;
 use Hash;
 use Illuminate\Http\Request;
 use Session;
+use Mail;
 
 class EmployeesController extends Controller
 {
@@ -93,7 +94,7 @@ class EmployeesController extends Controller
                 ), function($message)use($employee_email){
                 $message->from(env('FromMail','askitchen18@gmail.com'),'KITCHEN');
                 $message->to($employee_email)->subject('KITCHEN | Employee Account Created');
-                }); 
+                });
 
                 $response['key'] = 1;
                 Session::put('successMessage', 'Employee detail has been added successfully.');

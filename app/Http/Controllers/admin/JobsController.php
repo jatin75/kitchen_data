@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 date_default_timezone_set('UTC');
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\admin\AdminHomeController;
+use Illuminate\Http\Request;
 use App\Job;
 use App\JobNote;
 use App\JobType;
@@ -11,8 +12,8 @@ use App\Admin;
 use App\AuditTrail;
 use App\Company;
 use DB;
-use Illuminate\Http\Request;
 use Session;
+use Mail;
 
 class JobsController extends Controller
 {
