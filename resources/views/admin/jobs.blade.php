@@ -46,7 +46,7 @@ tr th{
 							@foreach($jobDetails as $job)
 							<tr>
 								<td class="text-center">
-									<span data-toggle="modal" data-target="#jobDetailModel">
+									<span data-toggle="" data-target="#jobDetailModel">
 										<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="{{ $job->job_id }}">
 											<i class="ti-eye"></i>
 										</a>
@@ -521,6 +521,7 @@ tr th{
 	/*view job model*/
 	$(".view-job").click(function(){
 		var jobId = $(this).attr('data-id');
+		$('#loader').show();
 		$.ajax({
 			url:'{{ route('viewjobdetails') }}',
 			data:{
@@ -578,6 +579,8 @@ tr th{
 						$('#stoneInstallationDateTime').html('--');
 						$('#stoneInstallationEmployees').html('--');
 					}
+					$('#loader').hide();
+					$('#jobDetailModel').modal('show');
 				}
 			}
 		});

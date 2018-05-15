@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\admin;
 date_default_timezone_set('UTC');
 use Illuminate\Http\Request;

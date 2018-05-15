@@ -34,6 +34,10 @@
 	position: relative;
 	right: 20px;
 }
+.bootstrap-select.btn-group .dropdown-toggle .filter-option {
+    padding-right: 15px;
+    text-overflow: ellipsis;
+}
 .previous-href{
 	background: #e4e7ea !important;
 	border: 1px solid #e4e7ea !important;

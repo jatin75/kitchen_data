@@ -440,6 +440,7 @@ tr th{
 	/*view job model*/
 	$(document).on('click','.view-job', function() {
 		var jobId = $(this).attr('data-id');
+		$('#loader').show();
 		$.ajax({
 			url:'{{ route('viewjobdetails') }}',
 			data:{
@@ -497,6 +498,8 @@ tr th{
 						$('#stoneInstallationDateTime').html('--');
 						$('#stoneInstallationEmployees').html('--');
 					}
+					$('#loader').hide();
+					$('#jobDetailModel').modal('show');
 				}
 			}
 		});

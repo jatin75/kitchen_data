@@ -177,7 +177,7 @@ class AdminHomeController extends Controller
 
 						$html .='<tr>
 						<td class="text-center">
-							<span data-toggle="modal" data-target="#jobDetailModel">
+							<span data-toggle="" data-target="#jobDetailModel">
 								<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
 									<i class="ti-eye"></i>
 								</a>
@@ -204,7 +204,7 @@ class AdminHomeController extends Controller
 				foreach($getJobDetails as $jobDetail) {
 					$html .='<tr>
 					<td class="text-center">
-						<span data-toggle="modal" data-target="#jobDetailModel">
+						<span data-toggle="" data-target="#jobDetailModel">
 							<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
 								<i class="ti-eye"></i>
 							</a>
