@@ -74,7 +74,7 @@ class AdminHomeController extends Controller
 				Mail::send('emails.AdminPanel_ForgotPassword',array(
 					'temp_password' => $temporaryPwd
 				), function($message)use($email){
-					$message->from(env('FromMail','kitchen@gmail.com'),'KITCHEN');
+					$message->from(env('FromMail','askitchen18@gmail.com'),'KITCHEN');
 					$message->to($email)->subject('KITCHEN | Forgot Password');
 				});
 			} catch (\Exception $e){

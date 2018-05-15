@@ -500,7 +500,7 @@
 								Regards,<br>
 								<br>
 								<strong>KITCHEN&nbsp;ADMIN</strong><br>
-								<a href="http://www.goleagueinc.com/"></a></span></span></p>
+								<a href="http://askitchen.shopostreet.in/">www.askitchen.shopostreet.in</a></span></span></p>
 
 							</td>
 						</tr>
@@ -682,7 +682,7 @@
 							<em>Copyright © {{ date('Y') }} KITCHEN Inc<br>
 							All rights reserved.</em><br>
 							<br>
-							<a href="http://goleagueinc.com/" target="_blank"></a><br>
+							<a href="http://askitchen.shopostreet.in/" target="_blank"><img data-file-id="161807" height="32" src="http://askitchen.shopostreet.in/plugins/images/kitchen/A&S.jpg" style="border: 0px initial ; width: 32px; height: 32px; margin: 0px;" width="32"></a><br>
 							&nbsp;
 						</td>
 					</tr>

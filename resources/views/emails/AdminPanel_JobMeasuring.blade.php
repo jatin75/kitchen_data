@@ -13,7 +13,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>KITCHEN | Client Account Created</title>
+	<title>KITCHEN | Job </title>
 
 	<style type="text/css">
 	p{
@@ -492,14 +492,11 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>Congratulations! Your KITCHEN Client profile has been successfully created.</strong><br>
+							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>Job Title</strong><br>
+								<br>
+								This new job has been created and is awaiting Measurement. Job Address is:[-----].The contact information for the Super is [-----]. Please call A&amp;S Kitchen with any questions.<br>
 
-								<br>
-								Please use the email address and password below to login to the Admin Panel. You can change your password under the Account Settings of "My Profile".<br>
-								<br>
-								EMAIL: {{ $email }}<br>
-							 PASSWORD: {{ $password }}</span></span><br>
-							<br>
+								<br>This job is awaiting measurement and has not been assigned a measurer<br>
 							<br>
 							Regards,<br>
 							<br>

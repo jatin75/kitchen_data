@@ -487,20 +487,11 @@
 		/*installation status*/
 		var installationStatus = $("#installationSelect").val();
 		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-		var installStatus = (installationStatus == 1) ? true : false;
-		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('installationDate', installStatus)
-		.enableFieldValidators('installationTime', installStatus)
-		.enableFieldValidators('installationEmployees', installStatus);
-
+		
 		/* stone installation status*/
 		var stoneInstallationStatus = $("#stoneInstallationSelect").val();
 		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-		var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
-		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
-		.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
-		.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
+		
 		$('#resetPermission').click(function () {
 			location.reload();
 		});
@@ -509,23 +500,55 @@
 	$("#installationSelect").change(function(){
 		var installationStatus = $(this).val();
 		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-
 		$('#formAddJob').data('bootstrapValidator')
 		.enableFieldValidators('installationDate', false)
 		.enableFieldValidators('installationTime', false)
 		.enableFieldValidators('installationEmployees', false);
-		//$('.jobformsubmit').prop("disabled", false);
 	});
 
 	$("#stoneInstallationSelect").change(function(){
 		var stoneInstallationStatus = $(this).val();
 		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-
 		$('#formAddJob').data('bootstrapValidator')
 		.enableFieldValidators('stoneInstallationDate', false)
 		.enableFieldValidators('stoneInstallationTime', false)
 		.enableFieldValidators('stoneInstallationEmployees', false);
-		//$('.jobformsubmit').prop("disabled", false);
+	});
+
+	$("#installationDate").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('installationDate', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate');
+	});
+
+	$("#installationTime").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('installationTime', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'installationTime');
+	});
+
+	$("#installationEmployees").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('installationEmployees', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'installationEmployees');
+	});
+
+	$("#stoneInstallationDate").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('stoneInstallationDate', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate');
+	});
+
+	$("#stoneInstallationTime").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('stoneInstallationTime', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationTime');
+	});
+
+	$("#stoneInstallationEmployees").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('stoneInstallationEmployees', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationEmployees');
 	});
 
 	/*check revalidation*/
@@ -542,19 +565,6 @@
 		.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
 		.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
 		.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
-
-		//$('#formAddJob').bootstrapValidator('validate', $(this).prop('name'));
-		/*if(installationStatus == 1) {
-			$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate')
-			.bootstrapValidator('revalidateField', 'installationTime')
-			.bootstrapValidator('revalidateField', 'installationEmployees');
-		}
-
-		if(stoneInstallationStatus == 1) {
-			$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate')
-			.bootstrapValidator('revalidateField', 'stoneInstallationTime')
-			.bootstrapValidator('revalidateField', 'stoneInstallationEmployees');
-		}*/
 	});
 
 	/* For select 2*/
@@ -690,41 +700,7 @@
 	});
 
 	$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
-
-
-	// hide previous button
-	$(document).ready(function () {
-		// textarea_feedback
-		// if(typeof($('#txtLeagueInfo').val()) != "undefined" && $('#txtLeagueInfo').val() !== null)
-		// {
-		// 	var text_max = 138;
-		// 	var onFormLoad = text_max - $('#txtLeagueInfo').val().length;
-		// 	if(onFormLoad <= 1)
-		// 	{
-		// 		$('#textarea_feedback').html(onFormLoad + ' character remaining');
-		// 	}
-		// 	else
-		// 	{
-		// 		$('#textarea_feedback').html(onFormLoad + ' characters remaining');
-		// 	}
-		// }
-	});
-
-	/*$('#txtLeagueInfo').keyup(function() {
-		var text_max = 138;
-		var text_length = $('#txtLeagueInfo').val().length;
-		var text_remaining = text_max - text_length;
-
-		if(text_remaining <= 1)
-		{
-			$('#textarea_feedback').html(text_remaining + ' character remaining');
-		}
-		else
-		{
-			$('#textarea_feedback').html(text_remaining + ' characters remaining');
-		}
-	});*/
-
+	
 	/*prevent form to submit on enter*/
 	$(document).on("keypress", ":input:not(textarea)", function (event) {
 		return event.keyCode != 13;

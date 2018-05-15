@@ -466,7 +466,6 @@ tr th{
 					notify('Job Status has been Changed Successfully.','blackgloss');
 				}
 			}
-
 		});
 	});
 

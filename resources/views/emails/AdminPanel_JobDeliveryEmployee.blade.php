@@ -13,7 +13,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>KITCHEN | Client Account Created</title>
+	<title>KITCHEN | Job</title>
 
 	<style type="text/css">
 	p{
@@ -492,19 +492,23 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>Congratulations! Your KITCHEN Client profile has been successfully created.</strong><br>
-
+							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>Job Title</strong><br>
+								
+								<br>	
+								This job has been scheduled for Delivery on [mm/dd/yyyy] between 9am and 2pm.<br>
 								<br>
-								Please use the email address and password below to login to the Admin Panel. You can change your password under the Account Settings of "My Profile".<br>
+									EMAIL: {{ $email }}<br>
+									JOB ADDRESS: {{ $jobAddress }}<br>
+									JOB SUPER NAME: {{ $jobSuperName }}<br>
+									SUPER CONTACT NUMBER: {{ $superContactNumber }}<br>
+									JOB CONTRACTOR NAME: {{ $jobContractorName }}<br>
+									CONTRACTOR CONTACT NUMBER: {{ $contractorContactNumber }}<br>
 								<br>
-								EMAIL: {{ $email }}<br>
-							 PASSWORD: {{ $password }}</span></span><br>
-							<br>
-							<br>
-							Regards,<br>
-							<br>
-							<strong>KITCHEN&nbsp;ADMIN</strong><br>
-							<a href="http://askitchen.shopostreet.in/">www.askitchen.shopostreet.in</a></span></span></p>
+								<br>
+								Regards,<br>
+								<br>
+								<strong>KITCHEN&nbsp;ADMIN</strong><br>
+								<a href="http://askitchen.shopostreet.in/">www.askitchen.shopostreet.in</a></span></span></p>
 
 						</td>
 					</tr>

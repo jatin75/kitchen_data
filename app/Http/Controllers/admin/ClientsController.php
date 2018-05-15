@@ -11,6 +11,7 @@ use App\Company;
 use DB;
 use Hash;
 use Session;
+use Mail;
 
 class ClientsController extends Controller
 {
@@ -121,13 +122,13 @@ class ClientsController extends Controller
             $objAdmin->save();
 
             /*send Mail*/
-            /*Mail::send('emails.AdminPanel_EmployeeCreated',array(
+            Mail::send('emails.AdminPanel_EmployeeCreated',array(
             'password' => $new_client_id,
             'email' => $client_email,
             ), function($message)use($client_email){
-            $message->from(env('FromMail','kitchen@gmail.com'),'KITCHEN');
+            $message->from(env('FromMail','askitchen18@gmail.com'),'KITCHEN');
             $message->to($client_email)->subject('KITCHEN | Client Account Created');
-            });*/
+            });
 
             $response['key'] = 1;
             Session::put('successMessage', 'Client detail has been added successfully.');
