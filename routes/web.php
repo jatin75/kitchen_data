@@ -24,8 +24,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     /*Dashboard*/
     Route::get('dashboard', 'admin\AdminHomeController@showDashboard')->name('dashboard');
     Route::post('showjobdetailstatus', 'admin\AdminHomeController@showJobDetails')->name('showjobdetailstatus');
-    /*Route::post('jobs/changedashboardjobstatus', 'admin\JobsController@changeDashboardJobStatus')->name('changedashboardjobstatus');*/
-
+    
     /*My Profile*/
     //Route::get('profile/{email}','admin\AdminHomeController@editMyProfile')->name('adminprofile');
     //Route::post('storeadmin','admin\AdminHomeController@store')->name('storeadmin');

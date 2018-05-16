@@ -276,10 +276,10 @@ class JobsController extends Controller
     {
         $job_id = $request->get('job_id');
         $getJobDetails = DB::select("SELECT j.job_id,j.company_id,j.job_title,j.address_1,j.address_2,j.city,j.state,j.zipcode,j.apartment_number,j.super_name,j.super_phone_number,j.contractor_name,j.contractor_phone_number,j.contractor_email,j.working_employee_id,j.company_clients_id,j.plumbing_installation_date,j.delivery_datetime,j.job_status_id,j.is_select_installation,j.installation_datetime,j.installation_employee_id,j.is_select_stone_installation,j.stone_installation_datetime,j.stone_installation_employee_id,j.is_active,j.start_date,j.end_date,j.created_at,cmp.name AS company_name,jbt.job_status_name
-        FROM jobs AS j
-        JOIN companies AS cmp ON cmp.company_id = j.company_id
-        JOIN job_types AS jbt ON jbt.job_status_id = j.job_status_id
-        WHERE j.job_id = '{$job_id}'");
+            FROM jobs AS j
+            JOIN companies AS cmp ON cmp.company_id = j.company_id
+            JOIN job_types AS jbt ON jbt.job_status_id = j.job_status_id
+            WHERE j.job_id = '{$job_id}'");
         if (sizeof($getJobDetails) > 0) {
             $getJobDetails = $getJobDetails[0];
             $getJobDetails->is_active = ($getJobDetails->is_active == 1) ? 'Active':'Inactive' ;
@@ -315,23 +315,23 @@ class JobsController extends Controller
             {
                 $html .= '<div class="row" id="row_'. $single_note->id .'">
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" class="word-wrap">
-                    <span id="note">'. $single_note->job_note .'</span>
+                <span id="note">'. $single_note->job_note .'</span>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                    <span id="updated_by">'. $single_note->name .'</span>
+                <span id="updated_by">'. $single_note->name .'</span>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                    <span id="updated_date">'. date('m/d/Y', strtotime($single_note->updated_at)) .'</span>
+                <span id="updated_date">'. date('m/d/Y', strtotime($single_note->updated_at)) .'</span>
                 </div>
                 <div class="col-xs-2">
-                    <a class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
-                        <i class="ti-pencil-alt"></i>
-                    </a>
+                <a class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
+                <i class="ti-pencil-alt"></i>
+                </a>
                 </div>
                 <div class="col-xs-2">
-                    <a class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
-                        <i class="ti-trash"></i>
-                    </a>
+                <a class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
+                <i class="ti-trash"></i>
+                </a>
                 </div>
                 </div>';
             }
@@ -369,18 +369,18 @@ class JobsController extends Controller
         $html = '';
         $auditList = DB::select("SELECT * FROM audit_trail WHERE job_id = '{$job_id}'");
         $html .= '<table id="auditList" class="display nowrap" cellspacing="0" width="100%">
-                <thead>
-                    <tr>
-                        <th>Name Of Field</th>
-                        <th>Old Value</th>
-                        <th>New Value</th>
-                        <th>Date Of Edit</th>
-                        <th>User</th>
-                    </tr>
-                </thead><tbody>';
+        <thead>
+        <tr>
+        <th>Name Of Field</th>
+        <th>Old Value</th>
+        <th>New Value</th>
+        <th>Date Of Edit</th>
+        <th>User</th>
+        </tr>
+        </thead><tbody>';
         foreach ($auditList as $audit) {
             $html .= '<tr>
-                    <td>' . $audit->field_name . '</td>';
+            <td>' . $audit->field_name . '</td>';
             if (empty($audit->old_value)) {
                 $html .= '<td>--</td>';
             } else {
@@ -394,8 +394,8 @@ class JobsController extends Controller
             }
 
             $html .= '<td>' . date("m/d/Y", strtotime($audit->created_at)) . '</td>
-                    <td>' . $audit->name . '</td>
-                </tr>';
+            <td>' . $audit->name . '</td>
+            </tr>';
         }
         $html .= '</tbody></table>';
         $response['audit_data'] = $html;
@@ -411,21 +411,10 @@ class JobsController extends Controller
         $key = ($jobStatusId == 8) ? 1 : 2;
 
         $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
-        $response['key'] = $key;
 
+        $response['key'] = $key;
         echo json_encode($response);
     }
-
-    /*public function changeDashboardJobStatus(Request $request)
-    {
-        $jobId = $request->get('jobId');
-        $jobStatusId = $request->get('jobStatusId');
-
-        $is_active = ($jobStatusId == 8) ? 0 : 1;
-        $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
-        $response['key'] = 1;
-        echo json_encode($response);
-    }*/
 
     function commonViewJobDetails($ids)
     {

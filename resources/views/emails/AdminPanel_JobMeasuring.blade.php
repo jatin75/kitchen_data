@@ -492,9 +492,9 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>Job Title</strong><br>
+							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>{{ $JobTitle }}</strong><br>
 								<br>
-								This new job has been created and is awaiting Measurement. Job Address is:[-----].The contact information for the Super is [-----]. Please call A&amp;S Kitchen with any questions.<br>
+								This new job has been created and is awaiting Measurement. Job Address is:{{ $address }}.The contact information for the Super is {{ $superName }}. Please call A&amp;S Kitchen with any questions.<br>
 
 								<br>This job is awaiting measurement and has not been assigned a measurer<br>
 							<br>
