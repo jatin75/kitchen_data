@@ -175,7 +175,7 @@ class AdminHomeController extends Controller
 					$client_id_array = explode(',', $jobDetail->company_clients_id);
 					if(in_array($session_userId, $client_id_array)) {
 
-						$html .='<tr>
+						$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
 						<td class="text-center">
 							<span data-toggle="" data-target="#jobDetailModel">
 								<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
@@ -202,7 +202,7 @@ class AdminHomeController extends Controller
 				}
 			}else {
 				foreach($getJobDetails as $jobDetail) {
-					$html .='<tr>
+					$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
 					<td class="text-center">
 						<span data-toggle="" data-target="#jobDetailModel">
 							<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">

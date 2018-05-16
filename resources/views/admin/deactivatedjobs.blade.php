@@ -39,7 +39,7 @@ tr th{
                     </thead>
                     <tbody>
                         @foreach($jobDetails as $job)
-                        <tr>
+                        <tr class="changestatus_{{ $job->job_id }}">
                             <td class="text-center">
                                 {{-- <a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle" href="{{route('viewjob',['jobe_id' => $job->id])}}">
                                     <i class="ti-eye"></i>
@@ -180,20 +180,19 @@ tr th{
     $(".jobType").change(function() {
         var jobStatusId = $(this).val();
         var jobId = $(this).attr('data-id');
-        var checkJob;
         $("#loader").show();
         $.ajax({
             url:'{{ route('changejobstatus') }}',
-            data:{jobStatusId:jobStatusId,jobId:jobId,checkJob:2},
+            data:{jobStatusId:jobStatusId,jobId:jobId},
             type: 'post',
             dataType: 'json',
             success:function(data){
-                if(data.key == 1 ) {
-                    $("#loader").hide();
-                    notify('Job Status has been Changed Successfully.','blackgloss');
-                }else {
-                    location.reload();
+                $("#loader").hide();
+                if(data.key != 1 ) {
+                    var table = $('#jobList').DataTable();
+                    table.row('.changestatus_'+jobId).remove().draw(false);
                 }
+                notify('Job Status has been Changed Successfully.','blackgloss');
             }
         });
     });

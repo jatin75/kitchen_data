@@ -407,26 +407,16 @@ class JobsController extends Controller
     {
         $jobId = $request->get('jobId');
         $jobStatusId = $request->get('jobStatusId');
-        $checkJob = $request->get('checkJob');
+        $is_active = ($jobStatusId == 8) ? 0 : 1;
+        $key = ($jobStatusId == 8) ? 1 : 2;
 
-        if ($jobStatusId == 8) {
-            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => 0]);
-            $response['key'] = 1;
-            if ($checkJob == 1) {
-                Session::put('successMessage', 'Job Status has been Changed Successfully');
-            }
-        } else {
-            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => 1]);
-            $response['key'] = 2;
+        $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
+        $response['key'] = $key;
 
-            if ($checkJob == 2) {
-                Session::put('successMessage', 'Job Status has been Changed Successfully');
-            }
-        }
         echo json_encode($response);
     }
 
-    public function changeDashboardJobStatus(Request $request)
+    /*public function changeDashboardJobStatus(Request $request)
     {
         $jobId = $request->get('jobId');
         $jobStatusId = $request->get('jobStatusId');
@@ -435,7 +425,7 @@ class JobsController extends Controller
         $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
         $response['key'] = 1;
         echo json_encode($response);
-    }
+    }*/
 
     function commonViewJobDetails($ids)
     {

@@ -38,6 +38,11 @@ tr th{
 	color: #fff !important;
 	box-shadow: none;
 }
+.toolbarmenu_active {
+	background-color: #4c5667 !important;
+	color: #fff !important;
+	box-shadow: none;
+}
 .nav_toggle ul li > a{
 	padding: 8px 12px !important;
 	border-bottom: 1px solid #e5e5e5;
@@ -66,9 +71,9 @@ tr th{
 							<div class="dropdown user-pro-body" style="margin: 0px  !important">
 								<a href="#" class="u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></a>
 								<ul class="dropdown-menu animated flipInY" style="margin-left: 0;top:30px;padding: 0;">
-									<li><a class="toolbar_dropdownbtn toolbaractive" href="javascript:void(0)" onclick="getJobDetailsList(0)"> All </a></li>
+									<li><a class="toolbar_dropdownbtn toolbarmenu_active" href="javascript:void(0)" onclick="getJobDetailsList(0)" data-id="0"> All </a></li>
 									@foreach($jobTypeDetails as $jobType)
-									<li><a class="toolbar_dropdownbtn" href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})"> {{ strtoupper($jobType->job_status_name) }} </a></li>
+									<li><a class="toolbar_dropdownbtn" href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})" data-id="{{ $jobType->job_status_id }}"> {{ strtoupper($jobType->job_status_name) }} </a></li>
 									@endforeach
 								</ul>
 							</div>
@@ -109,8 +114,8 @@ tr th{
 				<div class="form-body">
 					<form method="POST" id="formAddNote">
 						{{ csrf_field() }}
-					<input type="hidden" id="hiddenJobId" name="hiddenJobId">
-					<input type="hidden" id="hiddenJobStatus" name="hiddenJobStatus">
+						<input type="hidden" id="hiddenJobId" name="hiddenJobId">
+						<input type="hidden" id="hiddenJobStatus" name="hiddenJobStatus">
 						<div class="row m-t-10">
 							<div class="row col-md-12">
 								<div class="col-md-12">
@@ -150,7 +155,7 @@ tr th{
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB STATUS</label>
-					<br><span id="jobStatus"></span>
+						<br><span id="jobStatus"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB ID</label>
@@ -271,35 +276,35 @@ tr th{
 				</div>
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="scrollit p-l-10">
-						<div class="text-center p-b-10"><span><b>Job Notes</b></span></div>
-						<div class="row p-b-10">
-							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-								<span><b>Job Note</b></span>
+						<div class="scrollit p-l-10">
+							<div class="text-center p-b-10"><span><b>Job Notes</b></span></div>
+							<div class="row p-b-10">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+									<span><b>Job Note</b></span>
+								</div>
+								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+									<span><b>Updated By</b></span>
+								</div>
+								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+									<span><b>Date</b></span>
+								</div>
+								<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+									<span><b>Action</b></span>
+								</div>
 							</div>
-							<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-								<span><b>Updated By</b></span>
-							</div>
-							<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-								<span><b>Date</b></span>
-							</div>
-							<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-								<span><b>Action</b></span>
+							<div id="notesData">
 							</div>
 						</div>
-						<div id="notesData">
-						</div>
-					</div>
 					</div>
 				</div>
-                <div class="modal-footer">
-                	<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
 </div>
 <!--/.jobDetail model-->
 @stop
@@ -575,10 +580,10 @@ tr th{
 				if(data.key == 1)
 				{
 					$('#loader').hide();
-                    notify('Job note has been added successfully.','blackgloss');
-                }
-            }
-        });
+					notify('Job note has been added successfully.','blackgloss');
+				}
+			}
+		});
 	});
 
 	/*job status menu*/
@@ -590,16 +595,28 @@ tr th{
 	$(document).on('change','.jobType',function(){
 		var jobStatusId = $(this).val();
 		var jobId = $(this).attr('data-id');
+		var activeJobStatus = $(".toolbaractive").attr("data-id");
+
+		if (window.matchMedia('(max-width: 767px)').matches) {
+			var activeJobStatus = $(".toolbarmenu_active").attr("data-id");
+		} else {
+			var activeJobStatus = $(".toolbaractive").attr("data-id");
+		}
 		$("#loader").show();
 		$.ajax({
-			url:'{{ route('changedashboardjobstatus') }}',
+			url:'{{ route('changejobstatus') }}',
 			data:{jobStatusId:jobStatusId,jobId:jobId},
 			type: 'post',
 			dataType: 'json',
 			success:function(data){
-				if(data.key == 1 ) {
-					location.reload();
+				$('#loader').hide();
+				if(activeJobStatus != 0) {
+					$('.changestatus_'+jobId).fadeOut(300, function(){
+						var table = $('#jobList').DataTable();
+						table.row('.changestatus_'+jobId).remove().draw(false);
+					});
 				}
+				notify('Job Status has been Changed Successfully.','blackgloss');
 			}
 		});
 	});
@@ -610,8 +627,8 @@ tr th{
 	});
 
 	$(".toolbar_dropdownbtn").on('click', function(){
-		$(".toolbar_dropdownbtn").removeClass('toolbaractive');
-		$(this).addClass('toolbaractive');
+		$(".toolbar_dropdownbtn").removeClass('toolbarmenu_active');
+		$(this).addClass('toolbarmenu_active');
 	});
 
 	@if(Session::has('successMessage'))
