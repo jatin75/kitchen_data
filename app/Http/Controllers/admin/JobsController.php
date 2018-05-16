@@ -98,7 +98,8 @@ class JobsController extends Controller
     public function store(Request $request)
     {
         $hidden_job_id = $request->get('hidden_job_id');
-        $working_employees = implode(',', $request->get('working_employee_id'));
+        $working_employee_ids = $request->get('working_employee_id');
+        $working_employees = implode(',', $working_employee_ids);
         $comapny_clients = implode(',', $request->get('comapny_clients_id'));
         $is_installation = $request->get('installation_select');
         $is_stone_installation = $request->get('stone_installation_select');
@@ -225,6 +226,9 @@ class JobsController extends Controller
             $objJob->save();
             Session::put('successMessage', 'Job has been added Successfully');
             $response['key'] = 1;
+
+            /*send Mail*/
+            $this->sendMailNew($working_employee_ids,$request->get('job_title'));
             return json_encode($response);
         }
     }
@@ -411,8 +415,33 @@ class JobsController extends Controller
         $key = ($jobStatusId == 8) ? 1 : 2;
 
         $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
-
         $response['key'] = $key;
+
+        /*send Mail*/
+        $getDetail = Job::where('job_id',$jobId)->first();
+        $working_employee_ids = explode(',', $getDetail->working_employee_id);
+        switch ($jobStatusId) {
+            case 1:
+            $this->sendMailNew($working_employee_ids, $getDetail->job_title);
+            break;
+            case 2:
+            break;
+            case 3:
+            $this->sendMailDesign($working_employee_ids, $getDetail->job_title);
+            break;
+            case 4:
+            break;
+            case 5:
+            $this->sendMailDelivery($getDetail);
+            break;
+            case 6:
+            break;
+            case 7:
+
+            break;
+            case 8:
+            break;
+        }
         echo json_encode($response);
     }
 
@@ -433,6 +462,108 @@ class JobsController extends Controller
             return implode(", ", $employeeNames);
         }
     }
+
+    /* New Status */
+    function sendMailNew($working_employee_ids,$job_title)
+    {
+        $email_ids = [];
+        foreach($working_employee_ids as $id)
+        {
+            $email_id = Admin::selectRaw('email')->where('id',$id)->first();
+            $email_ids[] = $email_id->email;
+        }
+        if(sizeof($email_ids) > 0)
+        {
+            /*send Mail*/
+            Mail::send('emails.AdminPanel_JobNew',array(
+                'job_title' =>  $job_title,
+                ), function($message)use($email_ids){
+                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | New Job Created');
+            });
+        }
+        return;
+    }
+
+     /* Design Status */
+     function sendMailDesign($working_employee_ids,$job_title)
+     {
+        $email_ids = [];
+        foreach($working_employee_ids as $id)
+        {
+            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',3)->first();
+            $email_ids[] = $email_id->email;
+        }
+        if(sizeof($email_ids) > 0)
+        {
+            /*send Mail*/
+            Mail::send('emails.AdminPanel_JobDesign',array(
+                'job_title' =>  $job_title,
+                ), function($message)use($email_ids){
+                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | "'.$job_title.'"');
+            });
+        }
+        return;
+     }
+
+     /* Delivery Status */
+     function sendMailDelivery($job_Detail)
+     {
+        $working_employee_ids = explode(',', $job_Detail->working_employee_id);
+        $job_title = $job_Detail->job_title;
+        $delivery_date = date('m/d/Y', strtotime($job_Detail->delivery_datetime));
+        $job_address = $job_Detail->address_1 + ' ' + (!empty($job_Detail->address_2)) ? $job_Detail->address_2 : ' ' + (!empty($job_Detail->city)) ? $job_Detail->city : ' ' + (!empty($job_Detail->state)) ? $job_Detail->state : ' ' + (!empty($job_Detail->zipcode)) ? $job_Detail->zipcode : ' '
+
+
+
+
+
+        + $job_Detail->city + ' ' + $job_Detail->state + ' ' + $job_Detail->zipcode + ' ' + $job_Detail->apartment_number;
+        $super_name = $job_Detail->super_name;
+        $super_contact_number = (new AdminHomeController)->formatPhoneNumber($job_Detail->super_phone_number);
+        $contractor_name = $job_Detail->contractor_name;
+        $contractor_contact_number = (new AdminHomeController)->formatPhoneNumber($job_Detail->contractor_phone_number);
+
+        /*Contractor*/
+        $contractor_email = $job_Detail->contractor_email;
+        if(!empty($contractor_email))
+        {
+            /*send Mail*/
+            Mail::send('emails.AdminPanel_JobDeliveryContractor',array(
+                'job_title' =>  $job_title,
+                'delivery_date' =>  $delivery_date,
+                ), function($message)use($contractor_email){
+                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                $message->bcc($contractor_email)->subject('A&S KITCHEN | "'.$job_title.'"');
+            });
+        }
+
+        /*Delivery Employee*/
+        $email_ids = [];
+        foreach($working_employee_ids as $id)
+        {
+            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',4)->first();
+            $email_ids[] = $email_id->email;
+        }
+        if(sizeof($email_ids) > 0)
+        {
+            /*send Mail*/
+            Mail::send('emails.AdminPanel_JobDeliveryEmployee',array(
+                'job_title' =>  $job_title,
+                'delivery_date' =>  $delivery_date,
+                'job_address' =>  $job_address,
+                'super_name' =>  $super_name,
+                'super_contact_number' =>  $super_contact_number,
+                'contractor_name' =>  $contractor_name,
+                'contractor_contact_number' =>  $contractor_contact_number,
+                ), function($message)use($email_ids){
+                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | "'.$job_title.'"');
+            });
+        }
+        return;
+     }
 
     public function getJobId()
     {

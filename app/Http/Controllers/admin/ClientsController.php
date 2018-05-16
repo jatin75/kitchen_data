@@ -125,8 +125,8 @@ class ClientsController extends Controller
             'password' => $new_client_id,
             'email' => $client_email,
             ), function($message)use($client_email){
-            $message->from(env('FromMail','askitchen18@gmail.com'),'KITCHEN');
-            $message->to($client_email)->subject('KITCHEN | Client Account Created');
+            $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+            $message->to($client_email)->subject('A&S KITCHEN | Client Account Created');
             });
 
             $response['key'] = 1;

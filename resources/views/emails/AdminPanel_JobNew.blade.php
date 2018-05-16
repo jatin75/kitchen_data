@@ -13,7 +13,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>A&amp;S KITCHEN | Job </title>
+	<title>A&amp;S KITCHEN | New Job Created</title>
 
 	<style type="text/css">
 	p{
@@ -492,7 +492,7 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>Job Title</strong><br>
+							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>{{ $job_title }}</strong><br>
 
 							<br>
 							This new job has been created. Please call A&amp;S Kitchen with any questions.<br>

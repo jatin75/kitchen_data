@@ -491,11 +491,11 @@
 		/*installation status*/
 		var installationStatus = $("#installationSelect").val();
 		(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
-		
+
 		/* stone installation status*/
 		var stoneInstallationStatus = $("#stoneInstallationSelect").val();
 		(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
-		
+
 		$('#resetPermission').click(function () {
 			location.reload();
 		});
@@ -704,7 +704,7 @@
 	});
 
 	$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
-	
+
 	/*prevent form to submit on enter*/
 	$(document).on("keypress", ":input:not(textarea)", function (event) {
 		return event.keyCode != 13;

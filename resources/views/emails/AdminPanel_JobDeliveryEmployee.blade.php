@@ -13,7 +13,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>A&amp;S KITCHEN | Job</title>
+	<title>A&amp;S KITCHEN | {{$job_title}}</title>
 
 	<style type="text/css">
 	p{
@@ -492,17 +492,16 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>Job Title</strong><br>
+							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>{{$job_title}}</strong><br>
 
 								<br>
-								This job has been scheduled for Delivery on [mm/dd/yyyy] between 9am and 2pm.<br>
+								This job has been scheduled for Delivery on {{$delivery_date}} between 9am and 2pm.<br>
 								<br>
-									EMAIL: {{ $email }}<br>
-									JOB ADDRESS: {{ $jobAddress }}<br>
-									JOB SUPER NAME: {{ $jobSuperName }}<br>
-									SUPER CONTACT NUMBER: {{ $superContactNumber }}<br>
-									JOB CONTRACTOR NAME: {{ $jobContractorName }}<br>
-									CONTRACTOR CONTACT NUMBER: {{ $contractorContactNumber }}<br>
+									JOB ADDRESS: {{ $job_address }}<br><br>
+									JOB SUPER NAME: {{ $super_name }}<br>
+									SUPER CONTACT NUMBER: {{ $super_contact_number }}<br>
+									JOB CONTRACTOR NAME: {{ $contractor_name }}<br>
+									CONTRACTOR CONTACT NUMBER: {{ $contractor_contact_number }}<br>
 								<br>
 								<br>
 								Regards,<br>
