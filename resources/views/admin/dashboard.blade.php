@@ -3,8 +3,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
-<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}"
-/>
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
 <style type="text/css">
 .nav-link.active {
@@ -314,8 +313,8 @@ tr th{
 	<!-- /.modal-dialog -->
 </div>
 <!--/.jobDetail model-->
-<!--Job status delivery model-->
-<div class="modal fade" id="jobDeliveryModel" tabindex="-1" data-backdrop="true" style="display: none;">
+<!--Job status change event model-->
+<div class="modal fade" id="statusWiseJobModel" tabindex="-1" data-backdrop="true" style="display: none;">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -324,6 +323,9 @@ tr th{
 			</div>
 			<div class="modal-body">
 				<div class="form-body form-material">
+					<input type="hidden" id="hiddenChangeJobId" name="hiddenChangeJobId">
+					<input type="hidden" id="hiddenChangeJobStatus" name="hiddenChangeJobStatus">
+					<input type="hidden" id="hiddenChangeJobActiveStatus" name="hiddenChangeJobActiveStatus">
 					<form method="POST" id="formAddDeliveryDateTime">
 						{{ csrf_field() }}
 						<div class="row m-t-10">
@@ -356,7 +358,7 @@ tr th{
 		</div>
 	</div>
 </div>
-<!--/.Job status delivery model-->
+<!--/.Job status change event model-->
 
 @stop
 @section('pageSpecificJs')
@@ -648,25 +650,28 @@ tr th{
 	$(document).on('change','.jobType',function(){
 		var jobStatusId = $(this).val();
 		var jobId = $(this).attr('data-id');
-		var activeJobStatus = $(".toolbaractive").attr("data-id");
 		var deliveryDate = ''; var deliveryTime = '';
-		if(jobStatusId == 5) {
-			$('#jobDeliveryModel').modal('show');
-			var deliveryDate = $("#deliveryDate").val();
-			var deliveryTime = $("#deliveryTime").val();
-		}
-		//alert(deliveryDate);
-		//alert(deliveryTime);
-		return;
+
 		if (window.matchMedia('(max-width: 767px)').matches) {
 			var activeJobStatus = $(".toolbarmenu_active").attr("data-id");
 		} else {
 			var activeJobStatus = $(".toolbaractive").attr("data-id");
 		}
+		if(jobStatusId == 5) {
+			$('#statusWiseJobModel').modal('show');
+			$("#hiddenChangeJobId").val(jobId);
+			$("#hiddenChangeJobStatus").val(jobStatusId);
+			$("#hiddenChangeJobActiveStatus").val(activeJobStatus);
+		}else {
+			changestatuswisejob(jobStatusId,jobId,activeJobStatus,deliveryDate,deliveryTime);
+		}
+	});
+
+	function changestatuswisejob(jobStatusId,jobId,activeJobStatus,deliveryDate,deliveryTime) {
 		$("#loader").show();
 		$.ajax({
 			url:'{{ route('changejobstatus') }}',
-			data:{jobStatusId:jobStatusId,jobId:jobId},
+			data:{jobStatusId:jobStatusId,jobId:jobId,deliveryDate:deliveryDate,deliveryTime:deliveryTime},
 			type: 'post',
 			dataType: 'json',
 			success:function(data){
@@ -680,11 +685,19 @@ tr th{
 				notify('Job Status has been Changed Successfully.','blackgloss');
 			}
 		});
-	});
+	}
 
 	$('#formAddDeliveryDateTime').on('success.form.bv', function(e) {
 		e.preventDefault();
-		$('#jobDeliveryModel').modal('hide');
+		$('#statusWiseJobModel').modal('hide');
+		var jobId = $("#hiddenChangeJobId").val();
+		var jobStatusId = $("#hiddenChangeJobStatus").val();
+		var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
+		var deliveryDate = $("#deliveryDate").val();
+		var deliveryTime = $("#deliveryTime").val();
+		if(jobStatusId == 5 && deliveryDate != '' && deliveryTime != '') {
+			changestatuswisejob(jobStatusId,jobId,activeJobStatus,deliveryDate,deliveryTime);
+		}
 	});
 
 	/*Date picker*/

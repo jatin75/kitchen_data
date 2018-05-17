@@ -411,10 +411,17 @@ class JobsController extends Controller
     {
         $jobId = $request->get('jobId');
         $jobStatusId = $request->get('jobStatusId');
+        
         $is_active = ($jobStatusId == 8) ? 0 : 1;
         $key = ($jobStatusId == 8) ? 1 : 2;
 
-        $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
+        if($jobStatusId == 5) {
+            $delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryDate') . ' ' . $request->get('deliveryTime')));
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'delivery_datetime'=>$delivery_datetime]);
+        }else {
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
+        }
+        
         $response['key'] = $key;
 
         /*send Mail*/
