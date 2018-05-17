@@ -418,7 +418,7 @@ class JobsController extends Controller
         $response['key'] = $key;
 
         /*send Mail*/
-        $getDetail = Job::where('job_id',$jobId)->first();
+        $getDetail = Job::where('job_id',$jobId)->where('is_deleted',0)->first();
         $working_employee_ids = explode(',', $getDetail->working_employee_id);
         switch ($jobStatusId) {
             case 1:
@@ -430,17 +430,14 @@ class JobsController extends Controller
             case 3:
             $this->sendMailDesign($working_employee_ids, $getDetail->job_title);
             break;
-            case 4:
-            break;
             case 5:
             $this->sendMailDelivery($getDetail);
             break;
             case 6:
+            $this->sendMailInstalling($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);
             break;
             case 7:
-
-            break;
-            case 8:
+            $this->sendMailStoneInstallation($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);
             break;
         }
         echo json_encode($response);
@@ -470,8 +467,11 @@ class JobsController extends Controller
         $email_ids = [];
         foreach($working_employee_ids as $id)
         {
-            $email_id = Admin::selectRaw('email')->where('id',$id)->first();
-            $email_ids[] = $email_id->email;
+            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',1)->where('is_deleted',0)->first();
+            if(!empty($email_id))
+            {
+                $email_ids[] = $email_id->email;
+            }
         }
         if(sizeof($email_ids) > 0)
         {
@@ -486,23 +486,86 @@ class JobsController extends Controller
         return;
     }
 
+    /* Measuring Status */
+    function sendMailMeasuring($job_Detail)
+    {
+        $working_employee_ids = explode(',', $job_Detail->working_employee_id);
+        $job_title = $job_Detail->job_title;
+
+        $delimiter = ','.' ';
+        $job_address = $job_Detail->address_1.$delimiter;
+        $job_address .= (!empty($job_Detail->apartment_number)) ? 'Apartment no: '.$job_Detail->apartment_number.$delimiter : '';
+        $job_address .= (!empty($job_Detail->address_2)) ? $job_Detail->address_2.$delimiter : '';
+        $job_address .= (!empty($job_Detail->city)) ? $job_Detail->city.$delimiter : '';
+        $job_address .= (!empty($job_Detail->state)) ? $job_Detail->state.$delimiter : '';
+        $job_address .= (!empty($job_Detail->zipcode)) ? $job_Detail->zipcode : '';
+        $super_name = $job_Detail->super_name;
+
+        $email_ids = [];
+        foreach($working_employee_ids as $id)
+        {
+            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',3)->where('is_deleted',0)->first();
+            if(!empty($email_id)) {
+                $email_ids[] = $email_id->email;
+            }
+        }
+        if(sizeof($email_ids) > 0)
+        {
+            /*send Mail*/
+            Mail::send('emails.AdminPanel_JobMeasuring',array(
+                'job_title' =>  $job_title,
+                'job_address' =>  $job_address,
+                'super_name' =>  $super_name,
+                'is_admin' => 0,
+            ), function($message)use($email_ids, $job_title){
+                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | '.$job_title);
+            });
+        }
+        else
+        {
+            foreach($working_employee_ids as $id)
+            {
+                $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',1)->where('is_deleted',0)->first();
+                if(!empty($email_id)) {
+                    $email_ids[] = $email_id->email;
+                }
+            }
+            if(sizeof($email_ids) > 0)
+            {
+                /*send Mail*/
+                Mail::send('emails.AdminPanel_JobMeasuring',array(
+                    'job_title' =>  $job_title,
+                    'is_admin' => 1,
+                ), function($message)use($email_ids, $job_title){
+                    $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                    $message->bcc($email_ids)->subject('A&S KITCHEN | '.$job_title);
+                });
+            }
+        }
+        return;
+    }
+
     /* Design Status */
     function sendMailDesign($working_employee_ids,$job_title)
     {
         $email_ids = [];
         foreach($working_employee_ids as $id)
         {
-            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',3)->first();
-            $email_ids[] = $email_id->email;
+            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',3)->where('is_deleted',0)->first();
+            if(!empty($email_id))
+            {
+                $email_ids[] = $email_id->email;
+            }
         }
         if(sizeof($email_ids) > 0)
         {
             /*send Mail*/
             Mail::send('emails.AdminPanel_JobDesign',array(
                 'job_title' =>  $job_title,
-            ), function($message)use($email_ids){
+                ), function($message)use($email_ids, $job_title){
                 $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($email_ids)->subject('A&S KITCHEN | "'.$job_title.'"');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | '.$job_title);
             });
         }
         return;
@@ -514,11 +577,6 @@ class JobsController extends Controller
         $working_employee_ids = explode(',', $job_Detail->working_employee_id);
         $job_title = $job_Detail->job_title;
         $delivery_date = date('m/d/Y', strtotime($job_Detail->delivery_datetime));
-        $job_address = $job_Detail->address_1 + ' ' + (!empty($job_Detail->address_2)) ? $job_Detail->address_2 : ' ' + (!empty($job_Detail->city)) ? $job_Detail->city : ' ' + (!empty($job_Detail->state)) ? $job_Detail->state : ' ' + (!empty($job_Detail->zipcode)) ? $job_Detail->zipcode : ' ' + $job_Detail->city + ' ' + $job_Detail->state + ' ' + $job_Detail->zipcode + ' ' + $job_Detail->apartment_number;
-        $super_name = $job_Detail->super_name;
-        $super_contact_number = (new AdminHomeController)->formatPhoneNumber($job_Detail->super_phone_number);
-        $contractor_name = $job_Detail->contractor_name;
-        $contractor_contact_number = (new AdminHomeController)->formatPhoneNumber($job_Detail->contractor_phone_number);
 
         /*Contractor*/
         $contractor_email = $job_Detail->contractor_email;
@@ -528,9 +586,9 @@ class JobsController extends Controller
             Mail::send('emails.AdminPanel_JobDeliveryContractor',array(
                 'job_title' =>  $job_title,
                 'delivery_date' =>  $delivery_date,
-            ), function($message)use($contractor_email){
+                ), function($message)use($contractor_email, $job_title){
                 $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($contractor_email)->subject('A&S KITCHEN | "'.$job_title.'"');
+                $message->bcc($contractor_email)->subject('A&S KITCHEN | '.$job_title);
             });
         }
 
@@ -538,11 +596,27 @@ class JobsController extends Controller
         $email_ids = [];
         foreach($working_employee_ids as $id)
         {
-            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',4)->first();
-            $email_ids[] = $email_id->email;
+            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',4)->where('is_deleted',0)->first();
+            if(!empty($email_id))
+            {
+                $email_ids[] = $email_id->email;
+            }
         }
         if(sizeof($email_ids) > 0)
         {
+            $delimiter = ','.' ';
+            $job_address = $job_Detail->address_1.$delimiter;
+            $job_address .= (!empty($job_Detail->apartment_number)) ? 'Apartment no: '.$job_Detail->apartment_number.$delimiter : '';
+            $job_address .= (!empty($job_Detail->address_2)) ? $job_Detail->address_2.$delimiter : '';
+            $job_address .= (!empty($job_Detail->city)) ? $job_Detail->city.$delimiter : '';
+            $job_address .= (!empty($job_Detail->state)) ? $job_Detail->state.$delimiter : '';
+            $job_address .= (!empty($job_Detail->zipcode)) ? $job_Detail->zipcode : '';
+
+            $super_name = $job_Detail->super_name;
+            $super_contact_number = (new AdminHomeController)->formatPhoneNumber($job_Detail->super_phone_number);
+            $contractor_name = $job_Detail->contractor_name;
+            $contractor_contact_number = (new AdminHomeController)->formatPhoneNumber($job_Detail->contractor_phone_number);
+
             /*send Mail*/
             Mail::send('emails.AdminPanel_JobDeliveryEmployee',array(
                 'job_title' =>  $job_title,
@@ -552,9 +626,47 @@ class JobsController extends Controller
                 'super_contact_number' =>  $super_contact_number,
                 'contractor_name' =>  $contractor_name,
                 'contractor_contact_number' =>  $contractor_contact_number,
-            ), function($message)use($email_ids){
+                ), function($message)use($email_ids, $job_title){
                 $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($email_ids)->subject('A&S KITCHEN | "'.$job_title.'"');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | '.$job_title);
+            });
+        }
+        return;
+    }
+
+    /* Installation Status */
+    function sendMailInstallation($job_title,$delivery_datetime,$contractor_email)
+    {
+        $delivery_date = date('m/d/Y', strtotime($delivery_datetime));
+        /*Contractor*/
+        if(!empty($contractor_email))
+        {
+            /*send Mail*/
+            Mail::send('emails.AdminPanel_JobInstalling',array(
+                'job_title' =>  $job_title,
+                'delivery_date' =>  $delivery_date,
+                ), function($message)use($contractor_email, $job_title){
+                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                $message->bcc($contractor_email)->subject('A&S KITCHEN | '.$job_title);
+            });
+        }
+        return;
+    }
+
+    /* Stone installation Status */
+    function sendMailStoneInstallation($job_title,$delivery_datetime,$contractor_email)
+    {
+        $delivery_date = date('m/d/Y', strtotime($delivery_datetime));
+        /*Contractor*/
+        if(!empty($contractor_email))
+        {
+            /*send Mail*/
+            Mail::send('emails.AdminPanel_JobStoneInstalling',array(
+                'job_title' =>  $job_title,
+                'delivery_date' =>  $delivery_date,
+                ), function($message)use($contractor_email, $job_title){
+                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                $message->bcc($contractor_email)->subject('A&S KITCHEN | '.$job_title);
             });
         }
         return;

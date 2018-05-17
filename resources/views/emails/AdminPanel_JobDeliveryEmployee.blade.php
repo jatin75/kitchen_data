@@ -497,11 +497,11 @@
 								<br>
 								This job has been scheduled for Delivery on {{$delivery_date}} between 9am and 2pm.<br>
 								<br>
-									JOB ADDRESS: {{ $job_address }}<br><br>
-									JOB SUPER NAME: {{ $super_name }}<br>
-									SUPER CONTACT NUMBER: {{ $super_contact_number }}<br>
-									JOB CONTRACTOR NAME: {{ $contractor_name }}<br>
-									CONTRACTOR CONTACT NUMBER: {{ $contractor_contact_number }}<br>
+									JOB ADDRESS:&nbsp;&nbsp;{{ $job_address }}<br><br>
+									JOB SUPER NAME:&nbsp;&nbsp;{{ $super_name }}<br>
+									SUPER CONTACT NUMBER:&nbsp;&nbsp;{{ $super_contact_number }}<br>
+									JOB CONTRACTOR NAME:&nbsp;&nbsp;{{ $contractor_name }}<br>
+									CONTRACTOR CONTACT NUMBER:&nbsp;&nbsp;{{ $contractor_contact_number }}<br>
 								<br>
 								<br>
 								Regards,<br>

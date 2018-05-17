@@ -13,7 +13,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>A&amp;S KITCHEN | Job </title>
+	<title>A&amp;S KITCHEN | {{$job_title}} </title>
 
 	<style type="text/css">
 	p{
@@ -492,10 +492,10 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>Job Title</strong><br>
+							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>{{$job_title}}</strong><br>
 
 								<br>
-								This job has been scheduled for Installation on [mm/dd/yyyy] between 9am and 2pm. Please contact A&amp;S with any questions. xxx-xxx-xxxx<br>
+								This job has been scheduled for Installation on {{$delivery_date}} between 9am and 2pm. Please contact A&amp;S with any questions. xxx-xxx-xxxx<br>
 							<br>
 							Regards,<br>
 							<br>
