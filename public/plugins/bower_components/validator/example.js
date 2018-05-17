@@ -180,6 +180,55 @@ $(document).ready(function () {
 		$('#formAddClientCompany').bootstrapValidator('revalidateField', 'companyPhoneNo');
 	});
 
+	$('#formAddDeliveryDateTime').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {
+			deliveryDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery date is required.'
+					},
+				}
+			},
+			deliveryTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+		}
+	});
+
 	$('#formAddEmployee').bootstrapValidator({
 		excluded: ':disabled',
 		fields: {
@@ -766,7 +815,7 @@ $(document).ready(function () {
 		}
 	});
 
-	$('#adminPhoneNo').on('keyup', function () {
-		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
-	});
+$('#adminPhoneNo').on('keyup', function () {
+	$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
+});
 });

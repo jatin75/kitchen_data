@@ -425,6 +425,7 @@ class JobsController extends Controller
             $this->sendMailNew($working_employee_ids, $getDetail->job_title);
             break;
             case 2:
+            $this->sendMailMeasuring($getDetail);
             break;
             case 3:
             $this->sendMailDesign($working_employee_ids, $getDetail->job_title);
@@ -477,7 +478,7 @@ class JobsController extends Controller
             /*send Mail*/
             Mail::send('emails.AdminPanel_JobNew',array(
                 'job_title' =>  $job_title,
-                ), function($message)use($email_ids){
+            ), function($message)use($email_ids){
                 $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
                 $message->bcc($email_ids)->subject('A&S KITCHEN | New Job Created');
             });
@@ -485,9 +486,9 @@ class JobsController extends Controller
         return;
     }
 
-     /* Design Status */
-     function sendMailDesign($working_employee_ids,$job_title)
-     {
+    /* Design Status */
+    function sendMailDesign($working_employee_ids,$job_title)
+    {
         $email_ids = [];
         foreach($working_employee_ids as $id)
         {
@@ -499,27 +500,21 @@ class JobsController extends Controller
             /*send Mail*/
             Mail::send('emails.AdminPanel_JobDesign',array(
                 'job_title' =>  $job_title,
-                ), function($message)use($email_ids){
+            ), function($message)use($email_ids){
                 $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
                 $message->bcc($email_ids)->subject('A&S KITCHEN | "'.$job_title.'"');
             });
         }
         return;
-     }
+    }
 
-     /* Delivery Status */
-     function sendMailDelivery($job_Detail)
-     {
+    /* Delivery Status */
+    function sendMailDelivery($job_Detail)
+    {
         $working_employee_ids = explode(',', $job_Detail->working_employee_id);
         $job_title = $job_Detail->job_title;
         $delivery_date = date('m/d/Y', strtotime($job_Detail->delivery_datetime));
-        $job_address = $job_Detail->address_1 + ' ' + (!empty($job_Detail->address_2)) ? $job_Detail->address_2 : ' ' + (!empty($job_Detail->city)) ? $job_Detail->city : ' ' + (!empty($job_Detail->state)) ? $job_Detail->state : ' ' + (!empty($job_Detail->zipcode)) ? $job_Detail->zipcode : ' '
-
-
-
-
-
-        + $job_Detail->city + ' ' + $job_Detail->state + ' ' + $job_Detail->zipcode + ' ' + $job_Detail->apartment_number;
+        $job_address = $job_Detail->address_1 + ' ' + (!empty($job_Detail->address_2)) ? $job_Detail->address_2 : ' ' + (!empty($job_Detail->city)) ? $job_Detail->city : ' ' + (!empty($job_Detail->state)) ? $job_Detail->state : ' ' + (!empty($job_Detail->zipcode)) ? $job_Detail->zipcode : ' ' + $job_Detail->city + ' ' + $job_Detail->state + ' ' + $job_Detail->zipcode + ' ' + $job_Detail->apartment_number;
         $super_name = $job_Detail->super_name;
         $super_contact_number = (new AdminHomeController)->formatPhoneNumber($job_Detail->super_phone_number);
         $contractor_name = $job_Detail->contractor_name;
@@ -533,7 +528,7 @@ class JobsController extends Controller
             Mail::send('emails.AdminPanel_JobDeliveryContractor',array(
                 'job_title' =>  $job_title,
                 'delivery_date' =>  $delivery_date,
-                ), function($message)use($contractor_email){
+            ), function($message)use($contractor_email){
                 $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
                 $message->bcc($contractor_email)->subject('A&S KITCHEN | "'.$job_title.'"');
             });
@@ -557,13 +552,13 @@ class JobsController extends Controller
                 'super_contact_number' =>  $super_contact_number,
                 'contractor_name' =>  $contractor_name,
                 'contractor_contact_number' =>  $contractor_contact_number,
-                ), function($message)use($email_ids){
+            ), function($message)use($email_ids){
                 $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
                 $message->bcc($email_ids)->subject('A&S KITCHEN | "'.$job_title.'"');
             });
         }
         return;
-     }
+    }
 
     public function getJobId()
     {

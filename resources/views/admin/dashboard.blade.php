@@ -3,6 +3,9 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}"
+/>
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
 <style type="text/css">
 .nav-link.active {
 	background: #4c5667 !important;
@@ -46,6 +49,10 @@ tr th{
 .nav_toggle ul li > a{
 	padding: 8px 12px !important;
 	border-bottom: 1px solid #e5e5e5;
+}
+.popover {
+ 	z-index: 999999;
+ 	/*display: block !important;*/
 }
 .word-wrap{word-break: normal;}
 .scrollit { height:150px; width: auto; overflow-y:scroll; border: 1px solid; background: #f4f8fb;}
@@ -307,6 +314,50 @@ tr th{
 	<!-- /.modal-dialog -->
 </div>
 <!--/.jobDetail model-->
+<!--Job status delivery model-->
+<div class="modal fade" id="jobDeliveryModel" tabindex="-1" data-backdrop="true" style="display: none;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="exampleModalLabel1">Add&nbsp;Delivery Date and Time</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-body form-material">
+					<form method="POST" id="formAddDeliveryDateTime">
+						{{ csrf_field() }}
+						<div class="row m-t-10">
+							<div class="row col-md-12">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="col-md-12">Select Date of Deliver and Time to delivery </label>
+										<div class="">
+											<div class="col-md-4">
+												<input type="text" name="deliveryDate" id="deliveryDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
+												maxlength="10" value="{{ $jobDetails->delivery_date or '' }}">
+											</div>
+											<div class="col-md-4">
+												<div class="input-group clockpicker " data-placement="top">
+													<input type="text" id="deliveryTime" name="deliveryTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->delivery_time or '' }}">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer form-group">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>&nbsp;
+							<button type="submit" class="btn btn-success">Add</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--/.Job status delivery model-->
+
 @stop
 @section('pageSpecificJs')
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.js')}}"></script>
@@ -318,6 +369,8 @@ tr th{
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.html5.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/buttons.print.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.js')}}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		/*get job detail list*/
@@ -596,7 +649,15 @@ tr th{
 		var jobStatusId = $(this).val();
 		var jobId = $(this).attr('data-id');
 		var activeJobStatus = $(".toolbaractive").attr("data-id");
-
+		var deliveryDate = ''; var deliveryTime = '';
+		if(jobStatusId == 5) {
+			$('#jobDeliveryModel').modal('show');
+			var deliveryDate = $("#deliveryDate").val();
+			var deliveryTime = $("#deliveryTime").val();
+		}
+		//alert(deliveryDate);
+		//alert(deliveryTime);
+		return;
 		if (window.matchMedia('(max-width: 767px)').matches) {
 			var activeJobStatus = $(".toolbarmenu_active").attr("data-id");
 		} else {
@@ -621,6 +682,24 @@ tr th{
 		});
 	});
 
+	$('#formAddDeliveryDateTime').on('success.form.bv', function(e) {
+		e.preventDefault();
+		$('#jobDeliveryModel').modal('hide');
+	});
+
+	/*Date picker*/
+	$('#deliveryDate').datepicker({
+		autoclose: true,
+		todayHighlight: true,
+	});
+
+	$('.clockpicker').clockpicker({
+		twelvehour: true,
+		autoclose: true,
+		placement: 'bottom',
+	});
+
+	
 	$(".toolbar_btn").on('click', function(){
 		$(".toolbar_btn").removeClass('toolbaractive');
 		$(this).addClass('toolbaractive');
