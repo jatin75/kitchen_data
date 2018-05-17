@@ -139,15 +139,15 @@ tr th{
 				</div>
 				<div class="modal-body">
 					<div class="table-responsive" id="auditData"></div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-		<!-- /.modal-content -->
-	</div>
-	<!-- /.modal-dialog -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+					</div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>
 <!--/.Audit model-->
 <!--jobDetail model-->
