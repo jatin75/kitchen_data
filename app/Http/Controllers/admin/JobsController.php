@@ -20,17 +20,22 @@ class JobsController extends Controller
     public function index()
     {
         $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date,job_notes')->where('is_active', 1)->where('is_deleted', 0)->get();
+        $stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+        $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
 
         $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
-        return view('admin.jobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType);
+        return view('admin.jobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
     }
 
     public function showDeactivated()
     {
         $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->get();
 
+        $stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+        $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+
         $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
-        return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType);
+        return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
     }
 
     public function create()
@@ -407,6 +412,39 @@ class JobsController extends Controller
         return json_encode($response);
     }
 
+    public function editJobDateTimeModel(Request $request) {
+        $jobId = $request->get('jobId');
+        $getJobDetails = Job::selectRaw('delivery_datetime,installation_datetime,installation_employee_id,stone_installation_datetime,stone_installation_employee_id,job_status_id')->where('job_id',$jobId)->first();
+        $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
+        $getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
+        if(empty($getJobDetails->installation_datetime)) {
+            $getJobDetails->installation_date = null;
+            $getJobDetails->installation_time = null;
+        }else {
+            $getJobDetails->installation_date = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
+            $getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
+        }
+
+        if(empty($getJobDetails->stone_installation_datetime)) {
+            $getJobDetails->stone_installation_date = null;
+            $getJobDetails->stone_installation_time = null;
+        }else {
+            $getJobDetails->stone_installation_date = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
+            $getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
+        }
+
+        if (!empty($getJobDetails->installation_employee_id)) {
+            $getJobDetails->installation_employee_id = explode(",", $getJobDetails->installation_employee_id);
+        }
+        if (!empty($getJobDetails->stone_installation_employee_id)) {
+            $getJobDetails->stone_installation_employee_id = explode(",", $getJobDetails->stone_installation_employee_id);
+        }
+
+        $response['job_detail'] = $getJobDetails;
+        $response['key'] = 1;
+        return json_encode($response);
+    }
+
     public function changeJobStatus(Request $request)
     {
         $jobId = $request->get('jobId');
@@ -416,8 +454,16 @@ class JobsController extends Controller
         $key = ($jobStatusId == 8) ? 1 : 2;
 
         if($jobStatusId == 5) {
-            $delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryDate') . ' ' . $request->get('deliveryTime')));
+            $delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'delivery_datetime'=>$delivery_datetime]);
+        }elseif($jobStatusId == 6) {
+            $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+            $installation_employee_id = implode(',', $request->get('employee'));
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'installation_datetime'=>$installation_datetime,'installation_employee_id'=>$installation_employee_id,'is_select_installation'=>1]);
+        }elseif($jobStatusId == 7) {
+            $stoneInstallation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+            $stoneInstallation_employee_id = implode(',', $request->get('employee'));
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'stone_installation_datetime'=>$stoneInstallation_datetime,'stone_installation_employee_id'=>$stoneInstallation_employee_id,'is_select_stone_installation'=>1]);
         }else {
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
         }
@@ -441,7 +487,7 @@ class JobsController extends Controller
             $this->sendMailDelivery($getDetail);
             break;
             case 6:
-            $this->sendMailInstalling($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);
+            $this->sendMailInstallation($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);
             break;
             case 7:
             $this->sendMailStoneInstallation($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);

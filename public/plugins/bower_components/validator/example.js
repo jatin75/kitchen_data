@@ -229,6 +229,120 @@ $(document).ready(function () {
 		}
 	});
 
+	$('#formAddInstallingDateTime').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {
+			installationDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Date is required.'
+					},
+				}
+			},
+			installationTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+			selectInstallationEmployees: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Employee is required and can\'t be empty'
+					},
+				}
+			},
+		}
+	});
+
+	$('#formAddStoneInstallingDateTime').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {
+			stoneInstallationDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Date is required.'
+					},
+				}
+			},
+			stoneInstallationTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+			selectStoneInstallationEmployees: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Employee is required and can\'t be empty'
+					},
+				}
+			},
+		}
+	});
+
 	$('#formAddEmployee').bootstrapValidator({
 		excluded: ':disabled',
 		fields: {

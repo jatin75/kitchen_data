@@ -6,6 +6,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}"
 />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.css')}}" />
 <style type="text/css">
 .modal-footer {
 	padding-bottom: 0px !important;
@@ -17,6 +18,29 @@ tr th{
 .popover {
 	z-index: 999999;
 	/*display: block !important;*/
+}
+.bootstrap-select .dropdown-toggle:focus {
+	outline: 0px auto -webkit-focus-ring-color!important;
+}
+.dropdown-toggle::after {
+	display: inline-block;
+	position: relative;
+	right: 20px;
+}
+.bootstrap-select.btn-group .dropdown-toggle .filter-option {
+	padding-right: 15px;
+	text-overflow: ellipsis;
+}
+.btn-default {
+	background: #ffffff !important;
+	border: 1px solid #e4e7ea;
+	padding: 10px 5px !important;
+	font-size: 13px !important;
+	padding-bottom: 8px !important;
+	font-weight: 100 !important;
+}
+.btn-default:hover {
+	background: #e4e7ea !important;
 }
 .word-wrap{word-break: normal;}
 .scrollit { height:150px; width: auto; overflow-y:scroll; border: 1px solid; background: #f4f8fb;}
@@ -142,12 +166,12 @@ tr th{
 					<div class="modal-footer">
 						<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
 					</div>
-                </div>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
 </div>
 <!--/.Audit model-->
 <!--jobDetail model-->
@@ -345,14 +369,16 @@ tr th{
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="exampleModalLabel1">Add&nbsp;Delivery Date and Time</h4>
+				<h4 class="modal-title addDeliveryDateTime" id="exampleModalLabel1">Add&nbsp;Delivery Date and Time</h4>
+				<h4 class="modal-title addInstallingDateTime" id="exampleModalLabel1">Add&nbsp;Installation Date and Time</h4>
+				<h4 class="modal-title addStoneInstallingDateTime" id="exampleModalLabel1">Add&nbsp;Stone Installation Date and Time</h4>
 			</div>
 			<div class="modal-body">
 				<div class="form-body form-material">
 					<input type="hidden" id="hiddenChangeJobId" name="hiddenChangeJobId">
 					<input type="hidden" id="hiddenChangeJobStatus" name="hiddenChangeJobStatus">
 					<input type="hidden" id="hiddenChangeJobActiveStatus" name="hiddenChangeJobActiveStatus">
-					<form method="POST" id="formAddDeliveryDateTime">
+					<form method="POST" id="formAddDeliveryDateTime" class="addDeliveryDateTime">
 						{{ csrf_field() }}
 						<div class="row m-t-10">
 							<div class="row col-md-12">
@@ -362,13 +388,89 @@ tr th{
 										<div class="">
 											<div class="col-md-4">
 												<input type="text" name="deliveryDate" id="deliveryDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
-												maxlength="10" value="{{ $jobDetails->delivery_date or '' }}">
+												maxlength="10" value="">
 											</div>
 											<div class="col-md-4">
 												<div class="input-group clockpicker " data-placement="top">
-													<input type="text" id="deliveryTime" name="deliveryTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->delivery_time or '' }}">
+													<input type="text" id="deliveryTime" name="deliveryTime" class="form-control" placeholder="hh:mm" value="">
 												</div>
 											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer form-group">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>&nbsp;
+							<button type="submit" class="btn btn-success">Add</button>
+						</div>
+					</form>
+					<form method="POST" id="formAddInstallingDateTime" class="addInstallingDateTime">
+						{{ csrf_field() }}
+						<div class="row m-t-10">
+							<div class="row col-md-12">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="col-md-12">Select Date and Time of Installation </label>
+										<div class="">
+											<div class="col-md-4">
+												<input type="text" name="installationDate" id="installationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
+												maxlength="10" value="">
+											</div>
+											<div class="col-md-4">
+												<div class="input-group clockpicker " data-placement="top">
+													<input type="text" id="installationTime" name="installationTime" class="form-control" placeholder="hh:mm" value="">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group" style="overflow: visible!important;">
+											<label class="control-label"><b>INSTALLATION EMPLOYEES</b></label>
+											<select data-size="5" id="selectInstallationEmployees" name="selectInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+												@foreach($installEmployeeList as $installer)
+												<option value="{{ $installer->id }}">{{ $installer->employee_name }}
+												</option>
+												@endforeach
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer form-group">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>&nbsp;
+							<button type="submit" class="btn btn-success">Add</button>
+						</div>
+					</form>
+					<form method="POST" id="formAddStoneInstallingDateTime" class="addStoneInstallingDateTime">
+						{{ csrf_field() }}
+						<div class="row m-t-10">
+							<div class="row col-md-12">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="col-md-12">Select Date and Time of Stone Installation </label>
+										<div class="">
+											<div class="col-md-4">
+												<input type="text" name="stoneInstallationDate" id="stoneInstallationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
+												maxlength="10" value="">
+											</div>
+											<div class="col-md-8">
+												<div class="input-group clockpicker " data-placement="top">
+													<input type="text" id="stoneInstallationTime" name="stoneInstallationTime" class="form-control" placeholder="hh:mm" value="">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group" style="overflow: visible!important;">
+											<label class="control-label"><b>STONE INSTALLATION EMPLOYEES</b></label>
+											<select data-size="5" id="selectStoneInstallationEmployees" name="selectStoneInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+												@foreach($stoneEmployeeList as $stone)
+												<option value="{{ $stone->id }}">{{ $stone->employee_name }}
+												</option>
+												@endforeach
+											</select>
 										</div>
 									</div>
 								</div>
@@ -398,6 +500,7 @@ tr th{
 <script type="text/javascript" src="{{asset('plugins/bower_components/custom-select/custom-select.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.js')}}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		var date = $('#formatedDate').val();
@@ -527,28 +630,66 @@ tr th{
 	$(document).on('change','.jobType',function(){
 		var jobStatusId = $(this).val();
 		var jobId = $(this).attr('data-id');
-		var deliveryDate = ''; var deliveryTime = '';
+		var date = ''; var time = ''; var employee = '';
 
 		if (window.matchMedia('(max-width: 767px)').matches) {
 			var activeJobStatus = $(".toolbarmenu_active").attr("data-id");
 		} else {
 			var activeJobStatus = $(".toolbaractive").attr("data-id");
 		}
+		$("#hiddenChangeJobId").val(jobId);
+		$("#hiddenChangeJobStatus").val(jobStatusId);
+		$("#hiddenChangeJobActiveStatus").val(activeJobStatus);
+		if(jobStatusId == 5 || jobStatusId == 6 || jobStatusId == 7) {
+			$.ajax({
+				url:'{{ route('editjobdatetimemodel') }}',
+				data:{jobId:jobId},
+				type: 'post',
+				dataType: 'json',
+				success:function(data){
+					if(data.key == 1) {
+						$('#deliveryDate').val(data.job_detail.delivery_date);
+						$('#deliveryTime').val(data.job_detail.delivery_time);
+						$('#installationDate').val(data.job_detail.installation_date);
+						$('#installationTime').val(data.job_detail.installation_time);
+						$('#selectInstallationEmployees').selectpicker('val', data.job_detail.installation_employee_id);
+						$('#stoneInstallationDate').val(data.job_detail.stone_installation_date);
+						$('#stoneInstallationTime').val(data.job_detail.stone_installation_time);
+						$('#selectStoneInstallationEmployees').selectpicker('val', data.job_detail.stone_installation_employee_id);
+					}
+				}
+			});
+		}
+
 		if(jobStatusId == 5) {
+			$('.addInstallingDateTime').hide();
+			$('.addDeliveryDateTime').show();
+			$('.addStoneInstallingDateTime').hide();
 			$('#statusWiseJobModel').modal('show');
-			$("#hiddenChangeJobId").val(jobId);
-			$("#hiddenChangeJobStatus").val(jobStatusId);
-			$("#hiddenChangeJobActiveStatus").val(activeJobStatus);
-		}else {
-			changestatuswisejob(jobStatusId,jobId,activeJobStatus,deliveryDate,deliveryTime);
+			
+		}else if(jobStatusId == 6) {
+			$('.addInstallingDateTime').show();
+			$('.addDeliveryDateTime').hide();
+			$('.addStoneInstallingDateTime').hide();
+			$('#statusWiseJobModel').modal('show');
+			
+		}else if(jobStatusId == 7) {
+			$('.addStoneInstallingDateTime').show();
+			$('.addDeliveryDateTime').hide();
+			$('.addInstallingDateTime').hide();
+			$('#statusWiseJobModel').modal('show');
+			
+		}
+		else {
+			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
 		}
 	});
 
-	function changestatuswisejob(jobStatusId,jobId,activeJobStatus,deliveryDate,deliveryTime) {
+	function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee) {
 		$("#loader").show();
 		$.ajax({
 			url:'{{ route('changejobstatus') }}',
-			data:{jobStatusId:jobStatusId,jobId:jobId,deliveryDate:deliveryDate,deliveryTime:deliveryTime},
+			data:{jobStatusId:jobStatusId,jobId:jobId,date:date,time:time,employee:employee},
 			type: 'post',
 			dataType: 'json',
 			success:function(data){
@@ -568,12 +709,43 @@ tr th{
 		var jobId = $("#hiddenChangeJobId").val();
 		var jobStatusId = $("#hiddenChangeJobStatus").val();
 		var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
-		var deliveryDate = $("#deliveryDate").val();
-		var deliveryTime = $("#deliveryTime").val();
-		if(jobStatusId == 5 && deliveryDate != '' && deliveryTime != '') {
-			changestatuswisejob(jobStatusId,jobId,activeJobStatus,deliveryDate,deliveryTime);
+		var date = $("#deliveryDate").val();
+		var time = $("#deliveryTime").val();
+		var employee = '';
+		if(jobStatusId == 5 && date != '' && time != '') {
+			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
 		}
 	});
+
+	$('#formAddInstallingDateTime').on('success.form.bv', function(e) {
+		e.preventDefault();
+		$('#statusWiseJobModel').modal('hide');
+		var jobId = $("#hiddenChangeJobId").val();
+		var jobStatusId = $("#hiddenChangeJobStatus").val();
+		var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
+		var date = $("#installationDate").val();
+		var time = $("#installationTime").val();
+		var employee = $("#selectInstallationEmployees").val();
+		if(jobStatusId == 6 && date != '' && time != '' && employee != '') {
+			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+		}
+	});
+
+	$('#formAddStoneInstallingDateTime').on('success.form.bv', function(e) {
+		e.preventDefault();
+		$('#statusWiseJobModel').modal('hide');
+		var jobId = $("#hiddenChangeJobId").val();
+		var jobStatusId = $("#hiddenChangeJobStatus").val();
+		var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
+		var date = $("#stoneInstallationDate").val();
+		var time = $("#stoneInstallationTime").val();
+		var employee = $("#selectStoneInstallationEmployees").val();
+		if(jobStatusId == 7 && date != '' && time != '' && employee != '') {
+			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+		}
+	});
+
+	
 
 	/*set audit*/
 	$(".view-audit").click(function(){
@@ -743,9 +915,10 @@ tr th{
 
 	/* For select 2*/
 	$(".select2").select2();
+	$('.selectpicker').selectpicker();
 
 	/*Date picker*/
-	$('#deliveryDate').datepicker({
+	$('#deliveryDate,#installationDate,#stoneInstallationDate').datepicker({
 		autoclose: true,
 		todayHighlight: true,
 	});

@@ -49,7 +49,10 @@ class AdminHomeController extends Controller
 	/*showdashboard*/
 	public function showDashboard(){
 		$getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
-		return view('admin.dashboard')->with('jobTypeDetails',$getJobTypeDetail);
+		$stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+        $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+
+		return view('admin.dashboard')->with('jobTypeDetails',$getJobTypeDetail)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
 	}
 
 	public function logout()
@@ -186,7 +189,7 @@ class AdminHomeController extends Controller
 						<td>'.$jobDetail->job_title.'</td>
 						<td>'.$jobDetail->name.'</td>
 						<td>
-							<select class="form-control select2 jobType" name="jobType" id="jobType" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
 
 		                        foreach($getJobTypeDetails as $jobType) {
 		                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
@@ -213,7 +216,7 @@ class AdminHomeController extends Controller
 					<td>'.$jobDetail->job_title.'</td>
 					<td>'.$jobDetail->name.'</td>
 					<td>
-						<select class="form-control select2 jobType" name="jobType" id="jobType" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+						<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
 
 	                        foreach($getJobTypeDetails as $jobType) {
 	                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
