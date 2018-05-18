@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\admin\AdminHomeController;
 use App\JobType;
 date_default_timezone_set('UTC');
 use DB;
@@ -29,10 +30,17 @@ class ReportsController extends Controller
     }else {
       $jobStatusCond = "WHERE jb.job_status_id = {$status_id}";
     }
-    $getJobDetails = DB::select("SELECT jb.job_id,jb.company_id,jb.job_title,jb.address_1,jb.address_2,jb.city,jb.state,jb.zipcode,jb.apartment_number,jb.super_name,jb.super_phone_number,jb.contractor_name,jb.contractor_phone_number,jb.contractor_email,jb.working_employee_id,jb.company_clients_id,jb.plumbing_installation_date,jb.delivery_datetime,jb.installation_datetime,jb.installation_employee_id,jb.stone_installation_datetime,jb.stone_installation_employee_id,jb.start_date,jb.end_date,jbt.job_status_name
+    $getJobDetails = DB::select("SELECT jb.job_id,jb.company_id,jb.job_title,jb.address_1,jb.address_2,jb.city,jb.state,jb.zipcode,jb.apartment_number,jb.super_name,jb.super_phone_number,jb.contractor_name,jb.contractor_phone_number,jb.contractor_email,jb.working_employee_id,jb.company_clients_id,DATE_FORMAT(jb.plumbing_installation_date, '%m/%d/%Y') as plumbing_installation_date,DATE_FORMAT(jb.delivery_datetime, '%m/%d/%Y %h:%i%p') as delivery_datetime,DATE_FORMAT(jb.installation_datetime, '%m/%d/%Y %h:%i%p') as installation_datetime,jb.installation_employee_id,DATE_FORMAT(jb.stone_installation_datetime, '%m/%d/%Y %h:%i%p') as stone_installation_datetime,jb.stone_installation_employee_id,DATE_FORMAT(jb.start_date, '%m/%d/%Y') as start_date,DATE_FORMAT(jb.end_date, '%m/%d/%Y') as end_date,jbt.job_status_name
       FROM jobs AS jb
       JOIN job_types AS jbt ON jbt.job_status_id = jb.job_status_id
       {$jobStatusCond}");
+
+      foreach($getJobDetails as $data)
+      {
+        $data->super_phone_number = (!empty($data->super_phone_number)) ? (new AdminHomeController)->formatPhoneNumber($data->super_phone_number) : '';
+        $data->contractor_phone_number = (!empty($data->contractor_phone_number)) ? (new AdminHomeController)->formatPhoneNumber($data->contractor_phone_number) : '';
+
+      }
 
     $getJobDetails = json_decode(json_encode($getJobDetails), true);
     array_unshift($getJobDetails,array('job_id'=>'Job id','company_id'=>'Company id','job_title'=>'Job title','address_1'=>'Address1','address_2'=>'Address2','city'=>'City','state'=>'State','zipcode'=>'Zipcode','apartment_number'=>'Apartment number','super_name'=>'Super name','super_phone_number'=>'Super phone number','contractor_name'=>'Contractor name','contractor_phone_number'=>'Contractor phone number','contractor_email'=>'Contractor email','working_employee_id'=>'Working employee id','company_clients_id'=>'Company client id','plumbing_installation_date'=>'Plumbing installation date','delivery_datetime'=>'Delivery datetime','installation_datetime'=>'Installation datetime','installation_employee_id'=>'Installation employee id','stone_installation_datetime'=>'Stone installation datetime','Stone_installation_employee_id'=>'Stone installation employee id','start_date'=>'Start date','end_date'=>'End date','job_status_name'=>'Job status name'));

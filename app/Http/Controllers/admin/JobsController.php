@@ -451,24 +451,143 @@ class JobsController extends Controller
         $jobStatusId = $request->get('jobStatusId');
 
         $is_active = ($jobStatusId == 8) ? 0 : 1;
-        $key = ($jobStatusId == 8) ? 1 : 2;
+        $key1 = ($jobStatusId == 8) ? 1 : 2;
+        $oldValueArray = [];
+        $newValueArray = [];
 
         if($jobStatusId == 5) {
             $delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+
+            /*Audit Trail start*/
+            $jobDetail = DB::select("SELECT job_status_id,is_active,delivery_datetime FROM jobs WHERE job_id = '{$jobId}'");
+            $oldValueArray = json_decode(json_encode($jobDetail), true);
+            $oldValueArray = call_user_func_array('array_merge', $oldValueArray);
+            $newValueArray = array(
+                'job_status_id' => $jobStatusId,
+                'is_active' => $is_active,
+                'delivery_datetime'=>$delivery_datetime
+            );
+            foreach ($oldValueArray as $key => $old) {
+                if ($newValueArray[$key] != $oldValueArray[$key]) {
+                    $finalArray[] = array(
+                        'job_id' => $jobId,
+                        'field_name' => $key,
+                        'old_value' => $oldValueArray[$key],
+                        'new_value' => $newValueArray[$key],
+                        'employee_id' => Session::get('employee_id'),
+                        'name' => Session::get('name'),
+                        'login_type_id' => Session::get('login_type_id'),
+                    );
+                }
+            }
+            if (isset($finalArray) && !empty($finalArray)) {
+                AuditTrail::insert($finalArray);
+            }
+            /*Audit Trail end*/
+
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'delivery_datetime'=>$delivery_datetime]);
+
         }elseif($jobStatusId == 6) {
             $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
             $installation_employee_id = implode(',', $request->get('employee'));
+
+            /*Audit Trail start*/
+            $jobDetail = DB::select("SELECT job_status_id,is_active,installation_datetime,installation_employee_id,is_select_installation FROM jobs WHERE job_id = '{$jobId}'");
+            $oldValueArray = json_decode(json_encode($jobDetail), true);
+            $oldValueArray = call_user_func_array('array_merge', $oldValueArray);
+            $newValueArray = array(
+                'job_status_id' => $jobStatusId,
+                'is_active' => $is_active,
+                'installation_datetime'=>$installation_datetime,
+                'installation_employee_id'=>$installation_employee_id,
+                'is_select_installation'=>1
+            );
+            foreach ($oldValueArray as $key => $old) {
+                if ($newValueArray[$key] != $oldValueArray[$key]) {
+                    $finalArray[] = array(
+                        'job_id' => $jobId,
+                        'field_name' => $key,
+                        'old_value' => $oldValueArray[$key],
+                        'new_value' => $newValueArray[$key],
+                        'employee_id' => Session::get('employee_id'),
+                        'name' => Session::get('name'),
+                        'login_type_id' => Session::get('login_type_id'),
+                    );
+                }
+            }
+            if (isset($finalArray) && !empty($finalArray)) {
+                AuditTrail::insert($finalArray);
+            }
+            /*Audit Trail end*/
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'installation_datetime'=>$installation_datetime,'installation_employee_id'=>$installation_employee_id,'is_select_installation'=>1]);
+
         }elseif($jobStatusId == 7) {
             $stoneInstallation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
             $stoneInstallation_employee_id = implode(',', $request->get('employee'));
+
+            /*Audit Trail start*/
+            $jobDetail = DB::select("SELECT job_status_id,is_active,stone_installation_datetime,stone_installation_employee_id,is_select_stone_installation FROM jobs WHERE job_id = '{$jobId}'");
+            $oldValueArray = json_decode(json_encode($jobDetail), true);
+            $oldValueArray = call_user_func_array('array_merge', $oldValueArray);
+            $newValueArray = array(
+                'job_status_id' => $jobStatusId,
+                'is_active' => $is_active,
+                'stone_installation_datetime'=>$stoneInstallation_datetime,
+                'stone_installation_employee_id'=>$stoneInstallation_employee_id,
+                'is_select_stone_installation'=>1
+            );
+            foreach ($oldValueArray as $key => $old) {
+                if ($newValueArray[$key] != $oldValueArray[$key]) {
+                    $finalArray[] = array(
+                        'job_id' => $jobId,
+                        'field_name' => $key,
+                        'old_value' => $oldValueArray[$key],
+                        'new_value' => $newValueArray[$key],
+                        'employee_id' => Session::get('employee_id'),
+                        'name' => Session::get('name'),
+                        'login_type_id' => Session::get('login_type_id'),
+                    );
+                }
+            }
+            if (isset($finalArray) && !empty($finalArray)) {
+                AuditTrail::insert($finalArray);
+            }
+            /*Audit Trail end*/
+
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'stone_installation_datetime'=>$stoneInstallation_datetime,'stone_installation_employee_id'=>$stoneInstallation_employee_id,'is_select_stone_installation'=>1]);
+
         }else {
+
+            /*Audit Trail start*/
+            $jobDetail = DB::select("SELECT job_status_id,is_active FROM jobs WHERE job_id = '{$jobId}'");
+            $oldValueArray = json_decode(json_encode($jobDetail), true);
+            $oldValueArray = call_user_func_array('array_merge', $oldValueArray);
+            $newValueArray = array(
+                'job_status_id' => $jobStatusId,
+                'is_active' => $is_active
+            );
+            foreach ($oldValueArray as $key => $old) {
+                if ($newValueArray[$key] != $oldValueArray[$key]) {
+                    $finalArray[] = array(
+                        'job_id' => $jobId,
+                        'field_name' => $key,
+                        'old_value' => $oldValueArray[$key],
+                        'new_value' => $newValueArray[$key],
+                        'employee_id' => Session::get('employee_id'),
+                        'name' => Session::get('name'),
+                        'login_type_id' => Session::get('login_type_id'),
+                    );
+                }
+            }
+            if (isset($finalArray) && !empty($finalArray)) {
+                AuditTrail::insert($finalArray);
+            }
+            /*Audit Trail end*/
+
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
         }
 
-        $response['key'] = $key;
+        $response['key'] = $key1;
 
         /*send Mail*/
         $getDetail = Job::where('job_id',$jobId)->where('is_deleted',0)->first();
