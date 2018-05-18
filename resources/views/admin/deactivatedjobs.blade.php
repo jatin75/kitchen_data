@@ -82,7 +82,7 @@ tr th{
                             <td>{{$job->job_title}}</td>
                             <td>{{$job->job_id}}</td>
                             <td>
-                                <select class="form-control select2 jobType" name="jobType" id="jobType" placeholder="Select your job type" data-id="{{$job->job_id}}">
+                                <select class="form-control select2 jobType" name="jobType" id="jobType_{{$job->job_id}}" placeholder="Select your job type" data-id="{{$job->job_id}}">
                                     @foreach($jobTypeDetails as $jobType)
                                     <option value="{{ $jobType->job_status_id }}" @if(isset($job->job_status_id) && $job->job_status_id == $jobType->job_status_id) {{"selected='selected'"}} @endif> {{ $jobType->job_status_name }}</option>
                                     @endforeach
@@ -376,6 +376,9 @@ tr th{
                 dataType: 'json',
                 success:function(data){
                     if(data.key == 1) {
+                        var jobstatus = data.job_detail.job_status_id;
+                        $("#jobType_"+jobId).find('option').removeAttr("selected");
+                        $("#jobType_"+jobId).select2("val", jobstatus);
                         $('#deliveryDate').val(data.job_detail.delivery_date);
                         $('#deliveryTime').val(data.job_detail.delivery_time);
                         $('#installationDate').val(data.job_detail.installation_date);
@@ -440,6 +443,7 @@ tr th{
         var date = $("#deliveryDate").val();
         var time = $("#deliveryTime").val();
         var employee = '';
+        $("#jobType_"+jobId).select2("val", jobStatusId);
         if(jobStatusId == 5 && date != '' && time != '') {
             changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
         }
@@ -454,6 +458,7 @@ tr th{
         var date = $("#installationDate").val();
         var time = $("#installationTime").val();
         var employee = $("#selectInstallationEmployees").val();
+        $("#jobType_"+jobId).select2("val", jobStatusId);
         if(jobStatusId == 6 && date != '' && time != '' && employee != '') {
             changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
         }
@@ -468,6 +473,7 @@ tr th{
         var date = $("#stoneInstallationDate").val();
         var time = $("#stoneInstallationTime").val();
         var employee = $("#selectStoneInstallationEmployees").val();
+        $("#jobType_"+jobId).select2("val", jobStatusId);
         if(jobStatusId == 7 && date != '' && time != '' && employee != '') {
             changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
         }

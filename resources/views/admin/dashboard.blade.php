@@ -513,12 +513,12 @@ tr th{
 							extend: 'csv',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5 ],
+								columns: [ 1,2,3,4,5,6 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 2) {
+										if (col == 3) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: 3} )
+											.cell( {row: row, column: 4} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -534,12 +534,12 @@ tr th{
 							extend: 'excel',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5 ],
+								columns: [ 1,2,3,4,5,6 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 2) {
+										if (col == 3) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: 3} )
+											.cell( {row: row, column: 4} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -556,12 +556,12 @@ tr th{
 							pageSize: 'LEGAL',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5],
+								columns: [ 1,2,3,4,5,6],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 2) {
+										if (col == 3) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: 3} )
+											.cell( {row: row, column: 4} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -577,12 +577,12 @@ tr th{
 							extend: 'print',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5 ],
+								columns: [ 1,2,3,4,5,6 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 2) {
+										if (col == 3) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: 3} )
+											.cell( {row: row, column: 4} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -844,6 +844,7 @@ tr th{
 		var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
 		var date = $("#deliveryDate").val();
 		var time = $("#deliveryTime").val();
+		$("#jobType_"+jobId).select2("val", jobStatusId);
 		var employee = '';
 		if(jobStatusId == 5 && date != '' && time != '') {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
@@ -859,6 +860,7 @@ tr th{
 		var date = $("#installationDate").val();
 		var time = $("#installationTime").val();
 		var employee = $("#selectInstallationEmployees").val();
+		$("#jobType_"+jobId).select2("val", jobStatusId);
 		if(jobStatusId == 6 && date != '' && time != '' && employee != '') {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
 		}
@@ -873,6 +875,7 @@ tr th{
 		var date = $("#stoneInstallationDate").val();
 		var time = $("#stoneInstallationTime").val();
 		var employee = $("#selectStoneInstallationEmployees").val();
+		$("#jobType_"+jobId).select2("val", jobStatusId);
 		if(jobStatusId == 7 && date != '' && time != '' && employee != '') {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
 		}

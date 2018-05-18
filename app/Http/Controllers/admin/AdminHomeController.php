@@ -163,6 +163,7 @@ class AdminHomeController extends Controller
 		<tr>
 		<th class="text-center">Actions</th>
 		<th>Job Name</th>
+		<th>Job Id</th>
 		<th>Company Name</th>
 		<th>Job Status</th>
 		<th>Start Date</th>
@@ -187,6 +188,7 @@ class AdminHomeController extends Controller
 							</span>
 						</td>
 						<td>'.$jobDetail->job_title.'</td>
+						<td>'.$jobDetail->job_id.'</td>
 						<td>'.$jobDetail->name.'</td>
 						<td>
 							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
@@ -214,6 +216,7 @@ class AdminHomeController extends Controller
 						</span>
 					</td>
 					<td>'.$jobDetail->job_title.'</td>
+					<td>'.$jobDetail->job_id.'</td>
 					<td>'.$jobDetail->name.'</td>
 					<td>
 						<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
