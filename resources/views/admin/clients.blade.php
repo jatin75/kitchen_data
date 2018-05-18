@@ -100,7 +100,7 @@ tr th{
 <script type="text/javascript">
     $(document).ready(function() {
         var date = $('#formatedDate').val();
-        var value = 'Kitchen_employee_' + date;
+        var value = 'Kitchen_clients_' + date;
         $('#jobList').DataTable({
             dom: 'Bfrtip',
             buttons: [

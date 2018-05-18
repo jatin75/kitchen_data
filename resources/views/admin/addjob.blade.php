@@ -72,7 +72,7 @@
 					<!--header-->
 					<div class="row">
 						<div class="col-md-4 col-sm-4 col-xs-4 m-t-15 m-l-15">
-							<a class="previous-href btn btn-circle" href="{{URL::previous()}}" title="Previous">
+							<a class="previous-href btn btn-circle" href="{{route('activejobs')}}" title="Previous">
 								<i class="ti-arrow-left"></i>
 							</a>
 						</div>

@@ -31,7 +31,7 @@
 					<!--header-->
 					<div class="row">
 						<div class="col-md-4 col-sm-4 col-xs-4 m-t-15 m-l-15">
-							<a class="btn btn-default btn-circle" href="{{URL::previous()}}" title="Previous"><i class="ti-arrow-left"></i> </a>
+							<a class="btn btn-default btn-circle" href="{{route('showclientcompany')}}" title="Previous"><i class="ti-arrow-left"></i> </a>
 						</div>
 						{{-- <div class="col-md-4 col-sm-4 col-xs-4 text-center">
 							<h2 class="_600" id="pageName">Add Account</h2>

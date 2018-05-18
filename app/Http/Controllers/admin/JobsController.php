@@ -19,7 +19,7 @@ class JobsController extends Controller
 {
     public function index()
     {
-        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date,job_notes')->where('is_active', 1)->where('is_deleted', 0)->get();
+        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 1)->where('is_deleted', 0)->orderBy('created_at','DESC')->get();
         $stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
 
@@ -29,7 +29,7 @@ class JobsController extends Controller
 
     public function showDeactivated()
     {
-        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->get();
+        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->orderBy('updated_at','DESC')->get();
 
         $stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
@@ -449,7 +449,7 @@ class JobsController extends Controller
     {
         $jobId = $request->get('jobId');
         $jobStatusId = $request->get('jobStatusId');
-        
+
         $is_active = ($jobStatusId == 8) ? 0 : 1;
         $key = ($jobStatusId == 8) ? 1 : 2;
 
@@ -467,7 +467,7 @@ class JobsController extends Controller
         }else {
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active]);
         }
-        
+
         $response['key'] = $key;
 
         /*send Mail*/

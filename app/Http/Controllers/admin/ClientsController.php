@@ -20,7 +20,7 @@ class ClientsController extends Controller
 			FROM clients AS cl
 			JOIN companies AS cmp ON cmp.company_id = cl.company_id
 			JOIN admin_users AS au ON au.id = cl.client_id
-			WHERE cl.is_deleted = 0 AND au.is_deleted = 0");
+			WHERE cl.is_deleted = 0 AND au.is_deleted = 0 ORDER BY au.created_at DESC");
         return view('admin.clients')->with('clientDetails', $getClientDetails);
     }
 

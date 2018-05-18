@@ -19,7 +19,7 @@ class EmployeesController extends Controller
     {
         $employee = DB::select("SELECT au.first_name,au.last_name,au.phone_number,au.email,au.login_type_id,au.created_at,au.id,lt.type_name
 			FROM admin_users AS au
-			JOIN login_types AS lt ON lt.login_type_id = au.login_type_id WHERE au.is_deleted = 0 AND au.login_type_id <> 9");
+			JOIN login_types AS lt ON lt.login_type_id = au.login_type_id WHERE au.is_deleted = 0 AND au.login_type_id <> 9 ORDER BY au.created_at DESC");
         return view('admin.employee')->with('employeeList', $employee);
     }
 
@@ -87,7 +87,6 @@ class EmployeesController extends Controller
                 $objEmployee->save();
 
                 /*send Mail*/
-
                  Mail::send('emails.AdminPanel_EmployeeCreated',array(
                 'password' => $employee_password,
                 'email' => $employee_email,

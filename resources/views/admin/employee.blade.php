@@ -18,7 +18,7 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-       <h4 class="page-title">Administration > Employee</h4>
+       <h4 class="page-title">Employees</h4>
    </div>
 </div>
 <div class="row">
@@ -101,6 +101,7 @@ tr th{
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
+                /* orientation: 'landscape', */
                 title: value,
                 exportOptions: {columns: [ 1,2,3,4,5,6,7]},
             },
