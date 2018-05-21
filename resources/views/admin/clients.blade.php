@@ -52,7 +52,7 @@ tr th{
                                 <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editclient',['client_id' => $client->client_id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
-                                <a class="btn btn-danger btn-circle" onclick="return confirm('You can\'t reactivate client. Are you sure you want to remove this client?');" href="{{route('deleteclient',['client_id' => $client->client_id])}}" data-toggle="tooltip" data-placement="top" title="Remove Client"><i class="ti-trash"></i> </a>
+                                {{-- <a class="btn btn-danger btn-circle" onclick="return confirm('You can\'t reactivate client. Are you sure you want to remove this client?');" href="{{route('deleteclient',['client_id' => $client->client_id])}}" data-toggle="tooltip" data-placement="top" title="Remove Client"><i class="ti-trash"></i> </a> --}}
                             </td>
                             <td>{{strtoupper($client->first_name)}}</td>
                             <td>{{strtoupper($client->last_name)}}</td>

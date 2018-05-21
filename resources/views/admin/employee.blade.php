@@ -48,7 +48,7 @@ tr th{
                                 <a data-toggle="tooltip" data-placement="top" title="Edit Employee" class="btn btn-info btn-circle" href="{{route('editemployee',['employee_id' => $employee_member->id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
-                                <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this employee?');" href="{{route('deleteemployee',['employee_id' => $employee_member->id])}}" data-toggle="tooltip" data-placement="top" title="Delete Employee"><i class="ti-trash"></i> </a>
+                                {{-- <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this employee?');" href="{{route('deleteemployee',['employee_id' => $employee_member->id])}}" data-toggle="tooltip" data-placement="top" title="Delete Employee"><i class="ti-trash"></i> </a> --}}
                             </td>
                             <td>{{strtoupper($employee_member->first_name)}}</td>
                             <td>{{strtoupper($employee_member->last_name)}}</td>

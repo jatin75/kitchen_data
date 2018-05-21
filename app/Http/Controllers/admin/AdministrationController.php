@@ -12,6 +12,9 @@ use Session;
 use Mail;
 use Validator;
 use App\Company;
+use App\Job;
+use App\Admin;
+use App\Client;
 
 class AdministrationController extends Controller
 {
@@ -76,6 +79,16 @@ class AdministrationController extends Controller
 	public function destroy($company_id)
 	{
 		Company::where('company_id',$company_id)->update(['is_deleted' => 1]);
+		Job::where('company_id',$company_id)->update(['is_deleted' => 1]);
+		/*Client::where('company_id',$company_id)->update(['is_deleted' => 1]);
+		$getClient = Client::selectRaw('client_id')->where('company_id',$company_id)->get();
+		if(sizeof($getClient) > 0) {
+			for($i=0; $i<sizeof($getClient); $i++) {
+				$client_id = $getClient[$i]->client_id;
+				Admin::where('id',$client_id)->update(['is_deleted' => 1]);
+			}
+		}*/
+				
 		$msg = 'Company deleted successfully.';
 		Session::flash('successMessage',$msg);
 		return back();

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{asset('plugins/images/goleague/goleague_favicon.png')}}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{asset('plugins/images/kitchen/A&S.jpg')}}">
   <link href="{{asset('plugins/images/goleague/GoLEAGUE_Webclip.png') }}" rel="apple-touch-icon">
   <title>Kitchen Inc</title>
   <!-- Bootstrap Core CSS -->

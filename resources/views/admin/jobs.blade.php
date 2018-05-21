@@ -659,6 +659,7 @@ tr th{
 						$('#stoneInstallationDate').val(data.job_detail.stone_installation_date);
 						$('#stoneInstallationTime').val(data.job_detail.stone_installation_time);
 						$('#selectStoneInstallationEmployees').selectpicker('val', data.job_detail.stone_installation_employee_id);
+						$('#statusWiseJobModel').modal('show');
 					}
 				}
 			});
@@ -668,19 +669,19 @@ tr th{
 			$('.addInstallingDateTime').hide();
 			$('.addDeliveryDateTime').show();
 			$('.addStoneInstallingDateTime').hide();
-			$('#statusWiseJobModel').modal('show');
+			//$('#statusWiseJobModel').modal('show');
 			
 		}else if(jobStatusId == 6) {
 			$('.addInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addStoneInstallingDateTime').hide();
-			$('#statusWiseJobModel').modal('show');
+			//$('#statusWiseJobModel').modal('show');
 			
 		}else if(jobStatusId == 7) {
 			$('.addStoneInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addInstallingDateTime').hide();
-			$('#statusWiseJobModel').modal('show');
+			//$('#statusWiseJobModel').modal('show');
 			
 		}
 		else {
