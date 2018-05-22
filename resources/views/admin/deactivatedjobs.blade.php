@@ -105,9 +105,9 @@ tr th{
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title addDeliveryDateTime" id="exampleModalLabel1">Add&nbsp;Delivery Date and Time</h4>
-                <h4 class="modal-title addInstallingDateTime" id="exampleModalLabel1">Add&nbsp;Installation Date and Time</h4>
-                <h4 class="modal-title addStoneInstallingDateTime" id="exampleModalLabel1">Add&nbsp;Stone Installation Date and Time</h4>
+                <h4 class="modal-title addDeliveryDateTime" id="exampleModalLabel1">Add&nbsp;Delivery Details</h4>
+                <h4 class="modal-title addInstallingDateTime" id="exampleModalLabel1">Add&nbsp;Installation Details</h4>
+                <h4 class="modal-title addStoneInstallingDateTime" id="exampleModalLabel1">Add&nbsp;Stone Installation Details</h4>
             </div>
             <div class="modal-body">
                 <div class="form-body form-material">
@@ -120,7 +120,7 @@ tr th{
                             <div class="row col-md-12">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-md-12">Select Date of Deliver and Time to delivery </label>
+                                        <label class="col-md-12">DELIVERY DATE AND TIME </label>
                                         <div class="">
                                             <div class="col-md-4">
                                                 <input type="text" name="deliveryDate" id="deliveryDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
@@ -143,11 +143,11 @@ tr th{
                     </form>
                     <form method="POST" id="formAddInstallingDateTime" class="addInstallingDateTime">
                         {{ csrf_field() }}
-                        <div class="row m-t-10">
+                        <div class="row">
                             <div class="row col-md-12">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-md-12">Select Date and Time of Installation </label>
+                                        <label class="control-label">INSTALLATION DATE AND TIME </label>
                                         <div class="">
                                             <div class="col-md-4">
                                                 <input type="text" name="installationDate" id="installationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
@@ -160,16 +160,18 @@ tr th{
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group" style="overflow: visible!important;">
-                                            <label class="control-label"><b>INSTALLATION EMPLOYEES</b></label>
-                                            <select data-size="5" id="selectInstallationEmployees" name="selectInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
-                                                @foreach($installEmployeeList as $installer)
-                                                <option value="{{ $installer->id }}">{{ $installer->employee_name }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="row col-md-12">
+                                <div class="col-md-8">
+                                    <div class="form-group" style="overflow: visible!important;">
+                                        <label class="control-label"><b>INSTALLATION EMPLOYEES</b></label>
+                                        <select data-size="5" id="selectInstallationEmployees" name="selectInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+                                            @foreach($installEmployeeList as $installer)
+                                            <option value="{{ $installer->id }}">{{ $installer->employee_name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -181,33 +183,35 @@ tr th{
                     </form>
                     <form method="POST" id="formAddStoneInstallingDateTime" class="addStoneInstallingDateTime">
                         {{ csrf_field() }}
-                        <div class="row m-t-10">
+                        <div class="row">
                             <div class="row col-md-12">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-md-12">Select Date and Time of Stone Installation </label>
+                                        <label class="control-label">STONE INSTALLATION DATE AND TIME </label>
                                         <div class="">
                                             <div class="col-md-4">
                                                 <input type="text" name="stoneInstallationDate" id="stoneInstallationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
                                                 maxlength="10" value="">
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-4">
                                                 <div class="input-group clockpicker " data-placement="top">
                                                     <input type="text" id="stoneInstallationTime" name="stoneInstallationTime" class="form-control" placeholder="hh:mm" value="">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group" style="overflow: visible!important;">
-                                            <label class="control-label"><b>STONE INSTALLATION EMPLOYEES</b></label>
-                                            <select data-size="5" id="selectStoneInstallationEmployees" name="selectStoneInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
-                                                @foreach($stoneEmployeeList as $stone)
-                                                <option value="{{ $stone->id }}">{{ $stone->employee_name }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="row col-md-12">
+                                <div class="col-md-8">
+                                    <div class="form-group" style="overflow: visible!important;">
+                                        <label class="control-label"><b>STONE INSTALLATION EMPLOYEES</b></label>
+                                        <select data-size="5" id="selectStoneInstallationEmployees" name="selectStoneInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+                                            @foreach($stoneEmployeeList as $stone)
+                                            <option value="{{ $stone->id }}">{{ $stone->employee_name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -369,12 +373,14 @@ tr th{
         $("#hiddenChangeJobStatus").val(jobStatusId);
         $("#hiddenChangeJobActiveStatus").val(activeJobStatus);
         if(jobStatusId == 5 || jobStatusId == 6 || jobStatusId == 7) {
+            $("#loader").show();
             $.ajax({
                 url:'{{ route('editjobdatetimemodel') }}',
                 data:{jobId:jobId},
                 type: 'post',
                 dataType: 'json',
                 success:function(data){
+                    $('#loader').hide();
                     if(data.key == 1) {
                         var jobstatus = data.job_detail.job_status_id;
                         $("#jobType_"+jobId).find('option').removeAttr("selected");

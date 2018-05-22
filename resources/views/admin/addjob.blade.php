@@ -713,11 +713,6 @@
 	/*Mask phone Number Digits*/
 	$("#superPhoneNumber,#contractorPhoneNumber").mask("(999) 999 - 9999");
 
-	/*Date picker*/
-	jQuery('#jobEndDate,#plumbingInstallationDate,#deliveryDate,#installationDate,#stoneInstallationDate').datepicker({
-		autoclose: true,
-		todayHighlight: true,
-	});
 	jQuery('#jobStartDate').datepicker({
 		autoclose: true,
 		todayHighlight: true,
@@ -725,6 +720,12 @@
 		$('#jobEndDate').datepicker('setStartDate', new Date($(this).val()))
 	});
 
+	/*Date picker*/
+	jQuery('#jobEndDate,#plumbingInstallationDate,#deliveryDate,#installationDate,#stoneInstallationDate').datepicker({
+		autoclose: true,
+		todayHighlight: true,
+	});
+	
 	function changePermission(id) {
 		var value = $('#access_' + id).val();
 		if (value == 1) {
