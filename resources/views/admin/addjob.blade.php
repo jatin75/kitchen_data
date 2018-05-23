@@ -519,16 +519,16 @@
 		.enableFieldValidators('stoneInstallationEmployees', false);
 	});
 
-	$("#installationDate").change(function(){
-		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('installationDate', true);
-		$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate');
-	});
-
 	$("#installationTime").change(function(){
 		$('#formAddJob').data('bootstrapValidator')
 		.enableFieldValidators('installationTime', true);
 		$('#formAddJob').bootstrapValidator('revalidateField', 'installationTime');
+	});
+
+	$("#installationEmployees").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('installationEmployees', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'installationEmployees');
 	});
 
 	$("#stoneInstallationTime").change(function(){
@@ -721,10 +721,10 @@
 		$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate');
 	});
 	/*installation date*/
-	$("#installationEmployees").change(function(){
+	$("#installationDate").change(function(){
 		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('installationEmployees', true);
-		$('#formAddJob').bootstrapValidator('revalidateField', 'installationEmployees');
+		.enableFieldValidators('installationDate', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate');
 	});
 	
 	function changePermission(id) {
