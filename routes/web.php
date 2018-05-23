@@ -42,6 +42,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::post('jobs/viewjobdetails', 'admin\JobsController@viewJobDetails')->name('viewjobdetails');
     Route::post('jobs/showaudittrail', 'admin\JobsController@showAuditTrail')->name('showaudittrail');
     Route::post('jobs/changejobstatus', 'admin\JobsController@changeJobStatus')->name('changejobstatus');
+    Route::post('jobs/sendmailchangejobstatus', 'admin\JobsController@SendMailChangeJobStatus')->name('sendmailchangejobstatus');
     Route::post('jobs/editnote', 'admin\JobsController@editNote')->name('editnote');
     Route::post('jobs/destroynote', 'admin\JobsController@destroyNote')->name('destroynote');
     Route::post('jobs/editjobmodel', 'admin\JobsController@editJobDateTimeModel')->name('editjobdatetimemodel');

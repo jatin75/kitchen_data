@@ -531,18 +531,6 @@
 		$('#formAddJob').bootstrapValidator('revalidateField', 'installationTime');
 	});
 
-	$("#installationEmployees").change(function(){
-		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('installationEmployees', true);
-		$('#formAddJob').bootstrapValidator('revalidateField', 'installationEmployees');
-	});
-
-	$("#stoneInstallationDate").change(function(){
-		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('stoneInstallationDate', true);
-		$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate');
-	});
-
 	$("#stoneInstallationTime").change(function(){
 		$('#formAddJob').data('bootstrapValidator')
 		.enableFieldValidators('stoneInstallationTime', true);
@@ -724,6 +712,19 @@
 	jQuery('#jobEndDate,#plumbingInstallationDate,#deliveryDate,#installationDate,#stoneInstallationDate').datepicker({
 		autoclose: true,
 		todayHighlight: true,
+	});
+
+	/*Stone installation date*/
+	$("#stoneInstallationDate").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('stoneInstallationDate', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationDate');
+	});
+	/*installation date*/
+	$("#installationEmployees").change(function(){
+		$('#formAddJob').data('bootstrapValidator')
+		.enableFieldValidators('installationEmployees', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'installationEmployees');
 	});
 	
 	function changePermission(id) {

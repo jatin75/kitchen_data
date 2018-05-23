@@ -709,6 +709,14 @@ tr th{
 					table.row('.changestatus_'+jobId).remove().draw(false);
 				}
 				notify('Job Status has been Changed Successfully.','blackgloss');
+				/*$.ajax({
+					url:'{{ route('sendmailchangejobstatus') }}',
+					data:{jobStatusId:jobStatusId,jobId:jobId},
+					type: 'post',
+					dataType: 'json',
+					success:function(data){
+					}
+				});*/
 			}
 		});
 	}
