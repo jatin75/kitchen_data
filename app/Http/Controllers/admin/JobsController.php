@@ -333,12 +333,12 @@ class JobsController extends Controller
                 <span id="updated_date">'. date('m/d/Y', strtotime($single_note->updated_at)) .'</span>
                 </div>
                 <div class="col-xs-2">
-                <a class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
+                <a data-toggle="tooltip" data-placement="top" class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
                 <i class="ti-pencil-alt"></i>
                 </a>
                 </div>
                 <div class="col-xs-2">
-                <a class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
+                <a data-toggle="tooltip" data-placement="top" class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
                 <i class="ti-trash"></i>
                 </a>
                 </div>
@@ -376,7 +376,7 @@ class JobsController extends Controller
     {
         $job_id = $request->get('job_id');
         $html = '';
-        $auditList = DB::select("SELECT * FROM audit_trail WHERE job_id = '{$job_id}'");
+        $auditList = AuditTrail::where('job_id',$job_id)->get();
         $html .= '<table id="auditList" class="display nowrap" cellspacing="0" width="100%">
         <thead>
         <tr>

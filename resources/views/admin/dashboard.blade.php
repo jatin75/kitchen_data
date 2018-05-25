@@ -82,6 +82,8 @@ tr th{
 }
 .word-wrap{word-break: normal;}
 .scrollit { height:150px; width: auto; overflow-y:scroll; border: 1px solid; background: #f4f8fb;}
+.edit-note{cursor: pointer;}
+.delete-note{cursor: pointer;}
 </style>
 @stop
 @section('content')

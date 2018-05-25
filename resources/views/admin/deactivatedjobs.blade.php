@@ -338,27 +338,6 @@ tr th{
     });
 
     /*change job status*/
-    /*$(".jobType").change(function() {
-        var jobStatusId = $(this).val();
-        var jobId = $(this).attr('data-id');
-        $("#loader").show();
-        $.ajax({
-            url:'{{ route('changejobstatus') }}',
-            data:{jobStatusId:jobStatusId,jobId:jobId},
-            type: 'post',
-            dataType: 'json',
-            success:function(data){
-                $("#loader").hide();
-                if(data.key != 1 ) {
-                    var table = $('#jobList').DataTable();
-                    table.row('.changestatus_'+jobId).remove().draw(false);
-                }
-                notify('Job Status has been Changed Successfully.','blackgloss');
-            }
-        });
-    });*/
-
-    /*change job status*/
     $(document).on('change','.jobType',function(){
         var jobStatusId = $(this).val();
         var jobId = $(this).attr('data-id');
