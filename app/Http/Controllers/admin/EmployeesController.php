@@ -119,9 +119,9 @@ class EmployeesController extends Controller
         return back();
     }
 
-    public function editMyProfile($email)
+    public function editMyProfile($id)
     {
-        $getEmployeeDetail = Admin::selectRaw('first_name,last_name,phone_number,email,login_type_id,id')->where('email', $email)->get();
+        $getEmployeeDetail = Admin::selectRaw('first_name,last_name,phone_number,email,login_type_id,id')->where('id', $id)->get();
         if (sizeof($getEmployeeDetail) > 0) {
             $getEmployeeDetail = $getEmployeeDetail[0];
         }

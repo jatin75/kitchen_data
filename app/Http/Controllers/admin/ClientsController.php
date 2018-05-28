@@ -76,6 +76,7 @@ class ClientsController extends Controller
                 Session::pull('email');
                 Session::put('email',$client_email);
                 $response['name'] = Session::get('name');
+                $response['email'] = $client_email;
             }
             $objAdmin->first_name = $request->get('client_first_name');
             $objAdmin->last_name = $request->get('client_last_name');
@@ -156,12 +157,12 @@ class ClientsController extends Controller
         return json_encode($response);
     }
 
-    public function editMyProfile($email)
+    public function editMyProfile($id)
     {
         $getClientDetails = DB::select("SELECT cl.client_id,cl.company_id,cl.address_1,cl.address_2,cl.city,cl.state,cl.zipcode,cl.contact_preference,au.email,au.first_name,au.last_name,au.phone_number
 			FROM clients AS cl
 			JOIN admin_users AS au ON au.id = cl.client_id
-			WHERE cl.is_deleted = 0 AND au.is_deleted = 0 AND au.email = '{$email}'");
+			WHERE cl.is_deleted = 0 AND au.is_deleted = 0 AND au.id = '{$id}'");
         if (sizeof($getClientDetails) > 0) {
             $getClientDetails = $getClientDetails[0];
         }

@@ -62,7 +62,6 @@ tr th{
 				<h3 class="box-title m-b-0 pull-left">All JOBS</h3>
 
 				<a href="{{route('addjob')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Job</span> <i class="fa fa-plus m-l-5"></i></a>
-				{{-- <a href="{{route('viewjobdetails')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>View Jobs</span> <i class="ti-eye m-l-5"></i></a> --}}
 				<div class="table-responsive">
 					<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
 						<thead>
@@ -330,27 +329,6 @@ tr th{
 								</div>
 							</div>
 							<div id="notesData">
-							{{-- <div class="row">
-								<div class="col-md-4 col-sm-4 col-xs-4" class="word-wrap">
-									<span id="note"></span>
-								</div>
-								<div class="col-md-3 col-sm-3 col-xs-3">
-									<span id="updated_by"></span>
-								</div>
-								<div class="col-md-3 col-sm-3 col-xs-3">
-									<span id="updated_date"></span>
-								</div>
-								<div class="col-xs-2">
-									<a title="Edit" href="#">
-										<i class="ti-pencil-alt"></i>
-									</a>
-								</div>
-								<div class="col-xs-2">
-									<a onclick="return confirm('Are you sure you want remove this note?');" title="Remove" href="#">
-										<i class="ti-trash"></i>
-									</a>
-								</div>
-							</div> --}}
 						</div>
 					</div>
 				</div>

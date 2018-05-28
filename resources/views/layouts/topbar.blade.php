@@ -17,10 +17,10 @@
         <ul class="dropdown-menu animated flipInY">
 
             @if(Session::get('login_type_id') == 1 || Session::get('login_type_id') == 2)
-            <li><a href="{{ route('employeeprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
+            <li><a href="{{ route('employeeprofile',['email'=>Session::get('employee_id')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
             @endif
             @if(Session::get('login_type_id') == 9)
-            <li><a href="{{ route('clientprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
+            <li><a href="{{ route('clientprofile',['email'=>Session::get('employee_id')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
             @endif
             <li role="separator" class="divider"></li>
             <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li>

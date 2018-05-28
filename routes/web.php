@@ -53,7 +53,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('employees/editemployee/{employee_id}', 'admin\EmployeesController@edit')->name('editemployee');
     Route::get('employees/deleteemployee/{employee_id}', 'admin\EmployeesController@destroy')->name('deleteemployee');
     Route::post('storeemployee', 'admin\EmployeesController@store')->name('storeemployee');
-    Route::get('profile/{email}', 'admin\EmployeesController@editMyProfile')->name('employeeprofile');
+    Route::get('profile/{id}', 'admin\EmployeesController@editMyProfile')->name('employeeprofile');
 
     /*Administration*/
     Route::get('administration/showclientcompany', 'admin\AdministrationController@index')->name('showclientcompany');
@@ -68,7 +68,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('clients/editclient/{client_id}', 'admin\ClientsController@edit')->name('editclient');
     Route::post('clients/storeclient', 'admin\ClientsController@store')->name('storeclient');
     Route::get('clients/deleteclient/{client_id}', 'admin\ClientsController@destroy')->name('deleteclient');
-    Route::get('myprofile/{email}', 'admin\ClientsController@editMyProfile')->name('clientprofile');
+    Route::get('myprofile/{id}', 'admin\ClientsController@editMyProfile')->name('clientprofile');
     Route::post('clients/getcompanyclients', 'admin\ClientsController@getCompanyClients')->name('getcompanyclients');
 
     /*Reports*/

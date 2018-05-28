@@ -647,10 +647,6 @@ class JobsController extends Controller
         echo json_encode($response);
     }
 
-    /*public function SendMailChangeJobStatus(Request $request) {
-
-    }*/
-
     function commonViewJobDetails($ids)
     {
         $allEmployeeId = explode(",", $ids);
