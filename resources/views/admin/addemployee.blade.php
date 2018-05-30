@@ -88,7 +88,7 @@
 													<input style="text-transform: lowercase;" type="email" name="employeeEmail" id="employeeEmail" value="{{$employeeDetail->email or ''}}" class="form-control"  placeholder="Enter your email">
 												</div>
 											</div>
-											@if(isset($employeeDetail) && Session::get('email') != $employeeDetail->email)
+											@if(isset($employeeDetail) && Session::get('employee_id') != $employeeDetail->id)
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>EMPLOYEE TYPE</b></label><br>
@@ -100,6 +100,9 @@
 													</select>
 												</div>
 											</div>
+											@elseif(isset($employeeDetail) && Session::get('employee_id') == $employeeDetail->id)
+												<input type="hidden" name="employeeType" id="employeeType" value="{{ $employeeDetail->login_type_id }}">
+
 											@elseif(!isset($employeeDetail))
 											<div class="col-md-4">
 												<div class="form-group">

@@ -64,7 +64,6 @@ class EmployeesController extends Controller
                 $getDetail->save();
 
                 $response['key'] = 2;
-                //Session::put('successMessage', 'Employee detail has been updated successfully.');
                 echo json_encode($response);
             }
         } else {

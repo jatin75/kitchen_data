@@ -13,7 +13,7 @@
         </ul>
     </div>
     <div class="user_profile_wrapper">
-        <a id="sessionName" style="text-transform: uppercase;" href="#" class="font-normal dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Session::get('name')}} &nbsp;<span class="fa fa-caret-down"></span></a>
+        <a id="sessionName" style="text-transform: uppercase;" href="#" class="font-normal dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Session::get('name')}}<span class="caret"></span></a>
         <ul class="dropdown-menu animated flipInY">
 
             @if(Session::get('login_type_id') == 1 || Session::get('login_type_id') == 2)
@@ -52,5 +52,15 @@
     font-size: 13px;
     padding: 4px 8px !important;
 }
-
+.dropdown-toggle::after {
+    display: inline-block !important;
+    width: 0;
+    height: 0;
+    margin-left: .3em;
+    vertical-align: middle;
+    content: "";
+    border-top: .3em solid;
+    border-right: .3em solid transparent;
+    border-left: .3em solid transparent;
+}
 </style>

@@ -21,11 +21,11 @@ tr th{
 .bootstrap-select .dropdown-toggle:focus {
     outline: 0px auto -webkit-focus-ring-color!important;
 }
-.dropdown-toggle::after {
+/*.dropdown-toggle::after {
     display: inline-block;
     position: relative;
     right: 20px;
-}
+}*/
 .bootstrap-select.btn-group .dropdown-toggle .filter-option {
     padding-right: 15px;
     text-overflow: ellipsis;
