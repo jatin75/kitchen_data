@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" type="image/png" sizes="16x16" href="">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{asset('plugins/images/kitchen/A&S.jpg')}}">
   <link href="" rel="apple-touch-icon">
   <title>Kitchen</title>
   <!-- Bootstrap Core CSS -->
@@ -27,7 +27,7 @@
   </div>
   <section id="wrapper" class="login-register">
     <div class="login-box">
-      <div class="white-box">
+      <div class="white-box " style="box-shadow: 0 0 14px #666;">
         @if(Session::has('matchResetPassword'))
         <div class="alert alert-success alert-bold-border fade in alert-dismissable">
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -43,7 +43,7 @@
         <form class="form-horizontal form-material" id="loginForm" method="POST" action="{{ route('login.submit') }}">
           {{ csrf_field() }}
           <a href="javascript:void(0)" class="text-center db">
-            <img src="{{asset('plugins/images/kitchen/A&S.jpg')}}" width="200" height="100" />
+            <img src="{{asset('plugins/images/kitchen/A&S.jpg')}}" width="100" height="100" />
           </a>
           <div class="form-group m-t-20">
             <div class="col-xs-12">

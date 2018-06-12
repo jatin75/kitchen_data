@@ -31,7 +31,7 @@
 					<!--header-->
 					<div class="row">
 						<div class="col-md-4 col-sm-4 col-xs-4 m-t-15 m-l-15">
-							<a class="btn btn-default btn-circle" href="{{URL::previous()}}" title="Previous"><i class="ti-arrow-left"></i> </a>
+							<a class="btn btn-default btn-circle" href="{{route('showclientcompany')}}" title="Previous"><i class="ti-arrow-left"></i> </a>
 						</div>
 						{{-- <div class="col-md-4 col-sm-4 col-xs-4 text-center">
 							<h2 class="_600" id="pageName">Add Account</h2>
@@ -50,7 +50,7 @@
 										{{ csrf_field() }}
 										{{-- <input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$accountDetail->email or ''}}"> --}}
 										{{-- <input type="show" name="hiddenStatus" id="hiddenStatus" value="{{$new_account or ''}}"> --}}
-										<input type="hidden" name="hiddenCompanyId" id="hiddenCompanyId" value="{{$companyDetail->id or ''}}">
+										<input type="hidden" name="hiddenCompanyId" id="hiddenCompanyId" value="{{$companyDetail->company_id or ''}}">
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
@@ -66,12 +66,18 @@
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>PHONE NUMBER</b></label>
-													<input type="text" placeholder="(xxx) xxx-xxxx" name="companyPhoneNo" id="companyPhoneNo" value="{{$companyDetail->phone_number or ''}}" class="form-control">
+													<label class="control-label"><b>COMPANY ID</b></label><br>
+													<span class="disabled-color" id="companyId">{{$companyDetail->company_id or '' }}</span>
 												</div>
 											</div>
 										</div>
 										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>PHONE NUMBER</b></label>
+													<input type="text" placeholder="(xxx) xxx-xxxx" name="companyPhoneNo" id="companyPhoneNo" value="{{$companyDetail->phone_number or ''}}" class="form-control">
+												</div>
+											</div>
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>ADDRESS 1</b></label><br>
@@ -84,14 +90,14 @@
 													<input type="text" name="subAddress" id="subAddress" value="{{$companyDetail->address_2 or ''}}" class="form-control" placeholder="Address line 2">
 												</div>
 											</div>
+										</div>
+										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>CITY</b></label>
 													<input type="text" name="city" id="city" value="{{$companyDetail->city or ''}}" class="form-control" placeholder="Enter city">
 												</div>
 											</div>
-										</div>
-										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>STATE</b></label>
@@ -112,6 +118,9 @@
 											@if(isset($companyDetail->id))
 											<button type="submit" class="btn btn-info">UPDATE</button>
 											@endif
+											&nbsp;
+											&nbsp;
+											<button id="resetPermission" type="button" class="btn btn-danger">CANCEL</button>
 										</div>
 									</form>
 								</div>
@@ -149,6 +158,10 @@
 			$('#companyName').val($('#companyName').val().toUpperCase());
 		if(typeof($('#companyEmail').val()) != "undefined" && $('#companyEmail').val() !== null)
 			$('#companyEmail').val($('#companyEmail').val().toLowerCase());
+
+		$('#resetPermission').click(function(){
+			location.reload();
+		});
 	});
 
 	/* For select 2*/
@@ -187,6 +200,11 @@
 				{
 					location.href = '{{ route('showclientcompany') }}';
 				}
+				if(data.key == 2)
+				{
+					$('#loader').hide();
+					notify('Company detail has been updated successfully.','blackgloss');
+				}
 			}
 		});
 	});
@@ -205,7 +223,6 @@
 	});
 
 	/*Mask phone Number Digits*/
-	/*$("#leagueContactNo").mask("999-999-999-9?999999");*/
 	$("#companyPhoneNo").mask("(999) 999 - 9999");
 
 	@if(Session::has('successMessage'))

@@ -18,14 +18,14 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-       <h4 class="page-title">Administration > Employee</h4>
+       <h4 class="page-title">Employees</h4>
    </div>
 </div>
 <div class="row">
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All EMPLOYEE</h3>
-            
+
             <a href="{{route('addemployee')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Employee</span> <i class="fa fa-plus m-l-5"></i></a>
             <div class="table-responsive">
                 <table id="employeeList" class="display nowrap" cellspacing="0" width="100%">
@@ -34,6 +34,7 @@ tr th{
                             <th class="text-center">Actions</th>
                             <th>First Name</th>
                             <th>Last Name</th>
+                            <th>Employee Id</th>
                             <th>Phone Number</th>
                             <th>Email Address</th>
                             <th>Employee Type</th>
@@ -47,10 +48,11 @@ tr th{
                                 <a data-toggle="tooltip" data-placement="top" title="Edit Employee" class="btn btn-info btn-circle" href="{{route('editemployee',['employee_id' => $employee_member->id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
-                                <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this employee?');" href="{{route('deleteemployee',['employee_id' => $employee_member->id])}}" data-toggle="tooltip" data-placement="top" title="Delete Employee"><i class="ti-trash"></i> </a>
+                                {{-- <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this employee?');" href="{{route('deleteemployee',['employee_id' => $employee_member->id])}}" data-toggle="tooltip" data-placement="top" title="Delete Employee"><i class="ti-trash"></i> </a> --}}
                             </td>
                             <td>{{strtoupper($employee_member->first_name)}}</td>
                             <td>{{strtoupper($employee_member->last_name)}}</td>
+                            <td>{{$employee_member->id}}</td>
                             @if(empty($employee_member->phone_number) || $employee_member->phone_number == "")
                             <td>{{'--'}}</td>
                             @else
@@ -82,35 +84,35 @@ tr th{
 <script type="text/javascript">
     $(document).ready(function() {
         var date = $('#formatedDate').val();
-        var value = 'Kitchen_employee' + date;
+        var value = 'Kitchen_employee_' + date;
         $('#employeeList').DataTable({
             dom: 'Bfrtip',
             buttons: [
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
+                /* orientation: 'landscape', */
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
             },
             ],
         });
     });
-
     @if(Session::has('successMessage'))
     notify('{{  Session::get('successMessage') }}','blackgloss');
     {{ Session::forget('successMessage') }}

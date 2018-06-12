@@ -18,14 +18,14 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-         <h4 class="page-title">Administration > Company</h4>
-     </div>
- </div>
- <div class="row">
+       <h4 class="page-title">Administration > Company</h4>
+   </div>
+</div>
+<div class="row">
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-0 pull-left">All COMPANY</h3>
-           
+
             <a href="{{route('addclientcompany')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Company</span> <i class="fa fa-plus m-l-5"></i></a>
             <div class="table-responsive">
                 <table id="clientCompanyList" class="display nowrap" cellspacing="0" width="100%">
@@ -33,6 +33,7 @@ tr th{
                         <tr>
                             <th class="text-center">Actions</th>
                             <th>Name</th>
+                            <th>Company Id</th>
                             <th>Phone Number</th>
                             <th>Address</th>
                             <th>Email Address</th>
@@ -43,12 +44,13 @@ tr th{
                         @foreach($clientCompanyList as $comapnyList)
                         <tr>
                             <td class="text-center">
-                                <a data-toggle="tooltip" data-placement="top" title="Edit Company" class="btn btn-info btn-circle" href="{{route('editclientcompany',['company_id' => $comapnyList->id])}}">
+                                <a data-toggle="tooltip" data-placement="top" title="Edit Company" class="btn btn-info btn-circle" href="{{route('editclientcompany',['company_id' => $comapnyList->company_id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
-                                <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this company?');" href="{{route('deleteclientcompany',['company_id' => $comapnyList->id])}}" data-toggle="tooltip" data-placement="top" title="Delete Company"><i class="ti-trash"></i> </a>
+                                <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to delete this company?');" href="{{route('deleteclientcompany',['company_id' => $comapnyList->company_id])}}" data-toggle="tooltip" data-placement="top" title="Delete Company"><i class="ti-trash"></i> </a>
                             </td>
                             <td>{{strtoupper($comapnyList->name)}}</td>
+                            <td>{{$comapnyList->company_id}}</td>
                             @if(empty($comapnyList->phone_number) || $comapnyList->phone_number == "")
                             <td>{{'--'}}</td>
                             @else
@@ -61,10 +63,10 @@ tr th{
                         @endforeach
                     </tbody>
                 </table>
-                </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 @stop
 @section('pageSpecificJs')
@@ -80,30 +82,30 @@ tr th{
 <script type="text/javascript">
     $(document).ready(function() {
         var date = $('#formatedDate').val();
-        var value = 'Kitchen_Client_Company' + date;
+        var value = 'Kitchen_Client_Company_' + date;
         $('#clientCompanyList').DataTable({
             dom: 'Bfrtip',
             buttons: [
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4]},
+                exportOptions: {columns: [ 1,2,3,4,5,6]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
             },
             ],
         });

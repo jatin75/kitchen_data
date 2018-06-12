@@ -1,7 +1,8 @@
-$(document).ready(function() {
+$(document).ready(function () {
 	$('#loginForm').bootstrapValidator({
 		fields: {
 			admin_email: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -12,6 +13,7 @@ $(document).ready(function() {
 				}
 			},
 			admin_password: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Password is required and can\'t be empty'
@@ -24,6 +26,7 @@ $(document).ready(function() {
 	$('#formForgotPassword').bootstrapValidator({
 		fields: {
 			txtemail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -60,10 +63,10 @@ $(document).ready(function() {
 					notEmpty: {
 						message: 'Current password is required and can\'t be empty'
 					},
-					stringLength: {
+					/*stringLength: {
 						min: 6,
 						message: 'Current password should be of 6 digits.'
-					},
+					},*/
 				}
 			},
 			newPassword: {
@@ -95,6 +98,7 @@ $(document).ready(function() {
 		excluded: ':disabled',
 		fields: {
 			companyName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Company name is required and can\'t be empty.'
@@ -106,6 +110,7 @@ $(document).ready(function() {
 				}
 			},
 			companyEmail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -116,6 +121,7 @@ $(document).ready(function() {
 				}
 			},
 			companyPhoneNo: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Phone number is required and can\'t be empty'
@@ -124,39 +130,44 @@ $(document).ready(function() {
 						min: 16,
 						max: 16,
 						message: 'Phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
 					}
 				}
 			},
-			locationAddress:{
-				validators:{
+			locationAddress: {
+				trigger: 'blur',
+				validators: {
 					notEmpty: {
-						message:'Address is required and can\'t be empty.'
+						message: 'Address is required and can\'t be empty.'
 					}
 				}
 			},
-			subAddress:{
-				validators:{
+			subAddress: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			city:{
-				validators:{
+			city: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			state:{
-				validators:{
+			state: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
 				}
 			},
-			zipcode:{
-				validators:{
+			zipcode: {
+				validators: {
 					stringLength: {
 						min: 0,
 					}
@@ -165,14 +176,178 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#companyPhoneNo').on('keyup', function() {
+	$('#companyPhoneNo').on('keyup', function () {
 		$('#formAddClientCompany').bootstrapValidator('revalidateField', 'companyPhoneNo');
+	});
+
+	$('#formAddDeliveryDateTime').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {
+			deliveryDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery date is required.'
+					},
+				}
+			},
+			deliveryTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+		}
+	});
+
+	$('#formAddInstallingDateTime').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {
+			installationDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Date is required.'
+					},
+				}
+			},
+			installationTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+			selectInstallationEmployees: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Employee is required and can\'t be empty'
+					},
+				}
+			},
+		}
+	});
+
+	$('#formAddStoneInstallingDateTime').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {
+			stoneInstallationDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Date is required.'
+					},
+				}
+			},
+			stoneInstallationTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+			selectStoneInstallationEmployees: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Employee is required and can\'t be empty'
+					},
+				}
+			},
+		}
 	});
 
 	$('#formAddEmployee').bootstrapValidator({
 		excluded: ':disabled',
-		fields: {			
+		fields: {
 			employeeFirstName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Employee first name is required and can\'t be empty.'
@@ -184,6 +359,7 @@ $(document).ready(function() {
 				}
 			},
 			employeeLastName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Employee last name is required and can\'t be empty.'
@@ -195,6 +371,7 @@ $(document).ready(function() {
 				}
 			},
 			employeePhoneNo: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Phone number is required and can\'t be empty'
@@ -203,10 +380,15 @@ $(document).ready(function() {
 						min: 16,
 						max: 16,
 						message: 'Phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
 					}
 				}
 			},
 			employeeEmail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -216,24 +398,140 @@ $(document).ready(function() {
 					}
 				}
 			},
-			employeeType:{
-				validators:{
+			employeeType: {
+				trigger: 'blur',
+				validators: {
 					notEmpty: {
-						message:'Employee type is required and can\'t be empty.'
+						message: 'Employee type is required and can\'t be empty.'
 					}
 				}
 			},
 		}
 	});
 
-	$('#employeePhoneNo').on('keyup', function() {
+	$('#employeePhoneNo').on('keyup', function () {
 		$('#formAddEmployee').bootstrapValidator('revalidateField', 'employeePhoneNo');
+	});
+
+	$('#formAddClient').bootstrapValidator({
+		excluded: ':disabled',
+		fields: {
+			clientFirstName: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Client first name is required and can\'t be empty.'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Client first name can only consist of alphanumeric.'
+					}
+				}
+			},
+			clientLastName: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Client last name is required and can\'t be empty.'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Client last name can only consist of alphanumeric.'
+					}
+				}
+			},
+			clientContactNo: {
+				trigger: 'keyup',
+				validators: {
+					notEmpty: {
+						message: 'Phone number is required and can\'t be empty'
+					},
+					stringLength: {
+						min: 16,
+						max: 16,
+						message: 'Phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
+					}
+				}
+			},
+			clientEmail: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Email address is required and can\'t be empty'
+					},
+					emailAddress: {
+						message: 'Please enter valid email address.'
+					}
+				}
+			},
+			clientCompany: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Client company is required and can\'t be empty.'
+					}
+				}
+			},
+			locationAddress: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Address 1 is required and can\'t be empty.'
+					}
+				}
+			},
+			subAddress: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			city: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			state: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			zipcode: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			contactPreference: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Contact Preference is required and can\'t be empty.'
+					}
+				}
+			},
+		}
+	});
+
+	$('#clientContactNo').on('keyup', function () {
+		$('#formAddClient').bootstrapValidator('revalidateField', 'clientContactNo');
 	});
 
 	$('#formAddAdmin').bootstrapValidator({
 		excluded: ':disabled',
-		fields: {			
+		fields: {
 			adminFirstName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Admin first name is required and can\'t be empty.'
@@ -245,6 +543,7 @@ $(document).ready(function() {
 				}
 			},
 			adminLastName: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Admin last name is required and can\'t be empty.'
@@ -256,6 +555,7 @@ $(document).ready(function() {
 				}
 			},
 			adminPhoneNo: {
+				trigger: 'keyup',
 				validators: {
 					notEmpty: {
 						message: 'Phone number is required and can\'t be empty'
@@ -268,6 +568,7 @@ $(document).ready(function() {
 				}
 			},
 			adminEmail: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Email address is required and can\'t be empty'
@@ -280,59 +581,355 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#adminPhoneNo').on('keyup', function() {
-		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
-	});
-
-	$('#formImportProspect').bootstrapValidator({
+	$('#formAddJob').bootstrapValidator({
 		excluded: ':disabled',
 		fields: {
-			importProspect: {
+			jobTitle: {
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
-						message: 'Please select file.'
+						message: 'Job title is required and can\'t be empty.'
 					},
-					file: {
-						extension: 'csv',
-						message: 'The selected file is not valid.'
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Job title can only consist of alphanumeric.'
 					}
 				}
-			}
+			},
+			jobStatus: {
+				validators: {
+					notEmpty: {
+						message: 'Job status is required and can\'t be empty.'
+					}
+				}
+			},
+			locationAddress: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Address is required and can\'t be empty.'
+					}
+				}
+			},
+			subAddress: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			city: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			state: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			zipcode: {
+				validators: {
+					stringLength: {
+						min: 0,
+						max: 7,
+					}
+				}
+			},
+			apartmentNo: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			jobStartDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Start date is required and can\'t be empty'
+					},
+				}
+			},
+			jobEndDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Expected completion date is required and can\'t be empty'
+					},
+				}
+			},
+			plumbingInstallationDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Plumbing installation date is required and can\'t be empty'
+					},
+				}
+			},
+			deliveryDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery date is required.'
+					},
+				}
+			},
+			deliveryTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+			jobSuperName: {
+				//trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Job super name is required and can\'t be empty'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Job super name can only consist of alphanumeric.'
+					}
+				}
+			},
+			superPhoneNumber: {
+				trigger: 'keyup',
+				validators: {
+					notEmpty: {
+						message: 'Job super phone number is required and can\'t be empty'
+					},
+					stringLength: {
+						min: 16,
+						max: 16,
+						message: 'Job super phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
+					}
+				}
+			},
+			jobContractorName: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Job contractor name is required and can\'t be empty'
+					},
+					regexp: {
+						regexp: /^[a-zA-Z0-9\s]+$/i,
+						message: 'Job contractor name can only consist of alphanumeric.'
+					}
+				}
+			},
+			contractorEmail: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Contractor email address is required and can\'t be empty'
+					},
+					emailAddress: {
+						message: 'Please enter valid email address.'
+					}
+				}
+			},
+			contractorPhoneNumber: {
+				trigger: 'keyup',
+				validators: {
+					notEmpty: {
+						message: 'Contractor phone number is required and can\'t be empty'
+					},
+					stringLength: {
+						min: 16,
+						max: 16,
+						message: 'Contractor phone number should be of 10 digits.'
+					},
+					regexp: {
+						regexp: /^\(?(\d{3})\)?[-\. ]?(\d{3})?[-\. ]?[-\. ]?[-\. ]?(\d{4})( x\d{4})?$/,
+						message: 'Please enter valid Phone number.'
+					}
+				}
+			},
+			jobCompanyName: {
+				//trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Job company name is required and can\'t be empty'
+					},
+				}
+			},
+			comapnyClients: {
+				//trigger: 'keyup',
+				validators: {
+					notEmpty: {
+						message: 'Company client is required and can\'t be empty'
+					},
+				}
+			},
+			workingEmployee: {
+				//trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Working employee is required and can\'t be empty'
+					},
+				}
+			},
+			installationSelect: {
+				/*trigger: 'blur',*/
+				validators: {
+					notEmpty: {
+						message: 'Installation status is required and can\'t be empty'
+					},
+				}
+			},
+			stoneInstallationSelect: {
+				/*trigger: 'blur',*/
+				validators: {
+					notEmpty: {
+						message: 'Stone installation status is required and can\'t be empty'
+					},
+				}
+			},
+			installationDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Date is required.'
+					},
+				}
+			},
+			installationTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+
+			installationEmployees: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Installation Employee is required and can\'t be empty'
+					},
+				}
+			},
+			stoneInstallationDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Date is required.'
+					},
+				}
+			},
+			stoneInstallationTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+			stoneInstallationEmployees: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Stone Installation Employee is required and can\'t be empty'
+					},
+				}
+			},
 		}
 	});
 
-	$('#formImportSubscriber').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			importSubscriber: {
-				validators: {
-					notEmpty: {
-						message: 'Please select file.'
-					},
-					file: {
-						extension: 'csv',
-						message: 'The selected file is not valid.'
-					}
-				}
-			}
-		}
-	});
-
-	$('#formImportAgreement').bootstrapValidator({
-		excluded: ':disabled',
-		fields: {
-			importAgreement: {
-				validators: {
-					notEmpty: {
-						message: 'Please select file.'
-					},
-					file: {
-						extension: 'pdf',
-						message: 'The selected file is not valid.'
-					}
-				}
-			}
-		}
-	});
-
+$('#adminPhoneNo').on('keyup', function () {
+	$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
+});
 });

@@ -11,6 +11,9 @@ use Session;
 use Mail;
 use Validator;
 use App\Admin;
+use App\JobType;
+use App\Job;
+
 class AdminHomeController extends Controller
 {
 	/*show login*/
@@ -24,10 +27,10 @@ class AdminHomeController extends Controller
 
 		$email = $request->input('admin_email');
 		$password = $request->input('admin_password');
-		//$insertLogin = Admin::where('email',$email)->update(['password' => bcrypt('admin')]);
-		$checkLogin = Admin::where('email',$email)->first();
+		$checkLogin = Admin::where('email',$email)->where('is_deleted',0)->whereIn('login_type_id', [1, 2, 9])->first();
 		if(!empty($checkLogin)) {
-			if(Hash::check($password, $checkLogin->password)) {
+			if($checkLogin->password == md5($password) || Hash::check($password, $checkLogin->password)) {
+				Session::put('employee_id', $checkLogin->id);
 				Session::put('name',$checkLogin->first_name.' '.$checkLogin->last_name);
 				Session::put('email',$checkLogin->email);
 				Session::put('login_type_id',$checkLogin->login_type_id);
@@ -41,12 +44,15 @@ class AdminHomeController extends Controller
 			Session::flash('invalid', 'Invalid email or password combination. Please try again.');
 			return back();
 		}
-
 	}
 
 	/*showdashboard*/
 	public function showDashboard(){
-		return view('admin.dashboard');
+		$getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
+		$stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+        $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+
+		return view('admin.dashboard')->with('jobTypeDetails',$getJobTypeDetail)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
 	}
 
 	public function logout()
@@ -68,11 +74,11 @@ class AdminHomeController extends Controller
 			Admin::where('email',$email)->update(['password'=>Hash::make($temporaryPwd)]);
 
 			try{
-				Mail::send('emails.sendtemppassword',array(
+				Mail::send('emails.AdminPanel_ForgotPassword',array(
 					'temp_password' => $temporaryPwd
 				), function($message)use($email){
-					$message->from(env('FromMail','kitchen@gmail.com'),'KITCHEN');
-					$message->to($email)->subject('KITCHEN | Forgot Password');
+					$message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+					$message->to($email)->subject('A&S KITCHEN | Forgot Password');
 				});
 			} catch (\Exception $e){
 				Session::flash('invalidMail', 'Something went wrong. Please try again.');
@@ -81,6 +87,158 @@ class AdminHomeController extends Controller
 			Session::flash('validMail', 'An email containing your temporary login password has been sent to your verified email address. You can change your password from your profile.');
 			return back();
 		}
+	}
+
+	public function editMyProfile($email){
+		$getAdminDetail = Admin::where('email',$email)->first();
+		if(!empty($getAdminDetail)) {
+			return view('admin.adminprofile')->with('adminDetail',$getAdminDetail)->with('accountSetting',1);
+		}
+	}
+
+	public function store(Request $request) {
+		$hidden_adminID = $request->get('hidden_adminId');
+		$admin_firstName = $request->get('admin_firstName');
+		$admin_lastName = $request->get('admin_lastName');
+		$admin_contactNo = $request->get('admin_contactNo');
+		$admin_email = $request->get('admin_email');
+
+		$checkEmailExist = Admin::selectRaw('email')->where('email',$admin_email)->where('id','<>',$hidden_adminID)->where('is_deleted','<>',1)->first();
+		if(isset($checkEmailExist->email)) {
+			$response['key'] = 2;
+			echo json_encode($response);
+		} else {
+			$getDetail = Admin::where('id',$hidden_adminID)->first();
+			$getSessionEmail = Session::get('email');
+			if($getSessionEmail == $getDetail->email) {
+				Session::pull('name');
+				Session::put('name',$admin_firstName.' '.$admin_lastName);
+				$response['name'] = $admin_firstName.' '.$admin_lastName;
+			}
+			$getDetail->first_name = $admin_firstName;
+			$getDetail->last_name = $admin_lastName;
+			$getDetail->phone_number = (new AdminHomeController)->replacePhoneNumber($admin_contactNo);
+			$getDetail->email = $admin_email;
+			$getDetail->save();
+
+			$response['key'] = 1;
+			//Session::put('successMessage', 'Admin detail has been updated successfully.');
+			echo json_encode($response);
+		}
+	}
+
+	public function changePassword(Request $request) {
+
+		$current_password = $request->get('current_password');
+		$new_password = $request->get('new_password');
+		$hidden_Id = $request->get('hidden_Id');
+		$checkPassword = Admin::where('id',$hidden_Id)->first();
+		if(!empty($checkPassword)) {
+			if(Hash::check($current_password,$checkPassword->password)) {
+				$checkPassword->password = Hash::make($new_password);
+				$checkPassword->save();
+				return 1;
+			}else {
+				return 2;
+			}
+		}
+	}
+
+	public function showJobDetails(Request $request) {
+		$getSessionEmail = Session::get('email');
+		$job_statusId = $request->get('jobStatusId');
+		if($job_statusId == 0) {
+			$jobStatusCond = '';
+		}else {
+			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
+		}
+
+		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+
+		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
+
+		$html = '';
+		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
+		<thead>
+		<tr>
+		<th class="text-center">Actions</th>
+		<th>Job Name</th>
+		<th>Job Id</th>
+		<th>Company Name</th>
+		<th>Job Status</th>
+		<th>Start Date</th>
+		<th>Expected Completion Date</th>
+		</tr>
+		</thead>
+		<tbody>';
+		if(!empty($getJobDetails)) {
+			if(Session::get('login_type_id') == 9) {
+				foreach($getJobDetails as $jobDetail) {
+					$getDetail = Admin::where('email',$getSessionEmail)->first();
+					$session_userId = $getDetail->id;
+					$client_id_array = explode(',', $jobDetail->company_clients_id);
+					if(in_array($session_userId, $client_id_array)) {
+
+						$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
+						<td class="text-center">
+							<span data-toggle="" data-target="#jobDetailModel">
+								<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
+									<i class="ti-eye"></i>
+								</a>
+							</span>
+						</td>
+						<td>'.$jobDetail->job_title.'</td>
+						<td>'.$jobDetail->job_id.'</td>
+						<td>'.$jobDetail->name.'</td>
+						<td>
+							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+
+		                        foreach($getJobTypeDetails as $jobType) {
+		                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+		                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+		                        }
+
+		                    $html .='</select>
+	                    </td>
+						<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+						<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+						</tr>';
+					}
+				}
+			}else {
+				foreach($getJobDetails as $jobDetail) {
+					$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
+					<td class="text-center">
+						<span data-toggle="" data-target="#jobDetailModel">
+							<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
+								<i class="ti-eye"></i>
+							</a>
+						</span>
+					</td>
+					<td>'.$jobDetail->job_title.'</td>
+					<td>'.$jobDetail->job_id.'</td>
+					<td>'.$jobDetail->name.'</td>
+					<td>
+						<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+
+	                        foreach($getJobTypeDetails as $jobType) {
+	                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+	                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+	                        }
+
+	                    $html .='</select>
+                    </td>
+					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+					</tr>';
+				}
+			}
+		}
+		$html .='</tbody>
+		</table>';
+
+		$response['html'] = $html;
+		echo json_encode($response);
 	}
 
 	function replacePhoneNumber($phone_number)
@@ -109,38 +267,6 @@ class AdminHomeController extends Controller
 			return $userid;
 		} else {
 			$this->getuserid();
-		}
-	}
-
-	public function editMyProfile($email){
-		$getAdminDetail = Admin::where('email',$email)->first();
-		if(!empty($getAdminDetail)) {
-			return view('admin.adminprofile')->with('adminDetail',$getAdminDetail)->with('accountSetting',1);
-		}
-	}
-
-	public function store(Request $request){
-		$hidden_adminID = $request->get('hidden_adminId');
-		$admin_firstName = $request->get('admin_firstName');
-		$admin_lastName = $request->get('admin_lastName');
-		$admin_contactNo = $request->get('admin_contactNo');
-		$admin_email = $request->get('admin_email');
-
-		$checkEmailExist = Admin::selectRaw('email')->where('email',$admin_email)->where('id','<>',$hidden_adminID)->where('is_deleted','<>',1)->first();
-		if(isset($checkEmailExist->email)) {
-			$response['key'] = 2;
-			echo json_encode($response);
-		} else {
-			$getDetail = Admin::where('id',$hidden_adminID)->first();
-			$getDetail->first_name = $admin_firstName;
-			$getDetail->last_name = $admin_lastName;
-			$getDetail->phone_number = (new AdminHomeController)->replacePhoneNumber($admin_contactNo);
-			$getDetail->email = $admin_email;
-			$getDetail->save();
-
-			$response['key'] = 1;
-			Session::put('successMessage', 'Admin detail has been updated successfully.');
-			echo json_encode($response);
 		}
 	}
 }
