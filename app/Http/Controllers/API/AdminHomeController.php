@@ -37,6 +37,7 @@ class AdminHomeController extends Controller
                     $user->device_token = $device_token;
                     $user->device_type = $device_type;
                     $user->save();
+                    
                     return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Token generated successfully", 'response_data' => $success]);
                 } else {
                     return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Email or password is incorrect. Please try again."]);
