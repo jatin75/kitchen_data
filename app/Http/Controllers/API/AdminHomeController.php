@@ -12,7 +12,11 @@ use Validator;
 
 class AdminHomeController extends Controller
 {
-    /*login*/
+    /**
+     * Login
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function login(Request $request)
     {
         try {
@@ -34,6 +38,7 @@ class AdminHomeController extends Controller
                 if ($user->password == md5($password) || Hash::check($password, $user->password)) {
                     $success['token'] = "Bearer " . $user->createToken('kitchen')->accessToken;
                     $success['user_id'] = $user->id;
+                    $success['login_type_id'] = $user->login_type_id;
                     $user->device_token = $device_token;
                     $user->device_type = $device_type;
                     $user->save();
@@ -57,7 +62,6 @@ class AdminHomeController extends Controller
     public function userLogout()
     {
         try {
-
             if (Auth::check()) {
                 $user = Auth::user();
                 if (isset($user->id)) {

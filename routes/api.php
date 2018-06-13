@@ -10,10 +10,14 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
+
+Route::post('test', 'API\JobsController@test');
 Route::post('login', 'API\AdminHomeController@login');
 Route::middleware('auth:api')->group(function () {
+    //-------------- User --------------
     Route::get('userLogout', 'API\AdminHomeController@userLogout');
 
-    /*job*/
-	Route::post('changejobstatus','API\JobsController@changeJobStatus');
+    //-------------- Jobs --------------
+    Route::post('getUserJobDetails', 'API\JobsController@getUserJobDetails');
+    Route::post('changejobstatus','API\JobsController@changeJobStatus');
 });
