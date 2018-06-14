@@ -14,9 +14,9 @@
 Route::post('login', 'API\AdminHomeController@login');
 Route::middleware('auth:api')->group(function () {
     //-------------- User --------------
-    Route::get('userLogout', 'API\AdminHomeController@userLogout');
+	Route::get('userLogout', 'API\AdminHomeController@userLogout');
 
     //-------------- Jobs --------------
-    Route::post('getUserJobDetails', 'API\JobsController@getUserJobDetails');
-    Route::post('changeJobStatus','API\JobsController@changeJobStatus');
+	Route::post('getUserJobDetails', 'API\JobsController@getUserJobDetails');
+	Route::post('changeJobStatus', 'API\JobsController@changeJobStatus');
 });

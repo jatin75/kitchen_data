@@ -38,11 +38,12 @@ class AdminHomeController extends Controller
                 if ($user->password == md5($password) || Hash::check($password, $user->password)) {
                     $success['token'] = "Bearer " . $user->createToken('kitchen')->accessToken;
                     $success['user_id'] = $user->id;
+                    $success['user_name'] = $user->first_name . ' ' . $user->last_name;
                     $success['login_type_id'] = $user->login_type_id;
                     $user->device_token = $device_token;
                     $user->device_type = $device_type;
                     $user->save();
-                    
+
                     return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Token generated successfully", 'response_data' => $success]);
                 } else {
                     return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Email or password is incorrect. Please try again."]);

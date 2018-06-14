@@ -589,7 +589,7 @@ tr th{
 		$('#jobNoteSubmit').html('Add');
 	});
 
-	
+
 	/*change job status*/
 	$(document).on('change','.jobType',function(){
 		var jobStatusId = $(this).val();
@@ -636,19 +636,19 @@ tr th{
 			$('.addDeliveryDateTime').show();
 			$('.addStoneInstallingDateTime').hide();
 			//$('#statusWiseJobModel').modal('show');
-			
+
 		}else if(jobStatusId == 6) {
 			$('.addInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addStoneInstallingDateTime').hide();
 			//$('#statusWiseJobModel').modal('show');
-			
+
 		}else if(jobStatusId == 7) {
 			$('.addStoneInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addInstallingDateTime').hide();
 			//$('#statusWiseJobModel').modal('show');
-			
+
 		}
 		else {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
@@ -726,7 +726,7 @@ tr th{
 		}
 	});
 
-	
+
 
 	/*set audit*/
 	$(".view-audit").click(function(){
@@ -933,6 +933,7 @@ tr th{
 				if(data.key == 1)
 				{
 					$('#loader').hide();
+					$('#jobNote').val('');
 					notify('Job note has been added successfully.','blackgloss');
 				}
 			}
