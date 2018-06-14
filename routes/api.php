@@ -11,7 +11,6 @@
 |
  */
 
-Route::post('test', 'API\JobsController@test');
 Route::post('login', 'API\AdminHomeController@login');
 Route::middleware('auth:api')->group(function () {
     //-------------- User --------------
@@ -19,5 +18,5 @@ Route::middleware('auth:api')->group(function () {
 
     //-------------- Jobs --------------
     Route::post('getUserJobDetails', 'API\JobsController@getUserJobDetails');
-    Route::post('changejobstatus','API\JobsController@changeJobStatus');
+    Route::post('changeJobStatus','API\JobsController@changeJobStatus');
 });
