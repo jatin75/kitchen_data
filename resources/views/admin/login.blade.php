@@ -28,6 +28,12 @@
   <section id="wrapper" class="login-register">
     <div class="login-box">
       <div class="white-box " style="box-shadow: 0 0 14px #666;">
+        @if(Session::has('sessionExpired'))
+        <div class="alert alert-danger alert-bold-border fade in alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <strong>{!! session('sessionExpired') !!}</strong>
+        </div>
+        @endif
         @if(Session::has('matchResetPassword'))
         <div class="alert alert-success alert-bold-border fade in alert-dismissable">
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -90,4 +96,9 @@
   <script src="{{asset('plugins/bower_components/styleswitcher/jQuery.style.switcher.js')}}"></script>
 </body>
 </html>
+<script type="text/javascript">
+  @if(Session::has('sessionExpired'))
+  {{ Session::forget('sessionExpired') }}
+  @endif
+</script>
 
