@@ -147,78 +147,84 @@ class JobsController extends Controller
     		$job_pics = $request->file('job_pics');
     		$job_notes = $request->get('job_notes');
             
-
-    		switch ($user_login_type) {
-    			case 2:
-    			switch ($job_status) {
-    				case 1:
-    				/* status */
+            switch ($user_login_type) {
+    			case 3:  /*measurer*/
+                switch ($job_status) {
+                    case 1: /*complete*/
+                    /* status */
     				Job::where('job_id', $job_id)->update(['job_status_id' => 3]);
 
-                    $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_status,$job_pics,$job_notes);
-    				
-    				/*send Mail*/
-    				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
-    				$working_employee_ids = explode(',', $getDetail->working_employee_id);
-    				$company_client_ids = explode(',', $getDetail->company_clients_id);
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
+                    if(!empty($getImageNote)) {
+                        $image_url = $getImageNote[0];
+                    }else{
+                        $image_url = '';
+                    }
+                    /*send Mail*/
+                    $getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
+                    $working_employee_ids = explode(',', $getDetail->working_employee_id);
+                    $company_client_ids = explode(',', $getDetail->company_clients_id);
+                    
+                    /*send notification as client */
+                    if(sizeof($company_client_ids) > 0)
+                    {
+                        $title = 'Change Job Status';
+                        $badge = '1';
+                        $sound = 'default';
 
-    				/*send notification as client */
-    				if(sizeof($company_client_ids) > 0)
-    				{
-    					$title = 'Change Job Status';
-    					$badge = '1';
-    					$sound = 'default';
-
-    					foreach ($company_client_ids as $client_id) {
-    						$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
-    						if(!empty($device_detail->device_token)) {
-    							$messageBody = $getDetail->job_title .'has been measured and has moved into Design Stage';
-    							$deviceid = $device_detail->device_token;
-    							$device_type = $device_detail->device_type;
-    							$this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
-    						}
-    					}
-    				}
-    				/*send mail as measurer*/
-    				$this->sendMailDesign($working_employee_ids, $getDetail->job_title);
+                        foreach ($company_client_ids as $client_id) {
+                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                            if(!empty($device_detail->device_token)) {
+                                $messageBody = $getDetail->job_title .'has been measured and has moved into Design Stage';
+                                $deviceid = $device_detail->device_token;
+                                $device_type = $device_detail->device_type;
+                                $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                            }
+                        }
+                    }
+                    /*send mail as measurer*/
+                    $this->sendMailDesign($working_employee_ids, $getDetail->job_title);
                     /*send mail as admin*/
                     $adminMailBody = "Job has been measured and is now in Design stage.";
-                    $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody);
+                    $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody,$image_url);
 
-    				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
-    				break;
-    				case 2:
-    				Job::where('job_id',$job_id)->update(['job_status_id'=> 4]);
+                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
+                    break;
+                    case 2: /*pending & incomplete*/
+                    Job::where('job_id',$job_id)->update(['job_status_id'=> 4]);
 
-    				if(!empty($job_notes)) {
-    					$ObjJobNote = new JobNote();
-    					$ObjJobNote->job_id = $job_id;
-    					$ObjJobNote->name = $user_name;
-    					$ObjJobNote->employee_id = $user_id;
-    					$ObjJobNote->job_note = $job_notes;
-    					$ObjJobNote->login_type_id = $user_login_type;
-    					$ObjJobNote->created_at = date('Y-m-d H:i:s');
-    					$ObjJobNote->save();
-    				}
-    				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
-    				break;
-    				default:
-    				return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid job status. Please try again."]);
-    				break;
-    			}
-    			break;
-    			case 5:
-    			switch ($job_status) {
-    				case 1:
-                        /* status */
-                        Job::where('job_id', $job_id)->update(['job_status_id' => 7]);
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
+
+                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
+                    break;
+                    default:
+                    return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid job status. Please try again."]);
+                    break;
+                }
+                break;
+                case 5: /*installer*/
+                switch ($job_status) {
+                    case 1:/*complete*/
+                    $allJobCheck = $request->get('all_jobcheck');
+
+                    if($allJobCheck == 1) {
+                        /* status  installationSelect*/
+                        $is_stone_installation = $request->get('stone_installation_select');
                         
-                        $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_status,$job_pics,$job_notes);
+                        $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
+                        if(!empty($getImageNote)) {
+                            $image_url = $getImageNote[0];
+                        }else{
+                            $image_url = '';
+                        }
 
-                        /*send Mail*/
                         $getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
+
                         $working_employee_ids = explode(',', $getDetail->working_employee_id);
                         $company_client_ids = explode(',', $getDetail->company_clients_id);
+                        /*send mail as admin*/
+                        $adminMailBody = "Job has been Installed and is now in (stone installation stage or COMPLETE).";
+                        $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody,$image_url);
 
                         /*send notification as client */
                         if(sizeof($company_client_ids) > 0)
@@ -230,159 +236,221 @@ class JobsController extends Controller
                             foreach ($company_client_ids as $client_id) {
                                 $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
                                 if(!empty($device_detail->device_token)) {
-                                    $messageBody = $getDetail->job_title ." has been measured and ‘has moved To STONE INSTALLATION or is COMPLETE’";
+                                    $messageBody = $getDetail->job_title ." has been measured and ‘has moved To STONE INSTALLATION or is COMPLETE’.";
                                     $deviceid = $device_detail->device_token;
                                     $device_type = $device_detail->device_type;
                                     $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
                                 }
                             }
                         }
+                        /*send notification as stone installer*/
+                        if($is_stone_installation == 1) {
 
-                        /*send mail as admin*/
-                        $adminMailBody = "Job has been Installed and is now in (stone installation stage or COMPLETE).";
-                        $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody);
+                            $stoneinstallation_employees = $request->get('stoneinstallation_employee');
+                            $stone_employee_id = implode(',', $stoneinstallation_employees);
 
-        				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
-        			break;
-    				default:
-    				return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
-    				break;
-    			}
-    			break;
-    			default:
-    			return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
-    			break;
-    		}
-    	} catch (\Exception $e) {}
-    }
+                            $title = 'Change Job Status';
+                            $badge = '1';
+                            $sound = 'default';
 
-    /* Design Status */
-    public function sendMailDesign($working_employee_ids, $job_title)
-    {
-    	$email_ids = [];
-    	foreach ($working_employee_ids as $id) {
-    		$email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 3)->where('is_deleted', 0)->first();
-    		if (!empty($email_id)) {
-    			$email_ids[] = $email_id->email;
-    		}
-    	}
-    	if (sizeof($email_ids) > 0) {
-    		/*send Mail*/
-    		Mail::send('emails.AdminPanel_JobDesign', array(
-    			'job_title' => $job_title,
-    		), function ($message) use ($email_ids, $job_title) {
-    			$message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
-    			$message->bcc($email_ids)->subject('A&S KITCHEN | ' . $job_title);
-    		});
-    	}
-    	return;
-    }
+                            foreach ($stoneinstallation_employees as $stoneinstaller_id) {
+                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$stoneinstaller_id);
+                                if(!empty($device_detail->device_token)) {
+                                    $messageBody = $getDetail->job_title ." has been installed and is awaiting Stone Installation.";
+                                    $deviceid = $device_detail->device_token;
+                                    $device_type = $device_detail->device_type;
+                                    $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                                }
+                            }
+                        }else {
+                            $stone_employee_id = null;
+                        }
 
-    /* storeJobNotesAndImage */
-    public function storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_status,$job_pics,$job_notes) {
-        /* images */
-        if (sizeof($job_pics) > 0) {
-            $images_data = $this->storeJobImages($job_id, $job_pics);
-            $images_url = implode(',', $images_data[0]);
-            $images_name = implode(',', $images_data[1]);
-            $getExistedImages = Job::selectRaw('job_images_url,job_images_name')->where('job_id', $job_id)->where('is_deleted', 0)->first();
+                        Job::where('job_id', $job_id)->update(['job_status_id' => 7,'is_select_stone_installation' => $is_stone_installation,'stone_installation_employee_id' => $stone_employee_id]);
+                        
+                    }
+                    elseif($allJobCheck == 2) {
 
-            if (!empty($getExistedImages)) {
-                if (!empty($getExistedImages->job_images_url)) {
-                    $images_url = $getExistedImages->job_images_url . ',' . $images_url;
+                    } 
+
+                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
+                    break;
+                    case 2: /*incomplete*/
+
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
+                    if(!empty($getImageNote)) {
+                        $image_url = $getImageNote[0];
+                    }else{
+                        $image_url = '';
+                    }
+
+                    $getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
+                    $working_employee_ids = explode(',', $getDetail->working_employee_id);
+                    /*$installation_time = date('h:iA', strtotime($getDetail->installation_datetime));*/
+
+                    $installation_date = date('Y-m-d', strtotime($request->get('installation_date')));
+                    if(!empty($installation_date)) {
+                        /*Job::where('job_id', $job_id)->update(['installation_datetime' => $installation_date]);
+                        $installation_date = date('m-d-Y', strtotime($request->get('installation_date')));*/
+                        $adminMailBody = "Installation Date has been moved to ". $installation_date.".";
+                    }else {
+                        $adminMailBody = "Installation has been changed to INCOMPETE status.";
+                    }
+                    /*send mail as admin*/
+                    $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody,$image_url);
+
+
+                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
+                    break;
+                    default:
+                    return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
+                    break;
                 }
-                if (!empty($getExistedImages->job_images_name)) {
-                    $images_name = $getExistedImages->job_images_name . ',' . $images_name;
-                }
+                break;
+                default:
+                return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
+                break;
             }
-            Job::where('job_id', $job_id)->where('is_deleted', 0)->update(['job_images_url' => $images_url, 'job_images_name' => $images_name]);
-        }
-
-        /* notes */
-        if (!empty($job_notes)) {
-            $ObjJobNote = new JobNote();
-            $ObjJobNote->job_id = $job_id;
-            $ObjJobNote->name = $user_name;
-            $ObjJobNote->employee_id = $user_id;
-            $ObjJobNote->job_note = $job_notes;
-            $ObjJobNote->login_type_id = $user_login_type;
-            $ObjJobNote->created_at = date('Y-m-d H:i:s');
-            $ObjJobNote->save();
-        }
+        } catch (\Exception $e) {}
     }
 
-    public function storeJobImages($job_id, $job_pics)
-    {
-    	/* S3 bucket */
-    	if (sizeof($job_pics) > 0) {
-    		$imageURL = [];
-    		$imageName = [];
-    		foreach ($job_pics as $images) {
-    			$originalName = $images->getClientOriginalName();
-    			$imageFileName = $job_id . '_' . time() . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
-    			$s3 = Storage::disk('s3');
-    			$filePath = 'jobsite_images/' . $imageFileName;
-    			if ($s3->put($filePath, file_get_contents($images), 'public')) {
-    				$imageURL[] = $s3->url($filePath);
-    				$imageName[] = $imageFileName;
-    			}
-    		}
-    		$result = array($imageURL, $imageName);
-    		return $result;
-    	}
+/* Design Status */
+public function sendMailDesign($working_employee_ids, $job_title)
+{
+   $email_ids = [];
+   foreach ($working_employee_ids as $id) {
+      $email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 3)->where('is_deleted', 0)->first();
+      if (!empty($email_id)) {
+         $email_ids[] = $email_id->email;
+     }
+ }
+ if (sizeof($email_ids) > 0) {
+  /*send Mail*/
+  Mail::send('emails.AdminPanel_JobDesign', array(
+     'job_title' => $job_title,
+ ), function ($message) use ($email_ids, $job_title) {
+     $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+     $message->bcc($email_ids)->subject('A&S KITCHEN | ' . $job_title);
+ });
+}
+return;
+}
+
+/* storeJobNotesAndImage */
+public function storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes) {
+
+    $result = '';
+    /* notes */
+    if (!empty($job_notes)) {
+        $ObjJobNote = new JobNote();
+        $ObjJobNote->job_id = $job_id;
+        $ObjJobNote->name = $user_name;
+        $ObjJobNote->employee_id = $user_id;
+        $ObjJobNote->job_note = $job_notes;
+        $ObjJobNote->login_type_id = $user_login_type;
+        $ObjJobNote->created_at = date('Y-m-d H:i:s');
+        $ObjJobNote->save();
     }
 
-    /*pushNotification */
-    public function pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound='dafault')
-    {
-    	if(strtolower($device_type) == 'ios') {
+    /* images */
+    if (isset($job_pics)  && sizeof($job_pics) > 0) {
+        $images_data = $this->storeJobImages($job_id, $job_pics);
+        $images_url = implode(',', $images_data[0]);
+        $images_name = implode(',', $images_data[1]);
+        $getExistedImages = Job::selectRaw('job_images_url,job_images_name')->where('job_id', $job_id)->where('is_deleted', 0)->first();
 
-    		$message = PushNotification::message($messageBody,array(
-    			'title' => $title,
-    			'badge' => $badge,
-    			'sound' => $sound,
-    		));
-    		$push = PushNotification::app('KITCHENIOS')->to($deviceid)->send($message);
-    	}
-    	elseif (strtolower($device_type) == 'android') {
-
-    		$optionBuiler = new OptionsBuilder();
-    		$optionBuiler->setTimeToLive(60*20);
-
-    		$notificationBuilder = new PayloadNotificationBuilder($title);
-    		$notificationBuilder->setBody($messageBody)->setSound($sound)->setBadge($badge);
-
-    		$dataBuilder = new PayloadDataBuilder();
-
-    		$option = $optionBuiler->build();
-    		$notification = $notificationBuilder->build();
-    		$data = $dataBuilder->build();
-
-    		$downstreamResponse = FCM::sendTo($deviceid, $option, $notification, $data);
-    	}
-    }
-
-    /* Send mail admin */
-    public function sendMailAdmin($working_employee_ids, $job_title, $job_notes, $adminMailBody)
-    {
-        $email_ids = [];
-        foreach ($working_employee_ids as $id) {
-            $email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 1)->where('is_deleted', 0)->first();
-            if (!empty($email_id)) {
-                $email_ids[] = $email_id->email;
+        if (!empty($getExistedImages)) {
+            if (!empty($getExistedImages->job_images_url)) {
+                $images_url = $getExistedImages->job_images_url . ',' . $images_url;
+            }
+            if (!empty($getExistedImages->job_images_name)) {
+                $images_name = $getExistedImages->job_images_name . ',' . $images_name;
             }
         }
-        if (sizeof($email_ids) > 0) {
-            /* send Mail*/
-            Mail::send('emails.KitchenApp_AdminEmail', array(
-                'job_title' => $job_title,
-                'job_note' => $job_notes,
-                'mail_body' => $adminMailBody,
-            ), function ($message) use ($email_ids, $job_title) {
-                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
-                $message->bcc($email_ids)->subject('A&S KITCHEN | ' . $job_title);
-            });
-        }
-        return;
+        Job::where('job_id', $job_id)->where('is_deleted', 0)->update(['job_images_url' => $images_url, 'job_images_name' => $images_name]);
+
+        $result = array($images_data[0], $images_data[1]);
     }
+    return $result;
+}
+
+public function storeJobImages($job_id, $job_pics)
+{
+    /* S3 bucket */
+    if (sizeof($job_pics) > 0) {
+      $imageURL = [];
+      $imageName = [];
+      foreach ($job_pics as $images) {
+        $originalName = $images->getClientOriginalName();
+        $imageFileName = $job_id . '_' . time() . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+        $s3 = Storage::disk('s3');
+        $filePath = 'jobsite_images/' . $imageFileName;
+        if ($s3->put($filePath, file_get_contents($images), 'public')) {
+            $imageURL[] = $s3->url($filePath);
+            $imageName[] = $imageFileName;
+        }
+    }
+    $result = array($imageURL, $imageName);
+    return $result;
+}
+}
+
+/*pushNotification */
+public function pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound='dafault')
+{
+   if(strtolower($device_type) == 'ios') {
+
+      $message = PushNotification::message($messageBody,array(
+         'title' => $title,
+         'badge' => $badge,
+         'sound' => $sound,
+     ));
+      $push = PushNotification::app('KITCHENIOS')->to($deviceid)->send($message);
+  }
+  elseif (strtolower($device_type) == 'android') {
+
+      $optionBuiler = new OptionsBuilder();
+      $optionBuiler->setTimeToLive(60*20);
+
+      $notificationBuilder = new PayloadNotificationBuilder($title);
+      $notificationBuilder->setBody($messageBody)->setSound($sound)->setBadge($badge);
+
+      $dataBuilder = new PayloadDataBuilder();
+
+      $option = $optionBuiler->build();
+      $notification = $notificationBuilder->build();
+      $data = $dataBuilder->build();
+
+      $downstreamResponse = FCM::sendTo($deviceid, $option, $notification, $data);
+  }
+}
+
+/* Send mail admin */
+public function sendMailAdmin($working_employee_ids, $job_title, $job_notes, $adminMailBody,$image_url="")
+{
+    $email_ids = [];
+    foreach ($working_employee_ids as $id) {
+        $email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 1)->where('is_deleted', 0)->first();
+        if (!empty($email_id)) {
+            $email_ids[] = $email_id->email;
+        }
+    }
+    if (sizeof($email_ids) > 0) {
+        /* send Mail*/
+        Mail::send('emails.KitchenApp_AdminEmail', array(
+            'job_title' => $job_title,
+            'job_note' => $job_notes,
+            'mail_body' => $adminMailBody,
+        ), function ($message) use ($email_ids, $job_title,$image_url) {
+            $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+            $message->bcc($email_ids)->subject('A&S KITCHEN | ' . $job_title);
+            if(count($image_url) > 0) {
+                for($i=0; $i<count($image_url); $i++) {
+                    $message->attach($image_url[$i]);
+                }
+            }
+        });
+    }
+    return;
+}
 }
