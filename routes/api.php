@@ -12,6 +12,7 @@
  */
 
 Route::post('login', 'API\AdminHomeController@login');
+Route::post('forgotPassword', 'API\AdminHomeController@forgotPassword');
 Route::middleware('auth:api')->group(function () {
     //-------------- User --------------
 	Route::get('userLogout', 'API\AdminHomeController@userLogout');

@@ -84,7 +84,7 @@ class JobsController extends Controller
      */
     public function getAllJobDetails($user_id)
     {
-    	$getDetails = DB::select("SELECT * FROM jobs WHERE company_clients_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 ORDER BY created_at DESC");
+    	$getDetails = DB::select("SELECT * FROM jobs WHERE company_clients_id LIKE '%{$user_id}%' OR working_employee_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 ORDER BY created_at DESC");
     	if(sizeof($getDetails) > 0)
     	{
     		foreach ($getDetails as $job) {
@@ -130,7 +130,7 @@ class JobsController extends Controller
     		$orderBy = 'created_at';
     		break;
     	}
-    	$getDetails = DB::select("SELECT * FROM jobs WHERE company_clients_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 AND job_status_id = '{$job_status_id}' ORDER BY '{$orderBy}' DESC");
+    	$getDetails = DB::select("SELECT * FROM jobs WHERE working_employee_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 AND job_status_id = '{$job_status_id}' ORDER BY '{$orderBy}' DESC");
     	if(sizeof($getDetails) > 0)
     	{
     		foreach ($getDetails as $job) {
@@ -158,7 +158,7 @@ class JobsController extends Controller
     /*Change job status*/
     public function changeJobStatus(Request $request)
     {
-    	try {
+    	//try {
     		$validator = Validator::make($request->all(), [
     			'user_id' => 'required',
     			'job_id' => 'required',
@@ -192,7 +192,7 @@ class JobsController extends Controller
     				if(!empty($getImageNote)) {
     					$image_url = $getImageNote[0];
     				}else{
-    					$image_url = '';
+    					$image_url = array();
     				}
     				/*send Mail*/
     				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
@@ -224,7 +224,8 @@ class JobsController extends Controller
 
     				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
     				break;
-    				case 2: /*pending & incomplete*/
+                    /*pending & incomplete*/
+    				case 2:
     				Job::where('job_id',$job_id)->update(['job_status_id'=> 4]);
 
     				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
@@ -236,80 +237,77 @@ class JobsController extends Controller
     				break;
     			}
     			break;
-    			case 5: /*installer*/
+                /*installer*/
+    			case 5:
     			switch ($job_status) {
-    				case 1:/*complete*/
-    				$allJobCheck = $request->get('all_jobcheck');
+                    /*complete*/
+    				case 1:
+    				/* status  installationSelect*/
+					$is_stone_installation = $request->get('stone_installation_select');
 
-    				if($allJobCheck == 1) {
-    					/* status  installationSelect*/
-    					$is_stone_installation = $request->get('stone_installation_select');
+					$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
+					if(!empty($getImageNote)) {
+						$image_url = $getImageNote[0];
+					}else{
+						$image_url = array();
+					}
 
-    					$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
-    					if(!empty($getImageNote)) {
-    						$image_url = $getImageNote[0];
-    					}else{
-    						$image_url = '';
-    					}
+					$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
 
-    					$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
+					$working_employee_ids = explode(',', $getDetail->working_employee_id);
+					$company_client_ids = explode(',', $getDetail->company_clients_id);
 
-    					$working_employee_ids = explode(',', $getDetail->working_employee_id);
-    					$company_client_ids = explode(',', $getDetail->company_clients_id);
-    					/*send mail as admin*/
-    					$adminMailBody = "Job has been Installed and is now in (stone installation stage or COMPLETE).";
-    					$this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody,$image_url);
+					/*send mail as admin*/
+					$adminMailBody = "Job has been Installed and is now in (stone installation stage or COMPLETE).";
+					$this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody,$image_url);
 
-    					/*send notification as client */
-    					if(sizeof($company_client_ids) > 0)
-    					{
-    						$title = 'Change Job Status';
-    						$badge = '1';
-    						$sound = 'default';
+					/*send notification as client */
+					if(sizeof($company_client_ids) > 0)
+					{
+						$title = 'Change Job Status';
+						$badge = '1';
+						$sound = 'default';
 
-    						foreach ($company_client_ids as $client_id) {
-    							$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
-    							if(!empty($device_detail->device_token)) {
-    								$messageBody = $getDetail->job_title ." has been measured and ‘has moved To STONE INSTALLATION or is COMPLETE’.";
-    								$deviceid = $device_detail->device_token;
-    								$device_type = $device_detail->device_type;
-    								$this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
-    							}
-    						}
-    					}
-    					/*send notification as stone installer*/
-    					if($is_stone_installation == 1) {
+						foreach ($company_client_ids as $client_id) {
+							$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+							if(!empty($device_detail->device_token)) {
+								$messageBody = $getDetail->job_title ." has been measured and ‘has moved To STONE INSTALLATION or is COMPLETE’.";
+								$deviceid = $device_detail->device_token;
+								$device_type = $device_detail->device_type;
+								$this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+							}
+						}
+					}
+					/*send notification as stone installer*/
+					if($is_stone_installation == 1) {
 
-    						$stoneinstallation_employees = $request->get('stoneinstallation_employee');
-    						$stone_employee_id = implode(',', $stoneinstallation_employees);
+						$stoneinstallation_employees = $request->get('stoneinstallation_employee');
 
-    						$title = 'Change Job Status';
-    						$badge = '1';
-    						$sound = 'default';
+						$stone_employee_id = implode(',', $stoneinstallation_employees);
 
-    						foreach ($stoneinstallation_employees as $stoneinstaller_id) {
-    							$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$stoneinstaller_id);
-    							if(!empty($device_detail->device_token)) {
-    								$messageBody = $getDetail->job_title ." has been installed and is awaiting Stone Installation.";
-    								$deviceid = $device_detail->device_token;
-    								$device_type = $device_detail->device_type;
-    								$this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
-    							}
-    						}
-    					}else {
-    						$stone_employee_id = null;
-    					}
+						$title = 'Change Job Status';
+						$badge = '1';
+						$sound = 'default';
 
-    					Job::where('job_id', $job_id)->update(['job_status_id' => 7,'is_select_stone_installation' => $is_stone_installation,'stone_installation_employee_id' => $stone_employee_id]);
+						foreach ($stoneinstallation_employees as $stoneinstaller_id) {
+							$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$stoneinstaller_id);
+							if(!empty($device_detail->device_token)) {
+								$messageBody = $getDetail->job_title ." has been installed and is awaiting Stone Installation.";
+								$deviceid = $device_detail->device_token;
+								$device_type = $device_detail->device_type;
+								$this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+							}
+						}
+					}else {
+						$stone_employee_id = null;
+					}
 
-    				}
-    				elseif($allJobCheck == 2) {
-
-    				}
+					Job::where('job_id', $job_id)->update(['job_status_id' => 7,'is_select_stone_installation' => $is_stone_installation,'stone_installation_employee_id' => $stone_employee_id]);
 
     				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
     				break;
-    				case 2: /*incomplete*/
+                    /*incomplete*/
+    				case 2:
 
     				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
     				if(!empty($getImageNote)) {
@@ -320,13 +318,37 @@ class JobsController extends Controller
 
     				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
     				$working_employee_ids = explode(',', $getDetail->working_employee_id);
-    				/*$installation_time = date('h:iA', strtotime($getDetail->installation_datetime));*/
+                    $company_client_ids = explode(',', $getDetail->company_clients_id);
+    				
+                    if(!empty($getDetail->installation_datetime)) {
+                        $installation_time = date('h:iA', strtotime($getDetail->installation_datetime));
+                        $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $installation_time));
+                    }else {
+                        $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' 09:55AM'));
+                    }
 
-    				$installation_date = date('Y-m-d', strtotime($request->get('installation_date')));
-    				if(!empty($installation_date)) {
-                        /*Job::where('job_id', $job_id)->update(['installation_datetime' => $installation_date]);
-                        $installation_date = date('m-d-Y', strtotime($request->get('installation_date')));*/
+                    if(!empty($request->get('installation_date'))) {
+                        Job::where('job_id', $job_id)->update(['installation_datetime' => $installation_datetime]);
+                        $installation_date = date('m/d/Y', strtotime($request->get('installation_date')));
                         $adminMailBody = "Installation Date has been moved to ". $installation_date.".";
+
+                        /*send notification as client */
+                        if(sizeof($company_client_ids) > 0)
+                        {
+                            $title = 'Change Job Status';
+                            $badge = '1';
+                            $sound = 'default';
+
+                            foreach ($company_client_ids as $client_id) {
+                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                                if(!empty($device_detail->device_token)) {
+                                    $messageBody = $getDetail->job_title ." Installation Date is now ". $installation_date;
+                                    $deviceid = $device_detail->device_token;
+                                    $device_type = $device_detail->device_type;
+                                    $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                                }
+                            }
+                        }
                     }else {
                     	$adminMailBody = "Installation has been changed to INCOMPETE status.";
                     }
@@ -345,7 +367,7 @@ class JobsController extends Controller
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
                 break;
             }
-        } catch (\Exception $e) {}
+        //} catch (\Exception $e) {}
     }
 
     /* Design Status */
@@ -460,7 +482,7 @@ class JobsController extends Controller
     /* Send mail admin */
     public function sendMailAdmin($working_employee_ids, $job_title, $job_notes, $adminMailBody,$image_url="")
     {
-    	$email_ids = [];
+        $email_ids = [];
     	foreach ($working_employee_ids as $id) {
     		$email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 1)->where('is_deleted', 0)->first();
     		if (!empty($email_id)) {
