@@ -76,9 +76,19 @@ class AdminHomeController extends Controller
         } catch (\Exception $e) {}
     }
 
+    /*forget password*/
     public function forgotPassword(Request $request) {
-
         try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+            ]);
+            
+            if ($validator->fails()) {
+                $messages = $validator->errors()->all();
+                $msg = $messages[0];
+                return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
+            }
+
             $email = $request->input('email');
             $checkEmail = ApiAdmin::where('email',$email)->first();
             if(!empty($checkEmail)){
@@ -99,6 +109,83 @@ class AdminHomeController extends Controller
             }else {
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Email is incorrect. Please try again."]);
             }
+        }catch (\Exception $e) {}
+    }
+
+    /*change password*/
+    public function changeAccountSetting(Request $request) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required',
+                'new_password' => 'required',
+                'retype_Password' => 'required',
+                'user_id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $messages = $validator->errors()->all();
+                $msg = $messages[0];
+                return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
+            }
+            $current_password = $request->get('current_password');
+            $new_password = $request->get('new_password');
+            $retype_password = $request->get('retype_Password');
+            $user_id = $request->get('user_id');
+
+            if($new_password != $retype_password) {
+                return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "New password and  Retype password is not match. Please try again."]);
+            }
+
+            $checkPassword = ApiAdmin::where('id',$user_id)->first();
+            if(!empty($checkPassword)) {
+                if(Hash::check($current_password,$checkPassword->password)) {
+                    $checkPassword->password = Hash::make($new_password);
+                    $checkPassword->save();
+                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Your password has been changed successfully."]);
+                }else {
+                    return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Current password is invalid. Please try again."]);
+                }
+            } else {
+                return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Something went wrong. Please try again."]);
+            }
+        }catch (\Exception $e) {}    
+    }
+
+    /*change myprofile*/
+    public function changeMyProfile(Request $request) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required',
+                'firstName' => 'required',
+                'lastName' => 'required',
+                'contactNo' => 'required',
+                'email' => 'required|email',
+            ]);
+
+            if ($validator->fails()) {
+                $messages = $validator->errors()->all();
+                $msg = $messages[0];
+                return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
+            }
+
+            $user_id = $request->get('user_id');
+            $firstName = $request->get('firstName');
+            $lastName = $request->get('lastName');
+            $contactNo = $request->get('contactNo');
+            $email = $request->get('email');
+
+            $checkEmailExist = ApiAdmin::selectRaw('email')->where('email', $email)->where('id', '<>', $user_id)->first();
+            if(isset($checkEmailExist->email)) {
+                return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Entered email address already exists."]);
+            }
+
+            $getDetail = ApiAdmin::where('id',$user_id)->first();
+            $getDetail->first_name = $firstName;
+            $getDetail->last_name = $lastName;
+            $getDetail->phone_number = $this->replacePhoneNumber($contactNo);
+            $getDetail->email = $email;
+            $getDetail->save();
+            
         }catch (\Exception $e) {}
     }
 
