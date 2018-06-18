@@ -102,6 +102,16 @@ class JobsController extends Controller
     			{
     				$job->job_notes = [];
     			}
+
+                $job->delivery_datetime = (!empty($job->delivery_datetime))? date('m/d/Y H:i:s',strtotime($job->delivery_datetime)) : null;
+                $job->plumbing_installation_date = (!empty($job->plumbing_installation_date))? date('m/d/Y',strtotime($job->plumbing_installation_date)) : null;
+                $job->installation_datetime = (!empty($job->installation_datetime))? date('m/d/Y H:i:s',strtotime($job->installation_datetime)) : null;
+                $job->stone_installation_datetime = (!empty($job->stone_installation_datetime))? date('m/d/Y H:i:s',strtotime($job->stone_installation_datetime)) : null;
+                $job->start_date = (!empty($job->start_date))? date('m/d/Y',strtotime($job->start_date)) : null;
+                $job->end_date = (!empty($job->end_date))? date('m/d/Y',strtotime($job->end_date)) : null;
+                $job->created_at = (!empty($job->created_at))? date('m/d/Y H:i:s',strtotime($job->created_at)) : null;
+                $job->updated_at = (!empty($job->updated_at))? date('m/d/Y H:i:s',strtotime($job->updated_at)) : null;
+
     			$getStatusName = JobType::selectRaw('job_status_name')->where('job_status_id', $job->job_status_id)->first();
     			$job->job_status_name = $getStatusName->job_status_name;
     		}
@@ -148,6 +158,16 @@ class JobsController extends Controller
     			{
     				$job->job_notes = [];
     			}
+
+                $job->delivery_datetime = (!empty($job->delivery_datetime))? date('m/d/Y H:i:s',strtotime($job->delivery_datetime)) : null;
+                $job->plumbing_installation_date = (!empty($job->plumbing_installation_date))? date('m/d/Y',strtotime($job->plumbing_installation_date)) : null;
+                $job->installation_datetime = (!empty($job->installation_datetime))? date('m/d/Y H:i:s',strtotime($job->installation_datetime)) : null;
+                $job->stone_installation_datetime = (!empty($job->stone_installation_datetime))? date('m/d/Y H:i:s',strtotime($job->stone_installation_datetime)) : null;
+                $job->start_date = (!empty($job->start_date))? date('m/d/Y',strtotime($job->start_date)) : null;
+                $job->end_date = (!empty($job->end_date))? date('m/d/Y',strtotime($job->end_date)) : null;
+                $job->created_at = (!empty($job->created_at))? date('m/d/Y H:i:s',strtotime($job->created_at)) : null;
+                $job->updated_at = (!empty($job->updated_at))? date('m/d/Y H:i:s',strtotime($job->updated_at)) : null;
+
     			$getStatusName = JobType::selectRaw('job_status_name')->where('job_status_id', $job->job_status_id)->first();
     			$job->job_status_name = $getStatusName->job_status_name;
     		}
@@ -324,7 +344,7 @@ class JobsController extends Controller
     				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
     				$working_employee_ids = explode(',', $getDetail->working_employee_id);
                     $company_client_ids = explode(',', $getDetail->company_clients_id);
-    				
+
                     if(!empty($getDetail->installation_datetime)) {
                         $installation_time = date('h:iA', strtotime($getDetail->installation_datetime));
                         $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $installation_time));

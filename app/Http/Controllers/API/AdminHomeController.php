@@ -40,6 +40,8 @@ class AdminHomeController extends Controller
                     $success['token'] = "Bearer " . $user->createToken('kitchen')->accessToken;
                     $success['user_id'] = $user->id;
                     $success['user_name'] = $user->first_name . ' ' . $user->last_name;
+                    $success['email'] = $user->email;
+                    $success['phone_number'] = (!empty($user->phone_number))? $this->formatPhoneNumber($user->phone_number) : null;
                     $success['login_type_id'] = $user->login_type_id;
                     $user->device_token = $device_token;
                     $user->device_type = $device_type;
