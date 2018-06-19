@@ -158,9 +158,10 @@ class AdminHomeController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required',
-                'firstName' => 'required',
-                'lastName' => 'required',
-                'contactNo' => 'required',
+                'login_type_id' => 'required',
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'contact_no' => 'required',
                 'email' => 'required|email',
             ]);
 
@@ -171,10 +172,11 @@ class AdminHomeController extends Controller
             }
 
             $user_id = $request->get('user_id');
-            $firstName = $request->get('firstName');
-            $lastName = $request->get('lastName');
-            $contactNo = $request->get('contactNo');
+            $firstName = $request->get('first_name');
+            $lastName = $request->get('last_name');
+            $contactNo = $request->get('contact_no');
             $email = $request->get('email');
+            $login_type_id = $request->get('login_type_id');
 
             $checkEmailExist = ApiAdmin::selectRaw('email')->where('email', $email)->where('id', '<>', $user_id)->first();
             if(isset($checkEmailExist->email)) {
@@ -187,7 +189,15 @@ class AdminHomeController extends Controller
             $getDetail->phone_number = $this->replacePhoneNumber($contactNo);
             $getDetail->email = $email;
             $getDetail->save();
-            
+
+            $success['token'] = "Bearer " . $getDetail->createToken('kitchen')->accessToken;
+            $success['user_id'] = $user_id;
+            $success['user_name'] = $firstName . ' ' . $lastName;
+            $success['email'] = $email;
+            $success['phone_number'] = (!empty($contactNo))? $this->formatPhoneNumber($contactNo) : null;
+            $success['login_type_id'] = $login_type_id;
+
+            return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Profile has been updated successfully.", 'response_data' => $success]);
         }catch (\Exception $e) {}
     }
 
