@@ -29,11 +29,11 @@
 .bootstrap-select .dropdown-toggle:focus {
 	outline: 0px auto -webkit-focus-ring-color!important;
 }
-/*.dropdown-toggle::after {
+.dropdown_select .dropdown-toggle::after {
 	display: inline-block;
 	position: relative;
 	right: 20px;
-}*/
+}
 .bootstrap-select.btn-group .dropdown-toggle .filter-option {
     padding-right: 15px;
     text-overflow: ellipsis;
@@ -289,7 +289,7 @@
 												</div>
 											</div>
 											<div class="col-md-4">
-												<div class="form-group" style="overflow: visible!important;">
+												<div class="form-group dropdown_select" style="overflow: visible!important;">
 													<label class="control-label"><b>COMPANY CLIENTS</b></label>
 													<select data-size="5" id="comapnyClients" name="comapnyClients" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 														@if(isset($companyClientList) && sizeof($companyClientList) > 0)
@@ -305,7 +305,7 @@
 												</div>
 											</div>
 											<div class="col-md-4">
-												<div class="form-group" style="overflow: visible!important;">
+												<div class="form-group dropdown_select" style="overflow: visible!important;">
 													<label class="control-label"><b>WORKING EMPLOYEES</b></label>
 													<select data-size="5" id="workingEmployee" name="workingEmployee" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 														@foreach($employeeList as $employee)

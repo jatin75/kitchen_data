@@ -5,6 +5,11 @@ date_default_timezone_set('UTC');
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\admin\AdminHomeController;
 use Illuminate\Http\Request;
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use PushNotification;
+use FCM;
 use App\Job;
 use App\JobNote;
 use App\JobType;
@@ -624,24 +629,160 @@ class JobsController extends Controller
         /*send Mail*/
         $getDetail = Job::where('job_id',$jobId)->where('is_deleted',0)->first();
         $working_employee_ids = explode(',', $getDetail->working_employee_id);
+        $company_client_ids = explode(',', $getDetail->company_clients_id);
         switch ($jobStatusId) {
             case 1:
             $this->sendMailNew($working_employee_ids, $getDetail->job_title);
+            /*send notification as client */
+            if(sizeof($company_client_ids) > 0)
+            {
+                $title = 'Change Job Status';
+                $badge = '1';
+                $sound = 'default';
+
+                foreach ($company_client_ids as $client_id) {
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                    if(!empty($device_detail->device_token)) {
+                        $messageBody = 'NEW '.$getDetail->job_title .'CREATED.';
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    }
+                }
+            }
             break;
             case 2:
             $this->sendMailMeasuring($getDetail);
+            /*send notification as measurer */
+            if(sizeof($working_employee_ids) > 0)
+            {
+                $title = 'Change Job Status';
+                $badge = '1';
+                $sound = 'default';
+
+                foreach($working_employee_ids as $id)
+                {
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$id)->where('login_type_id',3)->where('is_deleted',0)->first();
+                    if(!empty($device_detail) && (!empty($device_detail->device_token))) {
+                        $messageBody = 'NEW JOB TO MEASURE: '.$getDetail->job_title;
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    }
+                }
+            }
             break;
             case 3:
             $this->sendMailDesign($working_employee_ids, $getDetail->job_title);
             break;
             case 5:
             $this->sendMailDelivery($getDetail);
+            $delivery_date = date('m/d/Y', strtotime($getDetail->delivery_datetime));
+            /*send notification as delivery */
+            if(sizeof($working_employee_ids) > 0) {
+                $title = 'Change Job Status';
+                $badge = '1';
+                $sound = 'default';
+
+                foreach($working_employee_ids as $id)
+                {
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$id)->where('login_type_id',4)->where('is_deleted',0)->first();
+                    if(!empty($device_detail) && (!empty($device_detail->device_token))) {
+                        $messageBody = $getDetail->job_title.' Scheduled for Deliver '.$delivery_date;
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    }
+                }
+            }
+            if(sizeof($company_client_ids) > 0) {
+                $title = 'Change Job Status';
+                $badge = '1';
+                $sound = 'default';
+
+                foreach ($company_client_ids as $client_id) {
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                    if(!empty($device_detail->device_token)) {
+                        $messageBody = $getDetail->job_title.' Scheduled for Deliver '.$delivery_date;
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    }
+                }
+            }
             break;
             case 6:
             $this->sendMailInstallation($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);
+            $installation_date = date('m/d/Y', strtotime($getDetail->installation_datetime));
+            /*send notification as installer */
+            if(sizeof($working_employee_ids) > 0) {
+                $title = 'Change Job Status';
+                $badge = '1';
+                $sound = 'default';
+
+                foreach($working_employee_ids as $id)
+                {
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$id)->where('login_type_id',5)->where('is_deleted',0)->first();
+                    if(!empty($device_detail) && (!empty($device_detail->device_token))) {
+                        $messageBody = $getDetail->job_title.' Scheduled for INSTALLATION '.$installation_date;
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    }
+                }
+            }
+            if(sizeof($company_client_ids) > 0) {
+                $title = 'Change Job Status';
+                $badge = '1';
+                $sound = 'default';
+
+                foreach ($company_client_ids as $client_id) {
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                    if(!empty($device_detail->device_token)) {
+                        $messageBody = $getDetail->job_title.' Scheduled for INSTALLATION '.$installation_date;
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    }
+                }
+            }
             break;
             case 7:
             $this->sendMailStoneInstallation($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);
+            $stone_installation_date = date('m/d/Y', strtotime($getDetail->stone_installation_datetime));
+            /*send notification as stone installer */
+            if(sizeof($working_employee_ids) > 0) {
+                $title = 'Change Job Status';
+                $badge = '1';
+                $sound = 'default';
+
+                foreach($working_employee_ids as $id)
+                {
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$id)->where('login_type_id',6)->where('is_deleted',0)->first();
+                    if(!empty($device_detail) && (!empty($device_detail->device_token))) {
+                        $messageBody = $getDetail->job_title.' Scheduled for STONE INSTALLATION '.$stone_installation_date;
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    }
+                }
+            }
+
+            if(sizeof($company_client_ids) > 0) {
+                $title = 'Change Job Status';
+                $badge = '1';
+                $sound = 'default';
+
+                foreach ($company_client_ids as $client_id) {
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                    if(!empty($device_detail->device_token)) {
+                        $messageBody = $getDetail->job_title.' Scheduled for STONE INSTALLATION '.$stone_installation_date;
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    }
+                }
+            }
             break;
         }
         echo json_encode($response);
@@ -874,6 +1015,35 @@ class JobsController extends Controller
             });
         }
         return;
+    }
+
+    /*pushNotification */
+    public function pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound='dafault')
+    {
+        if(strtolower($device_type) == 'ios') {
+
+            $message = PushNotification::message($messageBody,array(
+                'title' => $title,
+                'badge' => $badge,
+                'sound' => $sound,
+            ));
+            $push = PushNotification::app('KITCHENIOS')->to($deviceid)->send($message);
+        }
+        elseif (strtolower($device_type) == 'android') {
+
+            $optionBuiler = new OptionsBuilder();
+            $optionBuiler->setTimeToLive(60*20);
+
+            $notificationBuilder = new PayloadNotificationBuilder($title);
+            $notificationBuilder->setBody($messageBody)->setSound($sound)->setBadge($badge);
+
+            $dataBuilder = new PayloadDataBuilder();
+
+            $option = $optionBuiler->build();
+            $notification = $notificationBuilder->build();
+            $data = $dataBuilder->build();
+            $downstreamResponse = FCM::sendTo($deviceid, $option, $notification, $data);
+        }
     }
 
     public function getJobId()

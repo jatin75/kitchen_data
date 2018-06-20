@@ -261,6 +261,13 @@ class JobsController extends Controller
     			switch ($job_status) {
                     /*complete*/
     				case 1:
+                    print_r($request->get('stoneinstallation_employee'));
+                    if(!empty($request->get('stoneinstallation_employee'))){
+                        echo "hi";
+                    }else{
+                        echo "hello";
+                    }
+                    die;
     				/* status  installationSelect*/
 					$is_stone_installation = $request->get('stone_installation_select');
                     
