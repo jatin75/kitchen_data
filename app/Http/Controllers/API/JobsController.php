@@ -30,7 +30,7 @@ class JobsController extends Controller
      */
     public function getUserJobDetails(Request $request)
     {
-    	// try {
+    	try {
     	$validator = Validator::make($request->all(), [
     		'user_id' => 'required',
     		'login_type_id' => 'required',
@@ -67,6 +67,14 @@ class JobsController extends Controller
     		case '6':
     		$getJobsDetail = $this->getSpecificJobDetails($user_id, 7);
     		break;
+            /* plumber */
+            case '7':
+            $getJobsDetail = $this->getAllJobDetails($user_id);
+            break;
+            /* inspector */
+            case '8':
+            $getJobsDetail = $this->getAllJobDetails($user_id);
+            break;
     		/* Client */
     		case '9':
     		$getJobsDetail = $this->getAllJobDetails($user_id);
@@ -74,7 +82,7 @@ class JobsController extends Controller
     	}
     	return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully', 'response_data' => $getJobsDetail]);
 
-    	// } catch (\Exception $e) {}
+    	} catch (\Exception $e) {}
     }
 
     /**
@@ -197,7 +205,9 @@ class JobsController extends Controller
     		$job_id = $request->get('job_id');
     		$user_login_type = $request->get('user_login_type');
     		$job_status = $request->get('job_status');
-    		$job_pics = $request->file('job_pics');
+    		//$job_pics = $request->file('job_pics');
+            $job_pics_name = $request->get('job_pics_name');
+            $job_pics_url = $request->get('job_pics_url');
             $job_notes = $request->get('job_notes');
     		switch ($user_login_type) {
     			/*measurer*/
@@ -208,12 +218,15 @@ class JobsController extends Controller
     				/* status */
     				Job::where('job_id', $job_id)->update(['job_status_id' => 3]);
 
-    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
-    				if(!empty($getImageNote)) {
-    					$image_url = $getImageNote[0];
+    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+    				if(!empty($job_pics_url)) {
+    					//$image_url = $getImageNote[0];
+                        $image_url = explode(',', $job_pics_url);
     				}else{
     					$image_url = array();
     				}
+                    //print_r($image_url);
+                    //die;
                     /*send Mail*/
     				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
     				$working_employee_ids = explode(',', $getDetail->working_employee_id);
@@ -247,7 +260,7 @@ class JobsController extends Controller
                     /*pending & incomplete*/
     				case 2:
     				
-    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
+    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
 
     				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
     				break;
@@ -261,27 +274,24 @@ class JobsController extends Controller
     			switch ($job_status) {
                     /*complete*/
     				case 1:
-                    print_r($request->get('stoneinstallation_employee'));
-                    if(!empty($request->get('stoneinstallation_employee'))){
-                        echo "hi";
-                    }else{
-                        echo "hello";
-                    }
-                    die;
-    				/* status  installationSelect*/
+                    /* status  installationSelect*/
 					$is_stone_installation = $request->get('stone_installation_select');
                     
                     if(empty($is_stone_installation)) {
                         return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Stone installation field is required."]);
-                    }/*elseif($is_stone_installation = 1 && empty($request->get('stoneinstallation_employee'))) {
+                    }elseif($is_stone_installation = 1 && empty($request->get('stone_installation_date'))) {
+                        return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Stone installation date field is required."]);
+                    }elseif($is_stone_installation = 1 && empty(array_filter($request->get('stoneinstallation_employee')))) {
                         return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Stone installation employee field is required."]);
-                    }*/
-					$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
-					if(!empty($getImageNote)) {
-						$image_url = $getImageNote[0];
-					}else{
-						$image_url = array();
-					}
+                    }
+                    
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+					if(!empty($job_pics_url)) {
+                        //$image_url = $getImageNote[0];
+                        $image_url = explode(',', $job_pics_url);
+                    }else{
+                        $image_url = array();
+                    }
 
 					$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
 					$working_employee_ids = explode(',', $getDetail->working_employee_id);
@@ -354,25 +364,27 @@ class JobsController extends Controller
                     /*incomplete*/
     				case 2:
 
-    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
-    				if(!empty($getImageNote)) {
-    					$image_url = $getImageNote[0];
-    				}else{
-    					$image_url = array();
-    				}
+    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+    				if(!empty($job_pics_url)) {
+                        //$image_url = $getImageNote[0];
+                        $image_url = explode(',', $job_pics_url);
+                    }else{
+                        $image_url = array();
+                    }
 
     				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
     				$working_employee_ids = explode(',', $getDetail->working_employee_id);
                     $company_client_ids = explode(',', $getDetail->company_clients_id);
 
-                    if(!empty($getDetail->installation_datetime)) {
-                        $installation_time = date('h:iA', strtotime($getDetail->installation_datetime));
-                        $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $installation_time));
-                    }else {
-                        $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' 09:55AM'));
-                    }
-
                     if(!empty($request->get('installation_date'))) {
+
+                        if(!empty($getDetail->installation_datetime)) {
+                            $installation_time = date('h:iA', strtotime($getDetail->installation_datetime));
+                            $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $installation_time));
+                        }else {
+                            $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' 09:55AM'));
+                        }
+
                         Job::where('job_id', $job_id)->update(['installation_datetime' => $installation_datetime]);
                         $installation_date = date('m/d/Y', strtotime($request->get('installation_date')));
                         $adminMailBody = "Installation Date has been moved to ". $installation_date.".";
@@ -415,9 +427,18 @@ class JobsController extends Controller
                     /* status  installationSelect*/
                     $is_installation = $request->get('installation_select');
 
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
-                    if(!empty($getImageNote)) {
-                        $image_url = $getImageNote[0];
+                    if(empty($is_installation)) {
+                        return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Installation field is required."]);
+                    }elseif($is_installation = 1 && empty($request->get('installation_date'))) {
+                        return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Installation date field is required."]);
+                    }elseif($is_installation = 1 && empty(array_filter($request->get('installation_employee')))) {
+                        return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Installation employee field is required."]);
+                    }
+
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    if(!empty($job_pics_url)) {
+                        //$image_url = $getImageNote[0];
+                        $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
                     }
@@ -495,9 +516,10 @@ class JobsController extends Controller
                     break;
                     /*incomplete*/
                     case 2:
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
-                    if(!empty($getImageNote)) {
-                        $image_url = $getImageNote[0];
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    if(!empty($job_pics_url)) {
+                        //$image_url = $getImageNote[0];
+                        $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
                     }
@@ -550,9 +572,10 @@ class JobsController extends Controller
                     /*complete*/
                     case 1:
 
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
-                    if(!empty($getImageNote)) {
-                        $image_url = $getImageNote[0];
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    if(!empty($job_pics_url)) {
+                        //$image_url = $getImageNote[0];
+                        $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
                     }
@@ -590,9 +613,10 @@ class JobsController extends Controller
                     /*incomplete*/
                     case 2:
 
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes);
-                    if(!empty($getImageNote)) {
-                        $image_url = $getImageNote[0];
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    if(!empty($job_pics_url)) {
+                        //$image_url = $getImageNote[0];
+                        $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
                     }
@@ -601,14 +625,15 @@ class JobsController extends Controller
                     $working_employee_ids = explode(',', $getDetail->working_employee_id);
                     $company_client_ids = explode(',', $getDetail->company_clients_id);
 
-                    if(!empty($getDetail->stone_installation_datetime)) {
-                        $stone_installation_time = date('h:iA', strtotime($getDetail->stone_installation_datetime));
-                        $stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $stone_installation_time));
-                    }else {
-                        $stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' 09:55AM'));
-                    }
-
                     if(!empty($request->get('stone_installation_date'))) {
+
+                        if(!empty($getDetail->stone_installation_datetime)) {
+                            $stone_installation_time = date('h:iA', strtotime($getDetail->stone_installation_datetime));
+                            $stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $stone_installation_time));
+                        }else {
+                            $stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' 09:55AM'));
+                        }
+
                         Job::where('job_id', $job_id)->update(['stone_installation_datetime' => $stone_installation_datetime]);
                         $stone_installation_date = date('m/d/Y', strtotime($request->get('installation_date')));
                         $adminMailBody = " Stone Installation Date has been moved to ". $stone_installation_date.".";
@@ -679,7 +704,7 @@ class JobsController extends Controller
     }
 
     /* storeJobNotesAndImage */
-    public function storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_pics,$job_notes) {
+    public function storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url) {
         $result = '';
     	/* notes */
     	if (!empty($job_notes)) {
@@ -693,25 +718,26 @@ class JobsController extends Controller
     		$ObjJobNote->save();
     	}
     	/* images */
-    	if (isset($job_pics)  && sizeof($job_pics) > 0) {
-    		$images_data = $this->storeJobImages($job_id, $job_pics);
-    		$images_url = implode(',', $images_data[0]);
-    		$images_name = implode(',', $images_data[1]);
+    	//if (isset($job_pics)  && sizeof($job_pics) > 0) {
+        if (!empty($job_pics_name)  && !empty($job_pics_url)) {
+    		//$images_data = $this->storeJobImages($job_id, $job_pics);
+    		//$images_url = implode(',', $images_data[0]);
+    		//$images_name = implode(',', $images_data[1]);
     		$getExistedImages = Job::selectRaw('job_images_url,job_images_name')->where('job_id', $job_id)->where('is_deleted', 0)->first();
 
     		if (!empty($getExistedImages)) {
     			if (!empty($getExistedImages->job_images_url)) {
-    				$images_url = $getExistedImages->job_images_url . ',' . $images_url;
+    				$images_url = $getExistedImages->job_images_url . ',' . $job_pics_url;
     			}
     			if (!empty($getExistedImages->job_images_name)) {
-    				$images_name = $getExistedImages->job_images_name . ',' . $images_name;
+    				$images_name = $getExistedImages->job_images_name . ',' . $job_pics_name;
     			}
     		}
     		Job::where('job_id', $job_id)->where('is_deleted', 0)->update(['job_images_url' => $images_url, 'job_images_name' => $images_name]);
 
-    		$result = array($images_data[0], $images_data[1]);
+    		//$result = array($images_data[0], $images_data[1]);
     	}
-    	return $result;
+    	return;
     }
 
     public function storeJobImages($job_id, $job_pics)
