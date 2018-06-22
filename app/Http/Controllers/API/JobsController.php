@@ -40,7 +40,8 @@ class JobsController extends Controller
     		$msg = $messages[0];
     		return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
     	}
-    	$user_id = $request->get('user_id');
+        $employeeList = array();
+        $user_id = $request->get('user_id');
     	$login_type_id = $request->get('login_type_id');
     	switch ($login_type_id) {
     		/* Admin */
@@ -58,10 +59,12 @@ class JobsController extends Controller
     		/* Delivery */
     		case '4':
     		$getJobsDetail = $this->getSpecificJobDetails($user_id, 5);
+            $employeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
     		break;
     		/* Installer */
     		case '5':
     		$getJobsDetail = $this->getSpecificJobDetails($user_id, 6);
+            $employeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
     		break;
     		/* Stone */
     		case '6':
@@ -80,7 +83,7 @@ class JobsController extends Controller
     		$getJobsDetail = $this->getAllJobDetails($user_id);
     		break;
     	}
-    	return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully', 'response_data' => $getJobsDetail]);
+    	return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully', 'response_data' => array('job' => $getJobsDetail, 'employee' => $employeeList)]);
 
     	} catch (\Exception $e) {}
     }
@@ -149,7 +152,7 @@ class JobsController extends Controller
     		break;
     	}
     	$getDetails = DB::select("SELECT * FROM jobs WHERE working_employee_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 AND job_status_id = '{$job_status_id}' ORDER BY '{$orderBy}' DESC");
-    	if(sizeof($getDetails) > 0)
+        if(sizeof($getDetails) > 0)
     	{
     		foreach ($getDetails as $job) {
     			$notes = [];
@@ -180,13 +183,13 @@ class JobsController extends Controller
     			$job->job_status_name = $getStatusName->job_status_name;
     		}
     	}
-    	return $getDetails;
+        return $getDetails;
     }
 
     /*Change job status*/
     public function changeJobStatus(Request $request)
     {
-    	try {
+    	//try {
     		$validator = Validator::make($request->all(), [
     			'user_id' => 'required',
     			'job_id' => 'required',
@@ -205,8 +208,7 @@ class JobsController extends Controller
     		$job_id = $request->get('job_id');
     		$user_login_type = $request->get('user_login_type');
     		$job_status = $request->get('job_status');
-    		//$job_pics = $request->file('job_pics');
-            $job_pics_name = $request->get('job_pics_name');
+    		$job_pics_name = $request->get('job_pics_name');
             $job_pics_url = $request->get('job_pics_url');
             $job_notes = $request->get('job_notes');
     		switch ($user_login_type) {
@@ -220,13 +222,10 @@ class JobsController extends Controller
 
     				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
     				if(!empty($job_pics_url)) {
-    					//$image_url = $getImageNote[0];
-                        $image_url = explode(',', $job_pics_url);
+    				    $image_url = explode(',', $job_pics_url);
     				}else{
     					$image_url = array();
     				}
-                    //print_r($image_url);
-                    //die;
                     /*send Mail*/
     				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
     				$working_employee_ids = explode(',', $getDetail->working_employee_id);
@@ -287,7 +286,6 @@ class JobsController extends Controller
                     
                     $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
 					if(!empty($job_pics_url)) {
-                        //$image_url = $getImageNote[0];
                         $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
@@ -366,7 +364,6 @@ class JobsController extends Controller
 
     				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
     				if(!empty($job_pics_url)) {
-                        //$image_url = $getImageNote[0];
                         $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
@@ -437,7 +434,6 @@ class JobsController extends Controller
 
                     $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
                     if(!empty($job_pics_url)) {
-                        //$image_url = $getImageNote[0];
                         $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
@@ -518,7 +514,6 @@ class JobsController extends Controller
                     case 2:
                     $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
                     if(!empty($job_pics_url)) {
-                        //$image_url = $getImageNote[0];
                         $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
@@ -574,7 +569,6 @@ class JobsController extends Controller
 
                     $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
                     if(!empty($job_pics_url)) {
-                        //$image_url = $getImageNote[0];
                         $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
@@ -615,7 +609,6 @@ class JobsController extends Controller
 
                     $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
                     if(!empty($job_pics_url)) {
-                        //$image_url = $getImageNote[0];
                         $image_url = explode(',', $job_pics_url);
                     }else{
                         $image_url = array();
@@ -672,7 +665,7 @@ class JobsController extends Controller
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
                 break;
             }
-        } catch (\Exception $e) {}
+        //} catch (\Exception $e) {}
     }
 
     /* Design Status */
@@ -705,8 +698,7 @@ class JobsController extends Controller
 
     /* storeJobNotesAndImage */
     public function storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url) {
-        $result = '';
-    	/* notes */
+        /* notes */
     	if (!empty($job_notes)) {
     		$ObjJobNote = new JobNote();
     		$ObjJobNote->job_id = $job_id;
@@ -721,8 +713,8 @@ class JobsController extends Controller
     	//if (isset($job_pics)  && sizeof($job_pics) > 0) {
         if (!empty($job_pics_name)  && !empty($job_pics_url)) {
     		//$images_data = $this->storeJobImages($job_id, $job_pics);
-    		//$images_url = implode(',', $images_data[0]);
-    		//$images_name = implode(',', $images_data[1]);
+    		$images_url = $job_pics_url;
+            $images_name = $job_pics_name;
     		$getExistedImages = Job::selectRaw('job_images_url,job_images_name')->where('job_id', $job_id)->where('is_deleted', 0)->first();
 
     		if (!empty($getExistedImages)) {
@@ -735,7 +727,6 @@ class JobsController extends Controller
     		}
     		Job::where('job_id', $job_id)->where('is_deleted', 0)->update(['job_images_url' => $images_url, 'job_images_name' => $images_name]);
 
-    		//$result = array($images_data[0], $images_data[1]);
     	}
     	return;
     }
