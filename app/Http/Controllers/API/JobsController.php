@@ -189,7 +189,7 @@ class JobsController extends Controller
     /*Change job status*/
     public function changeJobStatus(Request $request)
     {
-    	//try {
+    	try {
     		$validator = Validator::make($request->all(), [
     			'user_id' => 'required',
     			'job_id' => 'required',
@@ -230,24 +230,24 @@ class JobsController extends Controller
     				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
     				$working_employee_ids = explode(',', $getDetail->working_employee_id);
     				$company_client_ids = explode(',', $getDetail->company_clients_id);
-
+                    
     				/*send notification as client */
     				if(sizeof($company_client_ids) > 0)
     				{
-    					$title = 'Change Job Status';
+                        $title = 'Change Job Status';
     					$badge = '1';
     					$sound = 'default';
 
     					foreach ($company_client_ids as $client_id) {
-    						$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
-    						if(!empty($device_detail->device_token)) {
-    							$messageBody = $getDetail->job_title .'has been measured and has moved into Design Stage';
+    						$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
+                            if(!empty($device_detail->device_token)) {
+                                $messageBody = $getDetail->job_title .'has been measured and has moved into Design Stage';
     							$deviceid = $device_detail->device_token;
     							$device_type = $device_detail->device_type;
     							$this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
     						}
     					}
-    				}
+                    }
     				/*send mail as measurer*/
     				$this->sendMailDesign($working_employee_ids, $getDetail->job_title, $job_notes,$image_url);
     				/*send mail as admin*/
@@ -256,9 +256,9 @@ class JobsController extends Controller
 
     				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
     				break;
+                    
                     /*pending & incomplete*/
     				case 2:
-    				
     				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
 
     				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
@@ -317,7 +317,7 @@ class JobsController extends Controller
                         $sound = 'default';
 
                         foreach ($stoneinstallation_employees as $stoneinstaller_id) {
-                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$stoneinstaller_id);
+                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$stoneinstaller_id)->first();
                             if(!empty($device_detail->device_token)) {
                                 $messageBody = $getDetail->job_title ." has been installed and is awaiting Stone Installation.";
                                 $deviceid = $device_detail->device_token;
@@ -345,7 +345,7 @@ class JobsController extends Controller
 						$sound = 'default';
 
 						foreach ($company_client_ids as $client_id) {
-							$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+							$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
 							if(!empty($device_detail->device_token)) {
 								$messageBody = $getDetail->job_title ." has been measured and has moved To ".$stage.".";
 								$deviceid = $device_detail->device_token;
@@ -394,7 +394,7 @@ class JobsController extends Controller
                             $sound = 'default';
 
                             foreach ($company_client_ids as $client_id) {
-                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                                 if(!empty($device_detail->device_token)) {
                                     $messageBody = $getDetail->job_title ." Installation Date is now ". $installation_date;
                                     $deviceid = $device_detail->device_token;
@@ -464,7 +464,7 @@ class JobsController extends Controller
                         $sound = 'default';
 
                         foreach ($installation_employees as $installer_id) {
-                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$installer_id);
+                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$installer_id)->first();
                             if(!empty($device_detail->device_token)) {
                                 $messageBody = $getDetail->job_title ." is ready for Installation";
                                 $deviceid = $device_detail->device_token;
@@ -495,7 +495,7 @@ class JobsController extends Controller
                         $sound = 'default';
 
                         foreach ($company_client_ids as $client_id) {
-                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                             if(!empty($device_detail->device_token)) {
                                 $messageBody = $getDetail->job_title ." has been delivered and Has moved to ".$stage.".";
                                 $deviceid = $device_detail->device_token;
@@ -539,7 +539,7 @@ class JobsController extends Controller
                             $sound = 'default';
 
                             foreach ($company_client_ids as $client_id) {
-                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                                 if(!empty($device_detail->device_token)) {
                                     $messageBody = $getDetail->job_title ." Delivery Date is now ". $delivery_date;
                                     $deviceid = $device_detail->device_token;
@@ -590,7 +590,7 @@ class JobsController extends Controller
                         $sound = 'default';
 
                         foreach ($company_client_ids as $client_id) {
-                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                            $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                             if(!empty($device_detail->device_token)) {
                                 $messageBody = $getDetail->job_title ." is COMPLETE.";
                                 $deviceid = $device_detail->device_token;
@@ -639,7 +639,7 @@ class JobsController extends Controller
                             $sound = 'default';
 
                             foreach ($company_client_ids as $client_id) {
-                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                                 if(!empty($device_detail->device_token)) {
                                     $messageBody = $getDetail->job_title ." Stone Installation Date is now ". $stone_installation_date;
                                     $deviceid = $device_detail->device_token;
@@ -665,7 +665,7 @@ class JobsController extends Controller
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
                 break;
             }
-        //} catch (\Exception $e) {}
+        } catch (\Exception $e) {}
     }
 
     /* Design Status */
@@ -710,8 +710,7 @@ class JobsController extends Controller
     		$ObjJobNote->save();
     	}
     	/* images */
-    	//if (isset($job_pics)  && sizeof($job_pics) > 0) {
-        if (!empty($job_pics_name)  && !empty($job_pics_url)) {
+    	if (!empty($job_pics_name)  && !empty($job_pics_url)) {
     		//$images_data = $this->storeJobImages($job_id, $job_pics);
     		$images_url = $job_pics_url;
             $images_name = $job_pics_name;
@@ -755,14 +754,14 @@ class JobsController extends Controller
     /*pushNotification */
     public function pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound='dafault')
     {
-    	if(strtolower($device_type) == 'ios') {
+        if(strtolower($device_type) == 'ios') {
 
     		$message = PushNotification::message($messageBody,array(
     			'title' => $title,
-    			'badge' => $badge,
+    			//'badge' => $badge,
     			'sound' => $sound,
     		));
-    		$push = PushNotification::app('KITCHENIOS')->to($deviceid)->send($message);
+            $push = PushNotification::app('KITCHENIOS')->to($deviceid)->send($message);
     	}
     	elseif (strtolower($device_type) == 'android') {
 
