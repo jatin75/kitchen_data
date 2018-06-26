@@ -241,7 +241,7 @@ class JobsController extends Controller
     					foreach ($company_client_ids as $client_id) {
     						$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                             if(!empty($device_detail->device_token)) {
-                                $messageBody = $getDetail->job_title .'has been measured and has moved into Design Stage';
+                                $messageBody = $getDetail->job_title .' has been measured and has moved into Design Stage';
     							$deviceid = $device_detail->device_token;
     							$device_type = $device_detail->device_type;
     							$this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);

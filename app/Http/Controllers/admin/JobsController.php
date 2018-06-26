@@ -641,9 +641,9 @@ class JobsController extends Controller
                 $sound = 'default';
 
                 foreach ($company_client_ids as $client_id) {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                     if(!empty($device_detail->device_token)) {
-                        $messageBody = 'NEW '.$getDetail->job_title .'CREATED.';
+                        $messageBody = 'NEW '.$getDetail->job_title .' CREATED.';
                         $deviceid = $device_detail->device_token;
                         $device_type = $device_detail->device_type;
                         $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
@@ -701,7 +701,7 @@ class JobsController extends Controller
                 $sound = 'default';
 
                 foreach ($company_client_ids as $client_id) {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                     if(!empty($device_detail->device_token)) {
                         $messageBody = $getDetail->job_title.' Scheduled for Deliver '.$delivery_date;
                         $deviceid = $device_detail->device_token;
@@ -737,7 +737,7 @@ class JobsController extends Controller
                 $sound = 'default';
 
                 foreach ($company_client_ids as $client_id) {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                     if(!empty($device_detail->device_token)) {
                         $messageBody = $getDetail->job_title.' Scheduled for INSTALLATION '.$installation_date;
                         $deviceid = $device_detail->device_token;
@@ -774,7 +774,7 @@ class JobsController extends Controller
                 $sound = 'default';
 
                 foreach ($company_client_ids as $client_id) {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id);
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
                     if(!empty($device_detail->device_token)) {
                         $messageBody = $getDetail->job_title.' Scheduled for STONE INSTALLATION '.$stone_installation_date;
                         $deviceid = $device_detail->device_token;
@@ -1024,7 +1024,7 @@ class JobsController extends Controller
 
             $message = PushNotification::message($messageBody,array(
                 'title' => $title,
-                'badge' => $badge,
+                //'badge' => $badge,
                 'sound' => $sound,
             ));
             $push = PushNotification::app('KITCHENIOS')->to($deviceid)->send($message);
