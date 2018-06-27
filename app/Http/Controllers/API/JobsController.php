@@ -189,7 +189,7 @@ class JobsController extends Controller
     /*Change job status*/
     public function changeJobStatus(Request $request)
     {
-    	try {
+    	//try {
     		$validator = Validator::make($request->all(), [
     			'user_id' => 'required',
     			'job_id' => 'required',
@@ -230,7 +230,7 @@ class JobsController extends Controller
     				$getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
     				$working_employee_ids = explode(',', $getDetail->working_employee_id);
     				$company_client_ids = explode(',', $getDetail->company_clients_id);
-                    
+
     				/*send notification as client */
     				if(sizeof($company_client_ids) > 0)
     				{
@@ -244,7 +244,7 @@ class JobsController extends Controller
                                 $messageBody = $getDetail->job_title .' has been measured and has moved into Design Stage';
     							$deviceid = $device_detail->device_token;
     							$device_type = $device_detail->device_type;
-    							$this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                                $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
     						}
     					}
                     }
@@ -256,7 +256,7 @@ class JobsController extends Controller
 
     				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
     				break;
-                    
+
                     /*pending & incomplete*/
     				case 2:
     				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
@@ -275,15 +275,15 @@ class JobsController extends Controller
     				case 1:
                     /* status  installationSelect*/
 					$is_stone_installation = $request->get('stone_installation_select');
-                    
+
                     if(empty($is_stone_installation)) {
                         return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Stone installation field is required."]);
-                    }elseif($is_stone_installation = 1 && empty($request->get('stone_installation_date'))) {
+                    }elseif($is_stone_installation == 1 && empty($request->get('stone_installation_date'))) {
                         return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Stone installation date field is required."]);
-                    }elseif($is_stone_installation = 1 && empty(array_filter($request->get('stoneinstallation_employee')))) {
+                    }elseif($is_stone_installation == 1 && empty(array_filter($request->get('stoneinstallation_employee')))) {
                         return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Stone installation employee field is required."]);
                     }
-                    
+
                     $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
 					if(!empty($job_pics_url)) {
                         $image_url = explode(',', $job_pics_url);
@@ -299,19 +299,19 @@ class JobsController extends Controller
                     if($is_stone_installation == 1) {
 
                         $stoneinstallation_employees = $request->get('stoneinstallation_employee');
-                        
+
                         if(!empty($getDetail->stone_installation_datetime)) {
                             $stoneinstallation_time = date('h:iA', strtotime($getDetail->stone_installation_datetime));
                             $stoneinstallation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $stoneinstallation_time));
                         }else {
                             $stoneinstallation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' 09:55AM'));
                         }
-                        
+
                         $stone_employee_id = implode(',', $stoneinstallation_employees);
                         $stage = 'Stone installation stage';
                         $job_status = 7;
                         $is_active = 1;
-                        
+
                         $title = 'Change Job Status';
                         $badge = '1';
                         $sound = 'default';
@@ -426,9 +426,9 @@ class JobsController extends Controller
 
                     if(empty($is_installation)) {
                         return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Installation field is required."]);
-                    }elseif($is_installation = 1 && empty($request->get('installation_date'))) {
+                    }elseif($is_installation == 1 && empty($request->get('installation_date'))) {
                         return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Installation date field is required."]);
-                    }elseif($is_installation = 1 && empty(array_filter($request->get('installation_employee')))) {
+                    }elseif($is_installation == 1 && empty(array_filter($request->get('installation_employee')))) {
                         return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "The Installation employee field is required."]);
                     }
 
@@ -456,7 +456,7 @@ class JobsController extends Controller
                         }
                         $installation_employee_id = implode(',', $installation_employees);
                         $stage = 'Installation stage';
-                        $job_status = 5;
+                        $job_status = 6;
                         $is_active = 1;
 
                         $title = 'Change Job Status';
@@ -553,7 +553,7 @@ class JobsController extends Controller
                     }
                     /*send mail as admin*/
                     $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody,$image_url);
-                    
+
                     return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                     break;
                     default:
@@ -628,7 +628,7 @@ class JobsController extends Controller
                         }
 
                         Job::where('job_id', $job_id)->update(['stone_installation_datetime' => $stone_installation_datetime]);
-                        $stone_installation_date = date('m/d/Y', strtotime($request->get('installation_date')));
+                        $stone_installation_date = date('m/d/Y', strtotime($request->get('stone_installation_date')));
                         $adminMailBody = " Stone Installation Date has been moved to ". $stone_installation_date.".";
 
                         /*send notification as client */
@@ -665,7 +665,7 @@ class JobsController extends Controller
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
                 break;
             }
-        } catch (\Exception $e) {}
+        //} catch (\Exception $e) {}
     }
 
     /* Design Status */
@@ -817,7 +817,7 @@ class JobsController extends Controller
         } else {
             $installation_date = '';
         }
-        
+
         /*Contractor*/
         if(!empty($contractor_email))
         {
