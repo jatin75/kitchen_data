@@ -35,8 +35,12 @@
     top: 20px;
     font-size: 16px;
     color: #fff !important;
-    width: 12%;
+    /*width: 12%;*/
     text-align: right;
+}
+.user_profile_wrapper .dropdown-menu{
+    right: 0;
+    left:auto!important;
 }
 .user_profile_wrapper a{
     color: #535354;

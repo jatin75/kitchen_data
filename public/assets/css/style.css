@@ -20346,7 +20346,7 @@ a.fc-event:not([href]):not([tabindex]) {
     }*/
 }
 
-@media screen and (max-width: 1240px) and (min-width: 110px) {
+/*@media screen and (max-width: 1240px) and (min-width: 110px) {
     .user_profile_wrapper {
         width: 15% !important;
         right: 30px !important;
@@ -20407,4 +20407,4 @@ a.fc-event:not([href]):not([tabindex]) {
         width: 47% !important;
         right: 35px !important;
     }
-}
+}*/
