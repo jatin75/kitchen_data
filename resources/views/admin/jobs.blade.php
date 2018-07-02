@@ -635,20 +635,17 @@ tr th{
 			$('.addInstallingDateTime').hide();
 			$('.addDeliveryDateTime').show();
 			$('.addStoneInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
-
+		
 		}else if(jobStatusId == 6) {
 			$('.addInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addStoneInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
-
+		
 		}else if(jobStatusId == 7) {
 			$('.addStoneInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
-
+		
 		}
 		else {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
@@ -669,14 +666,6 @@ tr th{
 					table.row('.changestatus_'+jobId).remove().draw(false);
 				}
 				notify('Job Status has been Changed Successfully.','blackgloss');
-				/*$.ajax({
-					url:'{{ route('sendmailchangejobstatus') }}',
-					data:{jobStatusId:jobStatusId,jobId:jobId},
-					type: 'post',
-					dataType: 'json',
-					success:function(data){
-					}
-				});*/
 			}
 		});
 	}

@@ -71,9 +71,6 @@ tr th{
                         @foreach($jobDetails as $job)
                         <tr class="changestatus_{{ $job->job_id }}">
                             <td class="text-center">
-                                {{-- <a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle" href="{{route('viewjob',['jobe_id' => $job->id])}}">
-                                    <i class="ti-eye"></i>
-                                </a> --}}
                                 <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editjob',['job_id' => $job->job_id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
@@ -382,19 +379,16 @@ tr th{
             $('.addInstallingDateTime').hide();
             $('.addDeliveryDateTime').show();
             $('.addStoneInstallingDateTime').hide();
-            //$('#statusWiseJobModel').modal('show');
             
         }else if(jobStatusId == 6) {
             $('.addInstallingDateTime').show();
             $('.addDeliveryDateTime').hide();
             $('.addStoneInstallingDateTime').hide();
-            //$('#statusWiseJobModel').modal('show');
             
         }else if(jobStatusId == 7) {
             $('.addStoneInstallingDateTime').show();
             $('.addDeliveryDateTime').hide();
             $('.addInstallingDateTime').hide();
-            //$('#statusWiseJobModel').modal('show');
             
         }
         else {
@@ -416,14 +410,6 @@ tr th{
                     table.row('.changestatus_'+jobId).remove().draw(false);
                 }
                 notify('Job Status has been Changed Successfully.','blackgloss');
-                /*$.ajax({
-                    url:'{{ route('sendmailchangejobstatus') }}',
-                    data:{jobStatusId:jobStatusId,jobId:jobId},
-                    type: 'post',
-                    dataType: 'json',
-                    success:function(data){
-                    }
-                });*/
             }
         });
     }

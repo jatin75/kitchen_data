@@ -101,7 +101,6 @@ tr th{
 			<div class="panel panel-info">
 				<div class="panel-wrapper collapse in" aria-expanded="true">
 					<div class="panel-body dashboard-job-list">
-						{{-- <div class="nav_toggle"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></div> --}}
 						<div class="nav_toggle user-profile" style="padding-top: 0;padding-bottom: 20px;text-align: left">
 							<div class="dropdown user-pro-body" style="margin: 0px  !important">
 								<a href="#" class="u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></a>
@@ -113,12 +112,6 @@ tr th{
 								</ul>
 							</div>
 						</div>
-						{{-- <ul class="nav nav-pills m-b-30" id="nav_menu">
-							<li data-id="0" class="nav-item active"> <a href="javascript:void(0)" onclick="getJobDetailsList(0)" class="nav-link" data-toggle="tab" aria-expanded="true">All</a> </li>
-							@foreach($jobTypeDetails as $jobType)
-							<li data-id="{{ $jobType->job_status_id }}" class="nav-item"> <a href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})" class="nav-link" data-toggle="tab" aria-expanded="true">{{ strtoupper($jobType->job_status_name) }}</a> </li>
-							@endforeach
-						</ul> --}}
 						<div class="row button-box nav_toolbar_menu m-b-30">
 							<div class=""><button class="btn toolbar_btn toolbaractive" data-id="0" onclick="getJobDetailsList(0)">All</button></div>
 							@foreach($jobTypeDetails as $jobType)
@@ -807,19 +800,16 @@ tr th{
 			$('.addInstallingDateTime').hide();
 			$('.addDeliveryDateTime').show();
 			$('.addStoneInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
 			
 		}else if(jobStatusId == 6) {
 			$('.addInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addStoneInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
 			
 		}else if(jobStatusId == 7) {
 			$('.addStoneInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
 			
 		}
 		else {
@@ -843,14 +833,6 @@ tr th{
 					});
 				}
 				notify('Job Status has been Changed Successfully.','blackgloss');
-				/*$.ajax({
-					url:'{{ route('sendmailchangejobstatus') }}',
-					data:{jobStatusId:jobStatusId,jobId:jobId},
-					type: 'post',
-					dataType: 'json',
-					success:function(data){
-					}
-				});*/
 			}
 		});
 	}
