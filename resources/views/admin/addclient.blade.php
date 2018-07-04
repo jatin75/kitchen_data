@@ -30,14 +30,13 @@
 			<div class="panel panel-info">
 				<div class="panel-wrapper collapse in" aria-expanded="true">
 					<!--header-->
+					@if(Session::get('login_type_id') != 9)
 					<div class="row">
 						<div class="col-md-4 col-sm-4 col-xs-4 m-t-15 m-l-15">
 							<a class="btn btn-default btn-circle" href="{{route('showclients')}}" title="Previous"><i class="ti-arrow-left"></i> </a>
 						</div>
-						{{-- <div class="col-md-4 col-sm-4 col-xs-4 text-center">
-							<h2 class="_600" id="pageName">Add Account</h2>
-						</div> --}}
 					</div>
+					@endif
 					<!--/header-->
 					<div class="panel-body">
 						<ul class="nav nav-pills m-b-30">
