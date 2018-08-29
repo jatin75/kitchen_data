@@ -214,6 +214,11 @@ class AdminHomeController extends Controller
 								<i class="ti-eye"></i>
 							</a>
 						</span>
+						<span data-toggle="modal" data-target="#jobNotesModel">
+							<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="'.$jobDetail->job_id.'">
+								<i class="ti-plus"></i>
+							</a>
+						</span>
 					</td>
 					<td>'.$jobDetail->job_title.'</td>
 					<td>'.$jobDetail->job_id.'</td>

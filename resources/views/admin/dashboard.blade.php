@@ -84,6 +84,9 @@ tr th{
 .scrollit { height:150px; width: auto; overflow-y:scroll; border: 1px solid; background: #f4f8fb;}
 .edit-note{cursor: pointer;}
 .delete-note{cursor: pointer;}
+body{
+	padding-right:0 !important;
+}
 </style>
 @stop
 @section('content')
@@ -672,9 +675,19 @@ tr th{
 		});
 	});
 
+	$(document).on('click',".add-job-note",function(){
+		var jobId = $(this).attr('data-id');
+		$("#jobNoteSubmit").prop("disabled",false);
+		$('#hiddenJobId').val(jobId);
+		$('#jobNote').val('');
+		$('#jobNoteSubmit').html('Submit');
+		$('#hiddenJobStatus').val(1);
+	});
+
 	/*edit Note*/
 	$(document).on('click','.edit-note', function(){
 		var jobId = $(this).attr('data-id');
+		$("#jobNoteSubmit").prop("disabled",false);
 		$.ajax({
 			url:'{{ route('editnote') }}',
 			data:{
@@ -721,7 +734,7 @@ tr th{
 		}
 	});
 
-	$('#formAddNote').on('submit', function(e) {
+	$('#formAddNote').on('success.form.bv', function(e) {
 		e.preventDefault();
 		$('#loader').show();
 		$('#jobNotesModel').modal('hide');

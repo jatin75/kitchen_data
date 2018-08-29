@@ -24,12 +24,13 @@ class JobsController extends Controller
 {
     public function index()
     {
+        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
         $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 1)->where('is_deleted', 0)->orderBy('created_at','DESC')->get();
         $stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
 
         $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
-        return view('admin.jobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
+        return view('admin.jobs')->with('jobTypeDetails',$getJobTypeDetail)->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
     }
 
     public function showDeactivated()
@@ -481,6 +482,105 @@ class JobsController extends Controller
         $response['key'] = 1;
         return json_encode($response);
     }
+
+    public function showFilterwiseJob(Request $request) {
+        $getSessionEmail = Session::get('email');
+		$job_statusId = $request->get('jobStatusId');
+		if($job_statusId == 0) {
+			$jobStatusCond = '';
+		}else {
+			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
+		}
+
+		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+
+		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
+
+		$html = '';
+		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
+		<thead>
+		<tr>
+		<th class="text-center">Actions</th>
+		<th>Job Name</th>
+		<th>Job Id</th>
+		<th>Job Status</th>
+		<th>Start Date</th>
+		<th>Expected Completion Date</th>
+		</tr>
+		</thead>
+		<tbody>';
+		if(!empty($getJobDetails)) {
+			if(Session::get('login_type_id') == 9) {
+				foreach($getJobDetails as $jobDetail) {
+					$getDetail = Admin::where('email',$getSessionEmail)->first();
+					$session_userId = $getDetail->id;
+					$client_id_array = explode(',', $jobDetail->company_clients_id);
+					if(in_array($session_userId, $client_id_array)) {
+
+						$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
+						<td class="text-center">
+							<span data-toggle="" data-target="#jobDetailModel">
+								<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
+									<i class="ti-eye"></i>
+								</a>
+							</span>
+						</td>
+						<td>'.$jobDetail->job_title.'</td>
+						<td>'.$jobDetail->job_id.'</td>
+						<td>
+							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+
+		                        foreach($getJobTypeDetails as $jobType) {
+		                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+		                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+		                        }
+
+		                    $html .='</select>
+	                    </td>
+						<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+						<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+						</tr>';
+					}
+				}
+			}else {
+				foreach($getJobDetails as $jobDetail) {
+					$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
+					<td class="text-center">
+						<span data-toggle="" data-target="#jobDetailModel">
+							<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
+								<i class="ti-eye"></i>
+							</a>
+						</span>
+						<span data-toggle="modal" data-target="#jobNotesModel">
+							<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="'.$jobDetail->job_id.'">
+								<i class="ti-plus"></i>
+							</a>
+						</span>
+					</td>
+					<td>'.$jobDetail->job_title.'</td>
+					<td>'.$jobDetail->job_id.'</td>
+					<td>
+						<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+
+	                        foreach($getJobTypeDetails as $jobType) {
+	                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+	                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+	                        }
+
+	                    $html .='</select>
+                    </td>
+					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+					</tr>';
+				}
+			}
+		}
+		$html .='</tbody>
+		</table>';
+
+		$response['html'] = $html;
+		echo json_encode($response);
+	}
 
     public function changeJobStatus(Request $request)
     {

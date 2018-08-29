@@ -409,6 +409,20 @@ $(document).ready(function () {
 		}
 	});
 
+	$('#formAddNote').bootstrapValidator({
+		//excluded: ':disabled',
+		fields: {
+			jobNote: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Jobnote is required and can\'t be empty.'
+					}
+				}
+			},
+		}
+	});
+
 	$('#employeePhoneNo').on('keyup', function () {
 		$('#formAddEmployee').bootstrapValidator('revalidateField', 'employeePhoneNo');
 	});
