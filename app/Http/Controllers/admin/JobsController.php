@@ -1146,6 +1146,34 @@ class JobsController extends Controller
         }
     }
 
+    public function getJobImages(Request $request)
+    {
+        $job_id = $request->get('jobId');
+        $getImages = Job::selectRaw('job_images_url')->where('job_id',$job_id)->first();
+        if(!empty($getImages->job_images_url))
+        {
+            $imageArray = explode(',', $getImages->job_images_url);
+            $html1 = $html2 = "";
+            foreach($imageArray as $key=>$image)
+            {
+                $active_class = ($key == 0)? 'active': '';
+                $html1 .= '<li data-target="#slide-id" data-slide-to="'.$key.'" class="'.$active_class.'"></li>';
+
+                $html2 .= '<div class="carousel-item '.$active_class.'"> <img height="500" width="700" src="'.$image.'">
+                </div>';
+            }
+            $response['html1'] = $html1;
+            $response['html2'] = $html2;
+            $response['key'] = 1;
+            // print_r($response);die;
+        }
+        else
+        {
+            $response['key'] = 2;
+        }
+        return json_encode($response);
+    }
+
     public function getJobId()
     {
         $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

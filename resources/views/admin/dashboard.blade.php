@@ -794,7 +794,7 @@ body{
 						var jobstatus = data.job_detail.job_status_id;
 						$("#jobType_"+jobId).find('option').removeAttr("selected");
 						$("#jobType_"+jobId).select2("val", jobstatus);
-						
+
 						$('#deliveryDate').val(data.job_detail.delivery_date);
 						$('#deliveryTime').val(data.job_detail.delivery_time);
 						$('#installationDate').val(data.job_detail.installation_date);
@@ -813,17 +813,17 @@ body{
 			$('.addInstallingDateTime').hide();
 			$('.addDeliveryDateTime').show();
 			$('.addStoneInstallingDateTime').hide();
-			
+
 		}else if(jobStatusId == 6) {
 			$('.addInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addStoneInstallingDateTime').hide();
-			
+
 		}else if(jobStatusId == 7) {
 			$('.addStoneInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addInstallingDateTime').hide();
-			
+
 		}
 		else {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
@@ -907,7 +907,7 @@ body{
 		placement: 'bottom',
 	});
 
-	
+
 	$(".toolbar_btn").on('click', function(){
 		$(".toolbar_btn").removeClass('toolbaractive');
 		$(this).addClass('toolbaractive');

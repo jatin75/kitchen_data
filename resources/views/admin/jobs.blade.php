@@ -7,6 +7,7 @@
 />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.css')}}" />
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/owl.carousel/owl.carousel.min.css')}}" />
 <style type="text/css">
 .modal-footer {
 	padding-bottom: 0px !important;
@@ -149,7 +150,10 @@ body{
 											<i class="ti-receipt"></i>
 										</a>
 									</span>
-									<a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to deactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
+									<span data-toggle="" data-target="#jobImageModel">
+										<a data-toggle="tooltip" data-placement="top" title="View Image" class="btn btn-dribbble btn-circle view-images" data-id="{{ $job->job_id }}"><i class="ti-image"></i></a>
+									</span>
+									<a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to deactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i></a>
 								</td>
 								<td>{{$job->job_title}}</td>
 								<td>{{$job->job_id}}</td>
@@ -382,18 +386,16 @@ body{
 								</div>
 							</div>
 							<div id="notesData">
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
 	</div>
-	<!-- /.modal-content -->
-</div>
-<!-- /.modal-dialog -->
 </div>
 <!--/.jobDetail model-->
 <!--Job status change event model-->
@@ -524,6 +526,35 @@ body{
 	</div>
 </div>
 <!--/.Job status change event model-->
+<!--jobImage model-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="jobImageModel" style="display: none; z-index:100000;">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Job Images</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<!-- START carousel-->
+						<div id="slide-id" data-ride="carousel" class="carousel slide">
+							<ol class="carousel-indicators"></ol>
+							<div class="carousel-inner"></div>
+							<a href="#slide-id" role="button" data-slide="prev" class="left carousel-control"> <span aria-hidden="true" class="fa fa-angle-left"></span> <span class="sr-only">Previous</span> </a>
+							<a href="#slide-id" role="button" data-slide="next" class="right carousel-control"> <span aria-hidden="true" class="fa fa-angle-right"></span> <span class="sr-only">Next</span> </a>
+						</div>
+						<!-- END carousel-->
+					</div>
+				</div>
+				<div class="modal-footer p-r-0">
+					<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--/.jobImage model-->
 @stop
 @section('pageSpecificJs')
 <script type="text/javascript" src="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.js')}}"></script>
@@ -538,6 +569,7 @@ body{
 <script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('plugins/bower_components/owl.carousel/owl.carousel.min.js')}}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		var date = $('#formatedDate').val();
@@ -545,6 +577,9 @@ body{
 		$('#jobList').DataTable({
 			dom: 'Bfrtip',
 			buttons: [
+			{
+				extend:'pageLength',
+			},
 			{
 				extend: 'csv',
 				title: value,
@@ -763,6 +798,35 @@ body{
 		$('#hiddenJobStatus').val(1);
 	});
 
+	/*view image model*/
+	$(document).on('click',".view-images",function(){
+		var jobId = $(this).attr('data-id');
+		$('#loader').show();
+		$.ajax({
+			url:'{{ route('getjobimages') }}',
+			data:{
+				jobId:jobId,
+			},
+			type:'post',
+			dataType:'json',
+			success: function(response)
+			{
+				if(response.key == 1)
+				{
+					$('.carousel-indicators').html(response.html1);
+					$('.carousel-inner').html(response.html2);
+					$('#loader').hide();
+					$('#jobImageModel').modal('show');
+				}
+				else
+				{
+					$('#loader').hide();
+					notify('Job images not found.','blackgloss');
+				}
+			}
+		});
+	});
+
 
 	/*change job status*/
 	$(document).on('change','.jobType',function(){
@@ -809,17 +873,17 @@ body{
 			$('.addInstallingDateTime').hide();
 			$('.addDeliveryDateTime').show();
 			$('.addStoneInstallingDateTime').hide();
-		
+
 		}else if(jobStatusId == 6) {
 			$('.addInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addStoneInstallingDateTime').hide();
-		
+
 		}else if(jobStatusId == 7) {
 			$('.addStoneInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addInstallingDateTime').hide();
-		
+
 		}
 		else {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
