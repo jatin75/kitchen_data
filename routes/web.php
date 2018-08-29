@@ -47,6 +47,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::post('jobs/destroynote', 'admin\JobsController@destroyNote')->name('destroynote');
     Route::post('jobs/editjobmodel', 'admin\JobsController@editJobDateTimeModel')->name('editjobdatetimemodel');
     Route::post('jobs/showfilterwisejob', 'admin\JobsController@showFilterwiseJob')->name('showfilterwisejob');
+    Route::post('getjobimages', 'admin\JobsController@getJobImages')->name('getjobimages');
 
     /*Employees*/
     Route::get('employees/showemployees', 'admin\EmployeesController@index')->name('showemployees');
