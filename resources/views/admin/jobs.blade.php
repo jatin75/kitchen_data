@@ -793,7 +793,7 @@ body{
 		$("#jobNoteSubmit").prop("disabled",false);
 		$('#hiddenJobId').val(jobId);
 		$('#jobNote').val('');
-		$('#jobNoteSubmit').html('Submit');
+		$('#jobNoteSubmit').html('Add');
 		$('#hiddenJobStatus').val(1);
 	});
 
