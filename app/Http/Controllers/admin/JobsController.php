@@ -396,7 +396,7 @@ class JobsController extends Controller
             $html .= '<tr>
             <td>' . $audit->field_name . '</td>';
             if (empty($audit->old_value)) {
-                $html .= '<td>--</td>'; 
+                $html .= '<td>--</td>';
             }elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
                 $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->old_value)) . '</td>';
             }elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {

@@ -151,7 +151,7 @@ class JobsController extends Controller
     		$orderBy = 'created_at';
     		break;
     	}
-    	$getDetails = DB::select("SELECT * FROM jobs WHERE working_employee_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 AND job_status_id = '{$job_status_id}' ORDER BY '{$orderBy}' DESC");
+        $getDetails = DB::select("SELECT * FROM jobs WHERE working_employee_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 AND job_status_id = '{$job_status_id}' ORDER BY '{$orderBy}' DESC");
         if(sizeof($getDetails) > 0)
     	{
     		foreach ($getDetails as $job) {

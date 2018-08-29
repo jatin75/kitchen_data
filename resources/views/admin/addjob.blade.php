@@ -726,7 +726,7 @@
 		.enableFieldValidators('installationDate', true);
 		$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate');
 	});
-	
+
 	function changePermission(id) {
 		var value = $('#access_' + id).val();
 		if (value == 1) {
