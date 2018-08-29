@@ -1142,7 +1142,7 @@ class JobsController extends Controller
                 $active_class = ($key == 0)? 'active': '';
                 $html1 .= '<li data-target="#slide-id" data-slide-to="'.$key.'" class="'.$active_class.'"></li>';
 
-                $html2 .= '<div class="carousel-item '.$active_class.'"> <img height="500" width="700" src="'.$image.'">
+                $html2 .= '<div class="carousel-item '.$active_class.'"> <img height="500" width="500" src="'.$image.'">
                 </div>';
             }
             $response['html1'] = $html1;
