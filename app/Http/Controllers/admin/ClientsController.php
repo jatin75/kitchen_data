@@ -1,16 +1,17 @@
 <?php
 namespace App\Http\Controllers\admin;
+
 date_default_timezone_set('UTC');
-use Illuminate\Http\Request;
-use App\Http\Controllers\admin\AdminHomeController;
-use App\Http\Controllers\Controller;
 use App\Admin;
 use App\Client;
 use App\Company;
+use App\Http\Controllers\admin\AdminHomeController;
+use App\Http\Controllers\Controller;
 use DB;
 use Hash;
-use Session;
+use Illuminate\Http\Request;
 use Mail;
+use Session;
 
 class ClientsController extends Controller
 {
@@ -74,7 +75,7 @@ class ClientsController extends Controller
                 Session::pull('name');
                 Session::put('name', $request->get('client_first_name') . " " . $request->get('client_last_name'));
                 Session::pull('email');
-                Session::put('email',$client_email);
+                Session::put('email', $client_email);
                 $response['name'] = Session::get('name');
                 $response['email'] = $client_email;
             }
@@ -122,12 +123,12 @@ class ClientsController extends Controller
             $objAdmin->save();
 
             /*send Mail*/
-            Mail::send('emails.AdminPanel_EmployeeCreated',array(
-            'password' => $new_client_id,
-            'email' => $client_email,
-            ), function($message)use($client_email){
-            $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-            $message->to($client_email)->subject('A&S KITCHEN | Client Account Created');
+            Mail::send('emails.AdminPanel_EmployeeCreated', array(
+                'password' => $new_client_id,
+                'email' => $client_email,
+            ), function ($message) use ($client_email) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                $message->to($client_email)->subject('A&S KITCHEN | Client Account Created');
             });
 
             $response['key'] = 1;
@@ -147,7 +148,7 @@ class ClientsController extends Controller
     public function getCompanyClients(Request $request)
     {
         $company_id = $request->get('company_id');
-        $getClients = DB::select("SELECT CONCAT(au.first_name,' ',au.last_name) AS client_name,au.id FROM clients AS cl JOIN admin_users AS au ON au.id = cl.client_id WHERE cl.company_id = '{$company_id}'");
+        $getClients = DB::select("SELECT UPPER(CONCAT(au.first_name,' ',au.last_name)) AS client_name,au.id FROM clients AS cl JOIN admin_users AS au ON au.id = cl.client_id WHERE cl.company_id = '{$company_id}'");
         if (sizeof($getClients) > 0) {
             $response['clients_data'] = $getClients;
             $response['key'] = 1;

@@ -59,12 +59,12 @@ class JobsController extends Controller
     		/* Delivery */
     		case '4':
     		$getJobsDetail = $this->getSpecificJobDetails($user_id, 5);
-            $employeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+            $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
     		break;
     		/* Installer */
     		case '5':
     		$getJobsDetail = $this->getSpecificJobDetails($user_id, 6);
-            $employeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+            $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
     		break;
     		/* Stone */
     		case '6':
