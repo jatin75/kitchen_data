@@ -92,10 +92,12 @@ body{
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="white-box">
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<h3 class="box-title m-b-0 pull-left">All JOBS</h3>
-					<a href="{{route('addjob')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Job</span> <i class="fa fa-plus m-l-5"></i></a>
-				</div>
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<h3 class="box-title m-b-0 pull-left">All JOBS</h3>
+						<a href="{{route('addjob')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Job</span> <i class="fa fa-plus m-l-5"></i></a>
+					</div>
+				</div>	
 				<div class="nav_toggle user-profile" style="padding-top: 0;padding-bottom: 20px;text-align: left">
 					<div class="dropdown user-pro-body" style="margin: 0px  !important">
 						<a href="#" class="u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></a>
@@ -655,18 +657,15 @@ body{
 						dom: 'Bfrtip',
 						buttons: [
 						{
-							extend:'pageLength',
-						},
-						{
 							extend: 'csv',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5,6 ],
+								columns: [ 1,2,3,4,5 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 3) {
+										if (col == 2) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: 4} )
+											.cell( {row: row, column: 3} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -682,12 +681,12 @@ body{
 							extend: 'excel',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5,6 ],
+								columns: [ 1,2,3,4,5 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 3) {
+										if (col == 2) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: 4} )
+											.cell( {row: row, column: 3} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -704,12 +703,12 @@ body{
 							pageSize: 'LEGAL',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5,6],
+								columns: [ 1,2,3,4,5],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 3) {
+										if (col == 2) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: 4} )
+											.cell( {row: row, column: 3} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -725,12 +724,12 @@ body{
 							extend: 'print',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5,6 ],
+								columns: [ 1,2,3,4,5 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 3) {
+										if (col == 2) {
 											return $('#jobList').DataTable()
-											.cell( {row: row, column: 4} )
+											.cell( {row: row, column: 3} )
 											.nodes()
 											.to$()
 											.find(':selected')
@@ -809,17 +808,17 @@ body{
 			$('.addInstallingDateTime').hide();
 			$('.addDeliveryDateTime').show();
 			$('.addStoneInstallingDateTime').hide();
-		
+
 		}else if(jobStatusId == 6) {
 			$('.addInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addStoneInstallingDateTime').hide();
-		
+
 		}else if(jobStatusId == 7) {
 			$('.addStoneInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addInstallingDateTime').hide();
-		
+
 		}
 		else {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
@@ -835,9 +834,11 @@ body{
 			dataType: 'json',
 			success:function(data){
 				$('#loader').hide();
-				if(data.key == 1 ) {
-					var table = $('#jobList').DataTable();
-					table.row('.changestatus_'+jobId).remove().draw(false);
+				if(activeJobStatus != 0) {
+					$('.changestatus_'+jobId).fadeOut(300, function(){
+						var table = $('#jobList').DataTable();
+						table.row('.changestatus_'+jobId).remove().draw(false);
+					});
 				}
 				notify('Job Status has been Changed Successfully.','blackgloss');
 			}
@@ -892,7 +893,8 @@ body{
 
 
 	/*set audit*/
-	$(".view-audit").click(function(){
+	$(document).on('click','.view-audit',function(){
+	//$(".view-audit").click(function(){
 		var jobId = $(this).attr('data-id');
 		$('#loader').show();
 		$.ajax({
@@ -943,7 +945,7 @@ body{
 	});
 
 	/*view job model*/
-	$(".view-job").click(function(){
+	$(document).on('click','.view-job', function(){
 		var jobId = $(this).attr('data-id');
 		$('#loader').show();
 		$.ajax({

@@ -337,18 +337,23 @@ class JobsController extends Controller
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
                 <span id="updated_date">'. date('m/d/Y', strtotime($single_note->updated_at)) .'</span>
-                </div>
-                <div class="col-xs-2">
-                <a data-toggle="tooltip" data-placement="top" class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
-                <i class="ti-pencil-alt"></i>
-                </a>
-                </div>
-                <div class="col-xs-2">
-                <a data-toggle="tooltip" data-placement="top" class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
-                <i class="ti-trash"></i>
-                </a>
-                </div>
                 </div>';
+                if(Session::get('login_type_id') != 9) {
+                    $html .= '<div class="col-xs-2">
+                    <a data-toggle="tooltip" data-placement="top" class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
+                    <i class="ti-pencil-alt"></i>
+                    </a>
+                    </div>
+                    <div class="col-xs-2">
+                    <a data-toggle="tooltip" data-placement="top" class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
+                    <i class="ti-trash"></i>
+                    </a>
+                    </div>';
+                }else {
+                    $html .= '<div class="col-xs-2">--</div><div class="col-xs-2">--</div>';
+                }
+
+                $html .= '</div>';
             }
         }
         $response['employee_detail'] = $getJobDetails;
@@ -510,70 +515,48 @@ class JobsController extends Controller
 		</thead>
 		<tbody>';
 		if(!empty($getJobDetails)) {
-			if(Session::get('login_type_id') == 9) {
-				foreach($getJobDetails as $jobDetail) {
-					$getDetail = Admin::where('email',$getSessionEmail)->first();
-					$session_userId = $getDetail->id;
-					$client_id_array = explode(',', $jobDetail->company_clients_id);
-					if(in_array($session_userId, $client_id_array)) {
+            foreach($getJobDetails as $jobDetail) {
+                $html .='<tr class="changestatus_'.$jobDetail->job_id.'">
+                <td class="text-center">
+                    <span data-toggle="" data-target="#jobDetailModel">
+                        <a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
+                            <i class="ti-eye"></i>
+                        </a>
+                    </span>
+                    <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="'.route("editjob",["job_id" => $jobDetail->job_id]).'">
+                        <i class="ti-pencil-alt"></i>
+                    </a>
+                    <span data-toggle="modal" data-target="#jobNotesModel">
+                        <a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="'.$jobDetail->job_id.'">
+                            <i class="ti-plus"></i>
+                        </a>
+                    </span>
+                    <span data-toggle="" data-target="#Auditmodel">
+                        <a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-primary btn-circle view-audit" data-id="'.$jobDetail->job_id.'">
+                            <i class="ti-receipt"></i>
+                        </a>
+                    </span>
+                    <span data-toggle="" data-target="#jobImageModel">
+                        <a data-toggle="tooltip" data-placement="top" title="View Image" class="btn btn-dribbble btn-circle view-images" data-id="'.$jobDetail->job_id.'"><i class="ti-image"></i></a>
+                    </span>
+                    <a class="btn btn-danger btn-circle" onclick="return confirm(\'Are you sure you want to deactivate this job?\');" href="'.route("deactivatejob",["job_id" => $jobDetail->job_id]).'" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
+                </td>
+                <td>'.$jobDetail->job_title.'</td>
+                <td>'.$jobDetail->job_id.'</td>
+                <td>
+                    <select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
 
-						$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
-						<td class="text-center">
-							<span data-toggle="" data-target="#jobDetailModel">
-								<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
-									<i class="ti-eye"></i>
-								</a>
-							</span>
-						</td>
-						<td>'.$jobDetail->job_title.'</td>
-						<td>'.$jobDetail->job_id.'</td>
-						<td>
-							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+                        foreach($getJobTypeDetails as $jobType) {
+                            $selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+                            $html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+                        }
 
-		                        foreach($getJobTypeDetails as $jobType) {
-		                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
-		                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
-		                        }
-
-		                    $html .='</select>
-	                    </td>
-						<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
-						<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
-						</tr>';
-					}
-				}
-			}else {
-				foreach($getJobDetails as $jobDetail) {
-					$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
-					<td class="text-center">
-						<span data-toggle="" data-target="#jobDetailModel">
-							<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
-								<i class="ti-eye"></i>
-							</a>
-						</span>
-						<span data-toggle="modal" data-target="#jobNotesModel">
-							<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="'.$jobDetail->job_id.'">
-								<i class="ti-plus"></i>
-							</a>
-						</span>
-					</td>
-					<td>'.$jobDetail->job_title.'</td>
-					<td>'.$jobDetail->job_id.'</td>
-					<td>
-						<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
-
-	                        foreach($getJobTypeDetails as $jobType) {
-	                        	$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
-	                        	$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
-	                        }
-
-	                    $html .='</select>
-                    </td>
-					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
-					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
-					</tr>';
-				}
-			}
+                    $html .='</select>
+                </td>
+                <td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+                <td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+                </tr>';
+            }
 		}
 		$html .='</tbody>
 		</table>';
