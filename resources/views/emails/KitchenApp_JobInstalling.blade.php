@@ -13,7 +13,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>A&amp;S KITCHEN | {{$job_title}}</title>
+	<title>A&amp;S KITCHEN | {{$job_title}} </title>
 
 	<style type="text/css">
 	p{
@@ -494,11 +494,15 @@
 
 							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>{{$job_title}}</strong><br>
 
-								<br>This new job has been Measured and is waiting the design.<br>
+								@if(!empty($installation_date))
+								<br>
+								This job has been scheduled for Installation on {{$installation_date}} between 9am and 2pm. Please contact A&amp;S with any questions. xxx-xxx-xxxx<br>
+							 @else
+							 <br>
+								INSTALLATION DATE PENDING. Please contact A&amp;S with any questions. xxx-xxx-xxxx<br>
+								@endif
+								
 							<br>
-							@if(!empty($job_note) && isset($job_note))
-							<strong>Note :</strong> {{ $job_note }} <br><br>
-							@endif
 							Regards,<br>
 							<br>
 							<strong>A&amp;S KITCHEN&nbsp;ADMIN</strong><br>

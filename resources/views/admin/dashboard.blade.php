@@ -84,6 +84,9 @@ tr th{
 .scrollit { height:150px; width: auto; overflow-y:scroll; border: 1px solid; background: #f4f8fb;}
 .edit-note{cursor: pointer;}
 .delete-note{cursor: pointer;}
+body{
+	padding-right:0 !important;
+}
 </style>
 @stop
 @section('content')
@@ -101,7 +104,6 @@ tr th{
 			<div class="panel panel-info">
 				<div class="panel-wrapper collapse in" aria-expanded="true">
 					<div class="panel-body dashboard-job-list">
-						{{-- <div class="nav_toggle"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></div> --}}
 						<div class="nav_toggle user-profile" style="padding-top: 0;padding-bottom: 20px;text-align: left">
 							<div class="dropdown user-pro-body" style="margin: 0px  !important">
 								<a href="#" class="u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></a>
@@ -113,12 +115,6 @@ tr th{
 								</ul>
 							</div>
 						</div>
-						{{-- <ul class="nav nav-pills m-b-30" id="nav_menu">
-							<li data-id="0" class="nav-item active"> <a href="javascript:void(0)" onclick="getJobDetailsList(0)" class="nav-link" data-toggle="tab" aria-expanded="true">All</a> </li>
-							@foreach($jobTypeDetails as $jobType)
-							<li data-id="{{ $jobType->job_status_id }}" class="nav-item"> <a href="javascript:void(0)" onclick="getJobDetailsList({{ $jobType->job_status_id }})" class="nav-link" data-toggle="tab" aria-expanded="true">{{ strtoupper($jobType->job_status_name) }}</a> </li>
-							@endforeach
-						</ul> --}}
 						<div class="row button-box nav_toolbar_menu m-b-30">
 							<div class=""><button class="btn toolbar_btn toolbaractive" data-id="0" onclick="getJobDetailsList(0)">All</button></div>
 							@foreach($jobTypeDetails as $jobType)
@@ -679,9 +675,19 @@ tr th{
 		});
 	});
 
+	$(document).on('click',".add-job-note",function(){
+		var jobId = $(this).attr('data-id');
+		$("#jobNoteSubmit").prop("disabled",false);
+		$('#hiddenJobId').val(jobId);
+		$('#jobNote').val('');
+		$('#jobNoteSubmit').html('Add');
+		$('#hiddenJobStatus').val(1);
+	});
+
 	/*edit Note*/
 	$(document).on('click','.edit-note', function(){
 		var jobId = $(this).attr('data-id');
+		$("#jobNoteSubmit").prop("disabled",false);
 		$.ajax({
 			url:'{{ route('editnote') }}',
 			data:{
@@ -728,7 +734,7 @@ tr th{
 		}
 	});
 
-	$('#formAddNote').on('submit', function(e) {
+	$('#formAddNote').on('success.form.bv', function(e) {
 		e.preventDefault();
 		$('#loader').show();
 		$('#jobNotesModel').modal('hide');
@@ -788,7 +794,7 @@ tr th{
 						var jobstatus = data.job_detail.job_status_id;
 						$("#jobType_"+jobId).find('option').removeAttr("selected");
 						$("#jobType_"+jobId).select2("val", jobstatus);
-						
+
 						$('#deliveryDate').val(data.job_detail.delivery_date);
 						$('#deliveryTime').val(data.job_detail.delivery_time);
 						$('#installationDate').val(data.job_detail.installation_date);
@@ -807,20 +813,17 @@ tr th{
 			$('.addInstallingDateTime').hide();
 			$('.addDeliveryDateTime').show();
 			$('.addStoneInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
-			
+
 		}else if(jobStatusId == 6) {
 			$('.addInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addStoneInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
-			
+
 		}else if(jobStatusId == 7) {
 			$('.addStoneInstallingDateTime').show();
 			$('.addDeliveryDateTime').hide();
 			$('.addInstallingDateTime').hide();
-			//$('#statusWiseJobModel').modal('show');
-			
+
 		}
 		else {
 			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
@@ -843,14 +846,6 @@ tr th{
 					});
 				}
 				notify('Job Status has been Changed Successfully.','blackgloss');
-				/*$.ajax({
-					url:'{{ route('sendmailchangejobstatus') }}',
-					data:{jobStatusId:jobStatusId,jobId:jobId},
-					type: 'post',
-					dataType: 'json',
-					success:function(data){
-					}
-				});*/
 			}
 		});
 	}
@@ -912,7 +907,7 @@ tr th{
 		placement: 'bottom',
 	});
 
-	
+
 	$(".toolbar_btn").on('click', function(){
 		$(".toolbar_btn").removeClass('toolbaractive');
 		$(this).addClass('toolbaractive');

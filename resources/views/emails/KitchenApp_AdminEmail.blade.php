@@ -13,7 +13,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>A&amp;S KITCHEN | {{$job_title}}</title>
+	<title>A&amp;S KITCHEN | {{ $job_title }}</title>
 
 	<style type="text/css">
 	p{
@@ -492,11 +492,12 @@
 
 						<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>{{$job_title}}</strong><br>
+							<p><span style="font-size:15px"><span style="font-family:lato,helvetica neue,helvetica,arial,sans-serif"><strong>{{ $job_title }}</strong><br>
 
-								<br>This new job has been Measured and is waiting the design.<br>
 							<br>
-							@if(!empty($job_note) && isset($job_note))
+							{{ $mail_body }}<br>
+							<br>
+							@if(!empty($job_note))
 							<strong>Note :</strong> {{ $job_note }} <br><br>
 							@endif
 							Regards,<br>

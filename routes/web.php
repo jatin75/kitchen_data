@@ -46,6 +46,8 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::post('jobs/editnote', 'admin\JobsController@editNote')->name('editnote');
     Route::post('jobs/destroynote', 'admin\JobsController@destroyNote')->name('destroynote');
     Route::post('jobs/editjobmodel', 'admin\JobsController@editJobDateTimeModel')->name('editjobdatetimemodel');
+    Route::post('jobs/showfilterwisejob', 'admin\JobsController@showFilterwiseJob')->name('showfilterwisejob');
+    Route::post('getjobimages', 'admin\JobsController@getJobImages')->name('getjobimages');
 
     /*Employees*/
     Route::get('employees/showemployees', 'admin\EmployeesController@index')->name('showemployees');
@@ -74,7 +76,5 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     /*Reports*/
     Route::get('reports/showreports', 'admin\ReportsController@index')->name('showreports');
     Route::post('downloadjobexcel', 'admin\ReportsController@downloadJobExcel')->name('downloadjobexcel');
-
-    /*Company*/
 
 });

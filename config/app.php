@@ -150,6 +150,8 @@ return [
         /*
          * Package Service Providers...
          */
+        LaravelFCM\FCMServiceProvider::class,
+        'Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider',
 
         /*
          * Application Service Providers...
@@ -214,7 +216,10 @@ return [
         
         'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-    
+        'FCM'      => LaravelFCM\Facades\FCM::class,
+        'FCMGroup' => LaravelFCM\Facades\FCMGroup::class,
+        'PushNotification' => 'Davibennun\LaravelPushNotification\Facades\PushNotification'
+
     ],
 
 ];

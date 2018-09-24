@@ -49,8 +49,8 @@ class AdminHomeController extends Controller
 	/*showdashboard*/
 	public function showDashboard(){
 		$getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
-		$stoneEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
-        $installEmployeeList = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+		$stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+        $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
 
 		return view('admin.dashboard')->with('jobTypeDetails',$getJobTypeDetail)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
 	}
@@ -212,6 +212,11 @@ class AdminHomeController extends Controller
 						<span data-toggle="" data-target="#jobDetailModel">
 							<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
 								<i class="ti-eye"></i>
+							</a>
+						</span>
+						<span data-toggle="modal" data-target="#jobNotesModel">
+							<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="'.$jobDetail->job_id.'">
+								<i class="ti-plus"></i>
 							</a>
 						</span>
 					</td>

@@ -189,6 +189,10 @@ $(document).ready(function () {
 					notEmpty: {
 						message: 'Delivery date is required.'
 					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
+					},
 				}
 			},
 			deliveryTime: {
@@ -237,6 +241,10 @@ $(document).ready(function () {
 				validators: {
 					notEmpty: {
 						message: 'Installation Date is required.'
+					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
 					},
 				}
 			},
@@ -294,6 +302,10 @@ $(document).ready(function () {
 				validators: {
 					notEmpty: {
 						message: 'Stone Installation Date is required.'
+					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
 					},
 				}
 			},
@@ -403,6 +415,20 @@ $(document).ready(function () {
 				validators: {
 					notEmpty: {
 						message: 'Employee type is required and can\'t be empty.'
+					}
+				}
+			},
+		}
+	});
+
+	$('#formAddNote').bootstrapValidator({
+		//excluded: ':disabled',
+		fields: {
+			jobNote: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Jobnote is required and can\'t be empty.'
 					}
 				}
 			},
@@ -653,6 +679,10 @@ $(document).ready(function () {
 					notEmpty: {
 						message: 'Start date is required and can\'t be empty'
 					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
+					},
 				}
 			},
 			jobEndDate: {
@@ -660,6 +690,10 @@ $(document).ready(function () {
 				validators: {
 					notEmpty: {
 						message: 'Expected completion date is required and can\'t be empty'
+					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
 					},
 				}
 			},
@@ -669,6 +703,10 @@ $(document).ready(function () {
 					notEmpty: {
 						message: 'Plumbing installation date is required and can\'t be empty'
 					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
+					},
 				}
 			},
 			deliveryDate: {
@@ -676,6 +714,10 @@ $(document).ready(function () {
 				validators: {
 					notEmpty: {
 						message: 'Delivery date is required.'
+					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
 					},
 				}
 			},
@@ -829,6 +871,10 @@ $(document).ready(function () {
 					notEmpty: {
 						message: 'Installation Date is required.'
 					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
+					},
 				}
 			},
 			installationTime: {
@@ -880,6 +926,10 @@ $(document).ready(function () {
 				validators: {
 					notEmpty: {
 						message: 'Stone Installation Date is required.'
+					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
 					},
 				}
 			},

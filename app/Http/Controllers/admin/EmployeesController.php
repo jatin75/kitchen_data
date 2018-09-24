@@ -25,7 +25,8 @@ class EmployeesController extends Controller
 
     public function create()
     {
-        return view('admin.addemployee')->with('employeeTypes', LoginType::all());
+        $loginType = LoginType::where('login_type_id','<>',9)->get();
+        return view('admin.addemployee')->with('employeeTypes', $loginType);
     }
 
     public function store(Request $request)
@@ -107,7 +108,8 @@ class EmployeesController extends Controller
         if (sizeof($getEmployeeDetail) > 0) {
             $getEmployeeDetail = $getEmployeeDetail[0];
         }
-        return view('admin.addemployee')->with('employeeDetail', $getEmployeeDetail)->with('employeeTypes', LoginType::all());
+        $loginType = LoginType::where('login_type_id','<>',9)->get();
+        return view('admin.addemployee')->with('employeeDetail', $getEmployeeDetail)->with('employeeTypes', $loginType);
     }
 
     public function destroy($employee_id)

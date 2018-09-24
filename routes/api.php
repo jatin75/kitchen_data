@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -11,9 +9,17 @@ use Illuminate\Http\Request;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', 'API\AdminHomeController@login');
+Route::post('forgotPassword', 'API\AdminHomeController@forgotPassword');
+Route::middleware('auth:api')->group(function () {
+    //-------------- User --------------
+	Route::get('userLogout', 'API\AdminHomeController@userLogout');
+	Route::post('changeAccountSetting', 'API\AdminHomeController@changeAccountSetting');
+	Route::post('changeMyProfile', 'API\AdminHomeController@changeMyProfile');
+
+    //-------------- Jobs --------------
+	Route::post('getUserJobDetails', 'API\JobsController@getUserJobDetails');
+	Route::post('changeJobStatus', 'API\JobsController@changeJobStatus');
 });
-
