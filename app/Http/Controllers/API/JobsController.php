@@ -769,7 +769,6 @@ class JobsController extends Controller
     public function pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound='dafault')
     {
         if(strtolower($device_type) == 'ios') {
-
     		$message = PushNotification::message($messageBody,array(
     			'title' => $title,
     			//'badge' => $badge,

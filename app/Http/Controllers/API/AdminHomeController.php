@@ -237,7 +237,7 @@ class AdminHomeController extends Controller
                 $objChat->save();
 
                 /*send notification to receiver */
-                if (!empty($receiver_id)) {
+                /* if (!empty($receiver_id)) {
                     $title = 'New Message Received';
                     $badge = '1';
                     $sound = 'default';
@@ -248,7 +248,7 @@ class AdminHomeController extends Controller
                         $device_type = $device_detail->device_type;
                         (new JobsController)->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
                     }
-                }
+                } */
                 $success['sender_id'] = $sender_id;
                 $success['receiver_id'] = $receiver_id;
                 $success['message'] = $message;
