@@ -275,11 +275,11 @@ class AdminHomeController extends Controller
           if(sizeof($getUser) > 0)
           {
               $success['chat_users'] = $getUser;
-              return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Get Chat Users successfully.", 'response' => $success]);   
+              return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Get Chat Users successfully.", 'response' => $success]);
           }
           else
           {
-            return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => 'User not found']);  
+            return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => 'User not found']);
           }
       } catch (\Exception $e) {}
     }
@@ -301,18 +301,17 @@ class AdminHomeController extends Controller
           $sender_id = $request->get('sender_id');
           $receiver_id = $request->get('receiver_id');
 
-          if (!empty($sender_id) && !empty($receiver_id)) 
+          if (!empty($sender_id) && !empty($receiver_id))
           {
-            $getAllChat = DB::select("SELECT sender_id,receiver_id,message,created_at FROM chat_history WHERE sender_id = '{$sender_id}' AND receiver_id= '{$receiver_id}' AND is_deleted = 0 ORDER BY created_at ASC");
-
+            $getAllChat = DB::select("SELECT sender_id,receiver_id,message,created_at FROM chat_history WHERE (sender_id = '{$sender_id}' OR sender_id = '{$receiver_id}') AND (receiver_id= '{$receiver_id}' OR receiver_id= '{$sender_id}') AND is_deleted = 0 ORDER BY created_at ASC");
             if(sizeof($getAllChat) > 0)
             {
               $success['chat_history'] = $getAllChat;
-              return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Get conversation list successfully.", 'response' => $success]);  
+              return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Get conversation list successfully.", 'response' => $success]);
             }
             else
             {
-              return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => 'Message not found']);  
+              return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => 'Message not found']);
             }
           }
       } catch (\Exception $e) {}
