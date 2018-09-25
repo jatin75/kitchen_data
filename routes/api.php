@@ -25,4 +25,7 @@ Route::middleware('auth:api')->group(function () {
 
     //-------------- Chat --------------
     Route::post('chatPost', 'API\AdminHomeController@chatPost');
+    Route::post('getChatUser', 'API\AdminHomeController@getChatUser');
+    Route::post('getChatHistory', 'API\AdminHomeController@getChatHistory');
+
 });

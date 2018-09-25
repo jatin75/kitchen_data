@@ -12,6 +12,7 @@ use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Mail;
+use DB;
 use Validator;
 
 class AdminHomeController extends Controller
@@ -248,10 +249,73 @@ class AdminHomeController extends Controller
                         (new JobsController)->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
                     }
                 }
+                $success['sender_id'] = $sender_id;
+                $success['receiver_id'] = $receiver_id;
+                $success['message'] = $message;
                 $success['created_at'] = $created_at;
                 return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Chat meassage has been added successfully.", 'response' => $success]);
             }
         } catch (\Exception $e) {}
+    }
+     //Get Chat user for chat listing
+    public function getChatUser(Request $request)
+    {
+        try {
+          $validator = Validator::make($request->all(), [
+                  'login_type_id' => 'required',
+              ]);
+
+              if ($validator->fails()) {
+                  $messages = $validator->errors()->all();
+                  $msg = $messages[0];
+                  return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
+              }
+              $login_type_id = $request->get('login_type_id');
+            $getUser = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS name FROM admin_users WHERE login_type_id = '{$login_type_id}' AND is_deleted = 0 ORDER BY name ASC");
+          if(sizeof($getUser) > 0)
+          {
+              $success['chat_users'] = $getUser;
+              return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Get Chat Users successfully.", 'response' => $success]);   
+          }
+          else
+          {
+            return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => 'User not found']);  
+          }
+      } catch (\Exception $e) {}
+    }
+
+    /*get chat history*/
+    public function getChatHistory (request $request)
+    {
+      try {
+          $validator = Validator::make($request->all(), [
+              'sender_id' => 'required',
+              'receiver_id' => 'required',
+          ]);
+
+          if ($validator->fails()) {
+              $messages = $validator->errors()->all();
+              $msg = $messages[0];
+              return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
+          }
+          $sender_id = $request->get('sender_id');
+          $receiver_id = $request->get('receiver_id');
+
+          if (!empty($sender_id) && !empty($receiver_id)) 
+          {
+            $getAllChat = DB::select("SELECT sender_id,receiver_id,message,created_at FROM chat_history WHERE sender_id = '{$sender_id}' AND receiver_id= '{$receiver_id}' AND is_deleted = 0 ORDER BY created_at ASC");
+
+            if(sizeof($getAllChat) > 0)
+            {
+              $success['chat_history'] = $getAllChat;
+              return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Get conversation list successfully.", 'response' => $success]);  
+            }
+            else
+            {
+              return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => 'Message not found']);  
+            }
+          }
+      } catch (\Exception $e) {}
     }
 
     public function replacePhoneNumber($phone_number)
