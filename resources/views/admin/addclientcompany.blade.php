@@ -54,7 +54,7 @@
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>NAME</b></label>
+													<label class="control-label"><b>NAME *</b></label>
 													<input style="text-transform:uppercase;" type="text" name="companyName" id="companyName" value="{{$companyDetail->name or ''}}" class="form-control" placeholder="COMPANY NAME">
 												</div>
 											</div>
@@ -74,13 +74,13 @@
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>PHONE NUMBER</b></label>
+													<label class="control-label"><b>PHONE NUMBER *</b></label>
 													<input type="text" placeholder="(xxx) xxx-xxxx" name="companyPhoneNo" id="companyPhoneNo" value="{{$companyDetail->phone_number or ''}}" class="form-control">
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>ADDRESS 1</b></label><br>
+													<label class="control-label"><b>ADDRESS 1 *</b></label><br>
 													<input type="text" name="locationAddress" id="locationAddress" value="{{$companyDetail->address_1 or ''}}" class="form-control" placeholder="Address line 1">
 												</div>
 											</div>

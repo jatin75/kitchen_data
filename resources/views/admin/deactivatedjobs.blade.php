@@ -48,7 +48,7 @@ tr th{
     <input type="hidden" id="formatedDate" name="formatedDate" value="{{ date('Y_m_d') }}">
     <div class="row bg-title">
       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-         <h4 class="page-title">Jobs > Deactivated</h4>
+         <h4 class="page-title">Jobs > Inactive</h4>
      </div>
  </div>
  <div class="row">
@@ -75,6 +75,8 @@ tr th{
                                     <i class="ti-pencil-alt"></i>
                                 </a>
                                 <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to remove this job?');" href="{{route('deletejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Remove Job"><i class="ti-trash"></i> </a>
+                                <span style="display:none;">{{$job->address_1}}</span>
+                                    <span style="display:none;">{{$job->address_2}}</span>
                             </td>
                             <td>{{$job->job_title}}</td>
                             <td>{{$job->job_id}}</td>

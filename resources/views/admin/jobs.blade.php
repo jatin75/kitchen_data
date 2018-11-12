@@ -9,50 +9,50 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/owl.carousel/owl.carousel.min.css')}}" />
 <style type="text/css">
-.modal-footer {
-	padding-bottom: 0px !important;
-	margin-bottom: 0px !important;
-}
-tr th{
-	padding-left: 10px !important;
-}
-.nav_toolbar_menu{
-	padding-left: 8px;
-}
-.toolbar_btn{
-	padding: 10px 18px !important;
-	background-color: #fff !important;
-	font-weight: bold;
-	letter-spacing: 0.6px;
-	margin: 0 2px 3px 0 !important;
-	border: 1px solid #dcdbdbe0;
-}
-.toolbar_btn:focus {
-	background-color: #4c5667 !important;
-	color: #fff;
-	box-shadow: none;
-}
-.toolbaractive {
-	background-color: #4c5667 !important;
-	color: #fff !important;
-	box-shadow: none;
-}
-.toolbarmenu_active {
-	background-color: #4c5667 !important;
-	color: #fff !important;
-	box-shadow: none;
-}
-.nav_toggle ul li > a{
-	padding: 8px 12px !important;
-	border-bottom: 1px solid #e5e5e5;
-}
-.popover {
-	z-index: 999999;
-	/*display: block !important;*/
-}
-.bootstrap-select .dropdown-toggle:focus {
-	outline: 0px auto -webkit-focus-ring-color!important;
-}
+	.modal-footer {
+		padding-bottom: 0px !important;
+		margin-bottom: 0px !important;
+	}
+	tr th{
+		padding-left: 10px !important;
+	}
+	.nav_toolbar_menu{
+		padding-left: 8px;
+	}
+	.toolbar_btn{
+		padding: 10px 18px !important;
+		background-color: #fff !important;
+		font-weight: bold;
+		letter-spacing: 0.6px;
+		margin: 0 2px 3px 0 !important;
+		border: 1px solid #dcdbdbe0;
+	}
+	.toolbar_btn:focus {
+		background-color: #4c5667 !important;
+		color: #fff;
+		box-shadow: none;
+	}
+	.toolbaractive {
+		background-color: #4c5667 !important;
+		color: #fff !important;
+		box-shadow: none;
+	}
+	.toolbarmenu_active {
+		background-color: #4c5667 !important;
+		color: #fff !important;
+		box-shadow: none;
+	}
+	.nav_toggle ul li > a{
+		padding: 8px 12px !important;
+		border-bottom: 1px solid #e5e5e5;
+	}
+	.popover {
+		z-index: 999999;
+		/*display: block !important;*/
+	}
+	.bootstrap-select .dropdown-toggle:focus {
+		outline: 0px auto -webkit-focus-ring-color!important;
+	}
 /*.dropdown-toggle::after {
 	display: inline-block;
 	position: relative;
@@ -155,7 +155,9 @@ body{
 									<span data-toggle="" data-target="#jobImageModel">
 										<a data-toggle="tooltip" data-placement="top" title="View Image" class="btn btn-dribbble btn-circle view-images" data-id="{{ $job->job_id }}"><i class="ti-image"></i></a>
 									</span>
-									<a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to deactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i></a>
+									<a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to inactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Inactivate Job"><i class="ti-lock"></i></a>
+									<span style="display:none;">{{$job->address_1}}</span>
+									<span style="display:none;">{{$job->address_2}}</span>
 								</td>
 								<td>{{$job->job_title}}</td>
 								<td>{{$job->job_id}}</td>
@@ -286,48 +288,7 @@ body{
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">JOB START DATE</label>
-						<br><span id="jobStartDate"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">EXPECTED COMPLETION DATE</label>
-						<br><span id="jobEndDate"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">PLUMBING INSTALLATION DATE</label>
-						<br><span id="plumbingInstallationDate"></span>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">DELIVERY DATE AND TIME</label>
-						<br><span id="deliveryDateTime"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">JOB SUPER NAME</label>
-						<br><span id="jobSuperName"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">JOB SUPER PHONE NUMBER</label>
-						<br><span id="superPhoneNumber"></span>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">JOB CONTRACTOR NAME</label>
-						<br><span id="jobContractorName"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">CONTRACTOR EMAIL ADDRESS</label>
-						<br><span id="contractorEmail"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">CONTRACTOR PHONE NUMBER</label>
-						<br><span id="contractorPhoneNumber"></span>
-					</div>
-				</div>
-				<div class="row">
+
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB COMPANY NAME</label>
 						<br><span id="jobCompanyName"></span>
@@ -336,6 +297,56 @@ body{
 						<label class="control-label">COMPANY CLIENTS</label>
 						<br><span id="comapnyClients"></span>
 					</div>
+
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">JOB START DATE</label>
+						<br><span id="jobStartDate"></span>
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">EXPECTED COMPLETION DATE</label>
+						<br><span id="jobEndDate"></span>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">PLUMBING INSTALLATION DATE</label>
+						<br><span id="plumbingInstallationDate"></span>
+					</div>
+
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">DELIVERY DATE AND TIME</label>
+						<br><span id="deliveryDateTime"></span>
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">JOB SUPER NAME</label>
+						<br><span id="jobSuperName"></span>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">JOB SUPER PHONE NUMBER</label>
+						<br><span id="superPhoneNumber"></span>
+					</div>
+
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">JOB CONTRACTOR NAME</label>
+						<br><span id="jobContractorName"></span>
+					</div>
+
+				</div>
+				<div class="row">
+
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">CONTRACTOR EMAIL ADDRESS</label>
+						<br><span id="contractorEmail"></span>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">CONTRACTOR PHONE NUMBER</label>
+						<br><span id="contractorPhoneNumber"></span>
+					</div>
+
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">WORKING EMPLOYEES</label>
 						<br><span id="workingEmployee"></span>
@@ -669,295 +680,295 @@ body{
 			},
 			],
 		});
-	});
+});
 
-	/*get job detail list*/
-	function getJobDetailsList(jobStatusId){
-		$('.jobDetailList').html('<div id="jobchart" class="box" style="padding: inherit;"><p style="text-align: center;margin: 10px;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px"></i></p></div>');
-		$.ajax({
-			url:'{{ route('showfilterwisejob') }}',
-			data:{
-				jobStatusId:jobStatusId,
-			},
-			type:'post',
-			dataType:'json',
-			success: function(data)
+/*get job detail list*/
+function getJobDetailsList(jobStatusId){
+	$('.jobDetailList').html('<div id="jobchart" class="box" style="padding: inherit;"><p style="text-align: center;margin: 10px;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px"></i></p></div>');
+	$.ajax({
+		url:'{{ route('showfilterwisejob') }}',
+		data:{
+			jobStatusId:jobStatusId,
+		},
+		type:'post',
+		dataType:'json',
+		success: function(data)
+		{
+			if(data.html != '')
 			{
-				if(data.html != '')
-				{
-					$('.jobDetailList').html(data.html);
-					var date = $('#formatedDate').val();
-					var value = 'Kitchen_job_' + date;
-					$('#jobList').DataTable({
-						dom: 'Bfrtip',
-						buttons: [
-						{
-							extend: 'csv',
-							title: value,
-							exportOptions: {
-								columns: [ 1,2,3,4,5 ],
-								format: {
-									body: function( data, row, col, node ) {
-										if (col == 2) {
-											return $('#jobList').DataTable()
-											.cell( {row: row, column: 3} )
-											.nodes()
-											.to$()
-											.find(':selected')
-											.text()
-										} else {
-											return data;
-										}
+				$('.jobDetailList').html(data.html);
+				var date = $('#formatedDate').val();
+				var value = 'Kitchen_job_' + date;
+				$('#jobList').DataTable({
+					dom: 'Bfrtip',
+					buttons: [
+					{
+						extend: 'csv',
+						title: value,
+						exportOptions: {
+							columns: [ 1,2,3,4,5 ],
+							format: {
+								body: function( data, row, col, node ) {
+									if (col == 2) {
+										return $('#jobList').DataTable()
+										.cell( {row: row, column: 3} )
+										.nodes()
+										.to$()
+										.find(':selected')
+										.text()
+									} else {
+										return data;
 									}
-								},
+								}
 							},
 						},
-						{
-							extend: 'excel',
-							title: value,
-							exportOptions: {
-								columns: [ 1,2,3,4,5 ],
-								format: {
-									body: function( data, row, col, node ) {
-										if (col == 2) {
-											return $('#jobList').DataTable()
-											.cell( {row: row, column: 3} )
-											.nodes()
-											.to$()
-											.find(':selected')
-											.text()
-										} else {
-											return data;
-										}
+					},
+					{
+						extend: 'excel',
+						title: value,
+						exportOptions: {
+							columns: [ 1,2,3,4,5 ],
+							format: {
+								body: function( data, row, col, node ) {
+									if (col == 2) {
+										return $('#jobList').DataTable()
+										.cell( {row: row, column: 3} )
+										.nodes()
+										.to$()
+										.find(':selected')
+										.text()
+									} else {
+										return data;
 									}
-								},
+								}
 							},
 						},
-						{
-							extend: 'pdf',
-							pageSize: 'LEGAL',
-							title: value,
-							exportOptions: {
-								columns: [ 1,2,3,4,5],
-								format: {
-									body: function( data, row, col, node ) {
-										if (col == 2) {
-											return $('#jobList').DataTable()
-											.cell( {row: row, column: 3} )
-											.nodes()
-											.to$()
-											.find(':selected')
-											.text()
-										} else {
-											return data;
-										}
+					},
+					{
+						extend: 'pdf',
+						pageSize: 'LEGAL',
+						title: value,
+						exportOptions: {
+							columns: [ 1,2,3,4,5],
+							format: {
+								body: function( data, row, col, node ) {
+									if (col == 2) {
+										return $('#jobList').DataTable()
+										.cell( {row: row, column: 3} )
+										.nodes()
+										.to$()
+										.find(':selected')
+										.text()
+									} else {
+										return data;
 									}
-								},
+								}
 							},
 						},
-						{
-							extend: 'print',
-							title: value,
-							exportOptions: {
-								columns: [ 1,2,3,4,5 ],
-								format: {
-									body: function( data, row, col, node ) {
-										if (col == 2) {
-											return $('#jobList').DataTable()
-											.cell( {row: row, column: 3} )
-											.nodes()
-											.to$()
-											.find(':selected')
-											.text()
-										} else {
-											return data;
-										}
+					},
+					{
+						extend: 'print',
+						title: value,
+						exportOptions: {
+							columns: [ 1,2,3,4,5 ],
+							format: {
+								body: function( data, row, col, node ) {
+									if (col == 2) {
+										return $('#jobList').DataTable()
+										.cell( {row: row, column: 3} )
+										.nodes()
+										.to$()
+										.find(':selected')
+										.text()
+									} else {
+										return data;
 									}
-								},
+								}
 							},
-						}
-						],
-					});
-					/* For select 2*/
-					$(".select2").select2();
-					/*tooltip*/
-					$('[data-toggle="tooltip"]').tooltip();
-				}
-			}
-		});
-	}
-
-	/*set job id on models*/
-	$(document).on('click',".add-job-note",function(){
-		var jobId = $(this).attr('data-id');
-		$("#jobNoteSubmit").prop("disabled",false);
-		$('#hiddenJobId').val(jobId);
-		$('#jobNote').val('');
-		$('#jobNoteSubmit').html('Add');
-		$('#hiddenJobStatus').val(1);
-	});
-
-	/*view image model*/
-	$(document).on('click',".view-images",function(){
-		var jobId = $(this).attr('data-id');
-		$('#loader').show();
-		$.ajax({
-			url:'{{ route('getjobimages') }}',
-			data:{
-				jobId:jobId,
-			},
-			type:'post',
-			dataType:'json',
-			success: function(response)
-			{
-				if(response.key == 1)
-				{
-					$('.carousel-indicators').html(response.html1);
-					$('.carousel-inner').html(response.html2);
-					$('#loader').hide();
-					$('#jobImageModel').modal('show');
-				}
-				else
-				{
-					$('#loader').hide();
-					notify('Job images not found.','blackgloss');
-				}
-			}
-		});
-	});
-
-
-	/*change job status*/
-	$(document).on('change','.jobType',function(){
-		var jobStatusId = $(this).val();
-		var jobId = $(this).attr('data-id');
-		var date = ''; var time = ''; var employee = '';
-
-		if (window.matchMedia('(max-width: 767px)').matches) {
-			var activeJobStatus = $(".toolbarmenu_active").attr("data-id");
-		} else {
-			var activeJobStatus = $(".toolbaractive").attr("data-id");
-		}
-		$("#hiddenChangeJobId").val(jobId);
-		$("#hiddenChangeJobStatus").val(jobStatusId);
-		$("#hiddenChangeJobActiveStatus").val(activeJobStatus);
-		if(jobStatusId == 5 || jobStatusId == 6 || jobStatusId == 7) {
-			$("#loader").show();
-			$.ajax({
-				url:'{{ route('editjobdatetimemodel') }}',
-				data:{jobId:jobId},
-				type: 'post',
-				dataType: 'json',
-				success:function(data){
-					$('#loader').hide();
-					if(data.key == 1) {
-						var jobstatus = data.job_detail.job_status_id;
-						$("#jobType_"+jobId).find('option').removeAttr("selected");
-						$("#jobType_"+jobId).select2("val", jobstatus);
-						$('#deliveryDate').val(data.job_detail.delivery_date);
-						$('#deliveryTime').val(data.job_detail.delivery_time);
-						$('#installationDate').val(data.job_detail.installation_date);
-						$('#installationTime').val(data.job_detail.installation_time);
-						$('#selectInstallationEmployees').selectpicker('val', data.job_detail.installation_employee_id);
-						$('#stoneInstallationDate').val(data.job_detail.stone_installation_date);
-						$('#stoneInstallationTime').val(data.job_detail.stone_installation_time);
-						$('#selectStoneInstallationEmployees').selectpicker('val', data.job_detail.stone_installation_employee_id);
-						$('#statusWiseJobModel').modal('show');
+						},
 					}
-				}
-			});
-		}
+					],
+				});
+/* For select 2*/
+$(".select2").select2();
+/*tooltip*/
+$('[data-toggle="tooltip"]').tooltip();
+}
+}
+});
+}
 
-		if(jobStatusId == 5) {
-			$('.addInstallingDateTime').hide();
-			$('.addDeliveryDateTime').show();
-			$('.addStoneInstallingDateTime').hide();
+/*set job id on models*/
+$(document).on('click',".add-job-note",function(){
+	var jobId = $(this).attr('data-id');
+	$("#jobNoteSubmit").prop("disabled",false);
+	$('#hiddenJobId').val(jobId);
+	$('#jobNote').val('');
+	$('#jobNoteSubmit').html('Add');
+	$('#hiddenJobStatus').val(1);
+});
 
-		}else if(jobStatusId == 6) {
-			$('.addInstallingDateTime').show();
-			$('.addDeliveryDateTime').hide();
-			$('.addStoneInstallingDateTime').hide();
-
-		}else if(jobStatusId == 7) {
-			$('.addStoneInstallingDateTime').show();
-			$('.addDeliveryDateTime').hide();
-			$('.addInstallingDateTime').hide();
-
-		}
-		else {
-			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+/*view image model*/
+$(document).on('click',".view-images",function(){
+	var jobId = $(this).attr('data-id');
+	$('#loader').show();
+	$.ajax({
+		url:'{{ route('getjobimages') }}',
+		data:{
+			jobId:jobId,
+		},
+		type:'post',
+		dataType:'json',
+		success: function(response)
+		{
+			if(response.key == 1)
+			{
+				$('.carousel-indicators').html(response.html1);
+				$('.carousel-inner').html(response.html2);
+				$('#loader').hide();
+				$('#jobImageModel').modal('show');
+			}
+			else
+			{
+				$('#loader').hide();
+				notify('Job images not found.','blackgloss');
+			}
 		}
 	});
+});
 
-	function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee) {
+
+/*change job status*/
+$(document).on('change','.jobType',function(){
+	var jobStatusId = $(this).val();
+	var jobId = $(this).attr('data-id');
+	var date = ''; var time = ''; var employee = '';
+
+	if (window.matchMedia('(max-width: 767px)').matches) {
+		var activeJobStatus = $(".toolbarmenu_active").attr("data-id");
+	} else {
+		var activeJobStatus = $(".toolbaractive").attr("data-id");
+	}
+	$("#hiddenChangeJobId").val(jobId);
+	$("#hiddenChangeJobStatus").val(jobStatusId);
+	$("#hiddenChangeJobActiveStatus").val(activeJobStatus);
+	if(jobStatusId == 5 || jobStatusId == 6 || jobStatusId == 7) {
 		$("#loader").show();
 		$.ajax({
-			url:'{{ route('changejobstatus') }}',
-			data:{jobStatusId:jobStatusId,jobId:jobId,date:date,time:time,employee:employee},
+			url:'{{ route('editjobdatetimemodel') }}',
+			data:{jobId:jobId},
 			type: 'post',
 			dataType: 'json',
 			success:function(data){
 				$('#loader').hide();
-				if(activeJobStatus != 0) {
-					$('.changestatus_'+jobId).fadeOut(300, function(){
-						var table = $('#jobList').DataTable();
-						table.row('.changestatus_'+jobId).remove().draw(false);
-					});
+				if(data.key == 1) {
+					var jobstatus = data.job_detail.job_status_id;
+					$("#jobType_"+jobId).find('option').removeAttr("selected");
+					$("#jobType_"+jobId).select2("val", jobstatus);
+					$('#deliveryDate').val(data.job_detail.delivery_date);
+					$('#deliveryTime').val(data.job_detail.delivery_time);
+					$('#installationDate').val(data.job_detail.installation_date);
+					$('#installationTime').val(data.job_detail.installation_time);
+					$('#selectInstallationEmployees').selectpicker('val', data.job_detail.installation_employee_id);
+					$('#stoneInstallationDate').val(data.job_detail.stone_installation_date);
+					$('#stoneInstallationTime').val(data.job_detail.stone_installation_time);
+					$('#selectStoneInstallationEmployees').selectpicker('val', data.job_detail.stone_installation_employee_id);
+					$('#statusWiseJobModel').modal('show');
 				}
-				notify('Job Status has been Changed Successfully.','blackgloss');
 			}
 		});
+}
+
+if(jobStatusId == 5) {
+	$('.addInstallingDateTime').hide();
+	$('.addDeliveryDateTime').show();
+	$('.addStoneInstallingDateTime').hide();
+
+}else if(jobStatusId == 6) {
+	$('.addInstallingDateTime').show();
+	$('.addDeliveryDateTime').hide();
+	$('.addStoneInstallingDateTime').hide();
+
+}else if(jobStatusId == 7) {
+	$('.addStoneInstallingDateTime').show();
+	$('.addDeliveryDateTime').hide();
+	$('.addInstallingDateTime').hide();
+
+}
+else {
+	changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+}
+});
+
+function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee) {
+	$("#loader").show();
+	$.ajax({
+		url:'{{ route('changejobstatus') }}',
+		data:{jobStatusId:jobStatusId,jobId:jobId,date:date,time:time,employee:employee},
+		type: 'post',
+		dataType: 'json',
+		success:function(data){
+			$('#loader').hide();
+			if(activeJobStatus != 0) {
+				$('.changestatus_'+jobId).fadeOut(300, function(){
+					var table = $('#jobList').DataTable();
+					table.row('.changestatus_'+jobId).remove().draw(false);
+				});
+			}
+			notify('Job Status has been Changed Successfully.','blackgloss');
+		}
+	});
+}
+
+$('#formAddDeliveryDateTime').on('success.form.bv', function(e) {
+	e.preventDefault();
+	$('#statusWiseJobModel').modal('hide');
+	var jobId = $("#hiddenChangeJobId").val();
+	var jobStatusId = $("#hiddenChangeJobStatus").val();
+	var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
+	var date = $("#deliveryDate").val();
+	var time = $("#deliveryTime").val();
+	var employee = '';
+	$("#jobType_"+jobId).select2("val", jobStatusId);
+	if(jobStatusId == 5 && date != '' && time != '') {
+		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
 	}
+});
 
-	$('#formAddDeliveryDateTime').on('success.form.bv', function(e) {
-		e.preventDefault();
-		$('#statusWiseJobModel').modal('hide');
-		var jobId = $("#hiddenChangeJobId").val();
-		var jobStatusId = $("#hiddenChangeJobStatus").val();
-		var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
-		var date = $("#deliveryDate").val();
-		var time = $("#deliveryTime").val();
-		var employee = '';
-		$("#jobType_"+jobId).select2("val", jobStatusId);
-		if(jobStatusId == 5 && date != '' && time != '') {
-			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
-		}
-	});
+$('#formAddInstallingDateTime').on('success.form.bv', function(e) {
+	e.preventDefault();
+	$('#statusWiseJobModel').modal('hide');
+	var jobId = $("#hiddenChangeJobId").val();
+	var jobStatusId = $("#hiddenChangeJobStatus").val();
+	var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
+	var date = $("#installationDate").val();
+	var time = $("#installationTime").val();
+	var employee = $("#selectInstallationEmployees").val();
+	$("#jobType_"+jobId).select2("val", jobStatusId);
+	if(jobStatusId == 6 && date != '' && time != '' && employee != '') {
+		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+	}
+});
 
-	$('#formAddInstallingDateTime').on('success.form.bv', function(e) {
-		e.preventDefault();
-		$('#statusWiseJobModel').modal('hide');
-		var jobId = $("#hiddenChangeJobId").val();
-		var jobStatusId = $("#hiddenChangeJobStatus").val();
-		var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
-		var date = $("#installationDate").val();
-		var time = $("#installationTime").val();
-		var employee = $("#selectInstallationEmployees").val();
-		$("#jobType_"+jobId).select2("val", jobStatusId);
-		if(jobStatusId == 6 && date != '' && time != '' && employee != '') {
-			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
-		}
-	});
-
-	$('#formAddStoneInstallingDateTime').on('success.form.bv', function(e) {
-		e.preventDefault();
-		$('#statusWiseJobModel').modal('hide');
-		var jobId = $("#hiddenChangeJobId").val();
-		var jobStatusId = $("#hiddenChangeJobStatus").val();
-		var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
-		var date = $("#stoneInstallationDate").val();
-		var time = $("#stoneInstallationTime").val();
-		var employee = $("#selectStoneInstallationEmployees").val();
-		$("#jobType_"+jobId).select2("val", jobStatusId);
-		if(jobStatusId == 7 && date != '' && time != '' && employee != '') {
-			changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
-		}
-	});
+$('#formAddStoneInstallingDateTime').on('success.form.bv', function(e) {
+	e.preventDefault();
+	$('#statusWiseJobModel').modal('hide');
+	var jobId = $("#hiddenChangeJobId").val();
+	var jobStatusId = $("#hiddenChangeJobStatus").val();
+	var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
+	var date = $("#stoneInstallationDate").val();
+	var time = $("#stoneInstallationTime").val();
+	var employee = $("#selectStoneInstallationEmployees").val();
+	$("#jobType_"+jobId).select2("val", jobStatusId);
+	if(jobStatusId == 7 && date != '' && time != '' && employee != '') {
+		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+	}
+});
 
 
 
-	/*set audit*/
-	$(document).on('click','.view-audit',function(){
+/*set audit*/
+$(document).on('click','.view-audit',function(){
 	//$(".view-audit").click(function(){
 		var jobId = $(this).attr('data-id');
 		$('#loader').show();
@@ -1008,169 +1019,113 @@ body{
 		});
 	});
 
-	/*view job model*/
-	$(document).on('click','.view-job', function(){
-		var jobId = $(this).attr('data-id');
-		$('#loader').show();
-		$.ajax({
-			url:'{{ route('viewjobdetails') }}',
-			data:{
-				job_id:jobId,
-			},
-			type:'post',
-			dataType:'json',
-			success: function(data)
+/*view job model*/
+$(document).on('click','.view-job', function(){
+	var jobId = $(this).attr('data-id');
+	$('#loader').show();
+	$.ajax({
+		url:'{{ route('viewjobdetails') }}',
+		data:{
+			job_id:jobId,
+		},
+		type:'post',
+		dataType:'json',
+		success: function(data)
+		{
+			if(data.key == 1)
 			{
-				if(data.key == 1)
+				$('#notesData').html(data.job_notes_detail);
+				$('#jobTitle').html(data.employee_detail.job_title);
+				$('#jobStatus').html(data.employee_detail.is_active);
+				$('#jobId').html(data.employee_detail.job_id);
+				$('#address1').html(data.employee_detail.address_1);
+				$('#address2').html(data.employee_detail.address_2);
+				$('#apartmentNo').html(data.employee_detail.apartment_number);
+				$('#city').html(data.employee_detail.city);
+				$('#state').html(data.employee_detail.state);
+				$('#zipcode').html(data.employee_detail.zipcode);
+				$('#jobStartDate').html(data.employee_detail.start_date);
+				$('#jobEndDate').html(data.employee_detail.end_date);
+				$('#plumbingInstallationDate').html(data.employee_detail.plumbing_installation_date);
+				$('#deliveryDateTime').html(data.employee_detail.delivery_datetime);
+				$('#jobSuperName').html(data.employee_detail.super_name);
+				$('#superPhoneNumber').html(data.employee_detail.super_phone_number);
+				$('#jobContractorName').html(data.employee_detail.contractor_name);
+				$('#contractorEmail').html(data.employee_detail.contractor_email);
+				$('#contractorPhoneNumber').html(data.employee_detail.contractor_phone_number);
+				$('#jobCompanyName').html(data.employee_detail.company_name);
+				$('#comapnyClients').html(data.employee_detail.company_clients_name);
+				$('#workingEmployee').html(data.employee_detail.working_employee_name);
+				if(data.employee_detail.is_select_installation == 3)
 				{
-					$('#notesData').html(data.job_notes_detail);
-					$('#jobTitle').html(data.employee_detail.job_title);
-					$('#jobStatus').html(data.employee_detail.is_active);
-					$('#jobId').html(data.employee_detail.job_id);
-					$('#address1').html(data.employee_detail.address_1);
-					$('#address2').html(data.employee_detail.address_2);
-					$('#apartmentNo').html(data.employee_detail.apartment_number);
-					$('#city').html(data.employee_detail.city);
-					$('#state').html(data.employee_detail.state);
-					$('#zipcode').html(data.employee_detail.zipcode);
-					$('#jobStartDate').html(data.employee_detail.start_date);
-					$('#jobEndDate').html(data.employee_detail.end_date);
-					$('#plumbingInstallationDate').html(data.employee_detail.plumbing_installation_date);
-					$('#deliveryDateTime').html(data.employee_detail.delivery_datetime);
-					$('#jobSuperName').html(data.employee_detail.super_name);
-					$('#superPhoneNumber').html(data.employee_detail.super_phone_number);
-					$('#jobContractorName').html(data.employee_detail.contractor_name);
-					$('#contractorEmail').html(data.employee_detail.contractor_email);
-					$('#contractorPhoneNumber').html(data.employee_detail.contractor_phone_number);
-					$('#jobCompanyName').html(data.employee_detail.company_name);
-					$('#comapnyClients').html(data.employee_detail.company_clients_name);
-					$('#workingEmployee').html(data.employee_detail.working_employee_name);
-					if(data.employee_detail.is_select_installation == 1)
-					{
-						$('#installationSelect').html('Yes');
-						$('#installationDateTime').html(data.employee_detail.installation_datetime);
-						$('#installationEmployees').html(data.employee_detail.installation_employee_name);
-					}
-					else
-					{
-						$('#installationSelect').html('No');
-						$('#installationDateTime').html('--');
-						$('#installationEmployees').html('--');
-					}
-					if(data.employee_detail.is_select_stone_installation == 1)
-					{
-						$('#stoneInstallationSelect').html('Yes');
-						$('#stoneInstallationDateTime').html(data.employee_detail.stone_installation_datetime);
-						$('#stoneInstallationEmployees').html(data.employee_detail.stone_installation_employee_name);
-					}
-					else
-					{
-						$('#stoneInstallationSelect').html('No');
-						$('#stoneInstallationDateTime').html('--');
-						$('#stoneInstallationEmployees').html('--');
-					}
-					$('#loader').hide();
-					$('#jobDetailModel').modal('show');
+					$('#installationSelect').html('Scheduled');
+					$('#installationDateTime').html(data.employee_detail.installation_datetime);
+					$('#installationEmployees').html(data.employee_detail.installation_employee_name);
 				}
+				else if(data.employee_detail.is_select_installation == 2)
+				{
+					$('#installationSelect').html('Awaiting Approval');
+					$('#installationDateTime').html('--');
+					$('#installationEmployees').html('--');
+				}else
+				{
+					$('#installationSelect').html('Awaiting Install');
+					$('#installationDateTime').html('--');
+					$('#installationEmployees').html('--');
+				}
+				if(data.employee_detail.is_select_stone_installation == 2)
+				{
+					$('#stoneInstallationSelect').html('Scheduled');
+					$('#stoneInstallationDateTime').html(data.employee_detail.stone_installation_datetime);
+					$('#stoneInstallationEmployees').html(data.employee_detail.stone_installation_employee_name);
+				}
+				else
+				{
+					$('#stoneInstallationSelect').html('Awaiting Approval');
+					$('#stoneInstallationDateTime').html('--');
+					$('#stoneInstallationEmployees').html('--');
+				}
+				$('#loader').hide();
+				$('#jobDetailModel').modal('show');
 			}
-		});
-	});
-
-	/*edit Note*/
-	$(document).on('click','.edit-note', function(){
-		var jobId = $(this).attr('data-id');
-		$("#jobNoteSubmit").prop("disabled",false);
-		$.ajax({
-			url:'{{ route('editnote') }}',
-			data:{
-				job_id:jobId,
-			},
-			type:'post',
-			dataType:'json',
-			success: function(data)
-			{
-				if(data.key == 1)
-				{
-					$('#hiddenJobId').val(data.job_note_detail.id);
-					$('#jobNote').val(data.job_note_detail.job_note);
-					$('#hiddenJobStatus').val(2);
-					$('#jobNoteSubmit').html('Update');
-					$('#jobDetailModel').modal('hide');
-					$('#jobNotesModel').modal('show');
-				}
-			}
-		});
-	});
-
-	/*delete Note*/
-	$(document).on('click','.delete-note', function(){
-		if(confirm(' Are you sure you want to remove this note?')){
-			var jobId = $(this).attr('data-id');
-			$.ajax({
-				url:'{{ route('destroynote') }}',
-				data:{
-					job_id:jobId,
-				},
-				type:'post',
-				dataType:'json',
-				success: function(data)
-				{
-					if(data.key == 1)
-					{
-						$('#row_'+jobId).fadeOut(300, function(){
-							$(this).remove();
-						});
-					}
-				}
-			});
 		}
 	});
+});
 
-	/* For select 2*/
-	$(".select2").select2();
-	$('.selectpicker').selectpicker();
-
-	/*job status menu*/
-	$(".nav_toggle").click(function(){
-		$("#nav_menu").toggle();
+/*edit Note*/
+$(document).on('click','.edit-note', function(){
+	var jobId = $(this).attr('data-id');
+	$("#jobNoteSubmit").prop("disabled",false);
+	$.ajax({
+		url:'{{ route('editnote') }}',
+		data:{
+			job_id:jobId,
+		},
+		type:'post',
+		dataType:'json',
+		success: function(data)
+		{
+			if(data.key == 1)
+			{
+				$('#hiddenJobId').val(data.job_note_detail.id);
+				$('#jobNote').val(data.job_note_detail.job_note);
+				$('#hiddenJobStatus').val(2);
+				$('#jobNoteSubmit').html('Update');
+				$('#jobDetailModel').modal('hide');
+				$('#jobNotesModel').modal('show');
+			}
+		}
 	});
+});
 
-	$(".toolbar_btn").on('click', function(){
-		$(".toolbar_btn").removeClass('toolbaractive');
-		$(this).addClass('toolbaractive');
-	});
-
-	$(".toolbar_dropdownbtn").on('click', function(){
-		$(".toolbar_dropdownbtn").removeClass('toolbarmenu_active');
-		$(this).addClass('toolbarmenu_active');
-	});
-
-
-	/*Date picker*/
-	$('#deliveryDate,#installationDate,#stoneInstallationDate').datepicker({
-		autoclose: true,
-		todayHighlight: true,
-	});
-
-	$('.clockpicker').clockpicker({
-		twelvehour: true,
-		autoclose: true,
-		placement: 'bottom',
-	});
-
-	$('#formAddNote').on('success.form.bv', function(e) {
-		e.preventDefault();
-		$('#loader').show();
-		$('#jobNotesModel').modal('hide');
-		var hidden_job_id = $('#hiddenJobId').val();
-		var job_note_desc = $('#jobNote').val();
-		var job_note_status = $('#hiddenJobStatus').val();
+/*delete Note*/
+$(document).on('click','.delete-note', function(){
+	if(confirm(' Are you sure you want to remove this note?')){
+		var jobId = $(this).attr('data-id');
 		$.ajax({
-			url:'{{ route('storejobnote') }}',
+			url:'{{ route('destroynote') }}',
 			data:{
-				hidden_job_id:hidden_job_id,
-				job_note_desc:job_note_desc,
-				job_note_status:job_note_status
+				job_id:jobId,
 			},
 			type:'post',
 			dataType:'json',
@@ -1178,17 +1133,78 @@ body{
 			{
 				if(data.key == 1)
 				{
-					$('#loader').hide();
-					$('#jobNote').val('');
-					notify('Job note has been added successfully.','blackgloss');
+					$('#row_'+jobId).fadeOut(300, function(){
+						$(this).remove();
+					});
 				}
 			}
 		});
-	});
+	}
+});
 
-	@if(Session::has('successMessage'))
-	notify('{{  Session::get('successMessage') }}','blackgloss');
-	{{ Session::forget('successMessage') }}
-	@endif
+/* For select 2*/
+$(".select2").select2();
+$('.selectpicker').selectpicker();
+
+/*job status menu*/
+$(".nav_toggle").click(function(){
+	$("#nav_menu").toggle();
+});
+
+$(".toolbar_btn").on('click', function(){
+	$(".toolbar_btn").removeClass('toolbaractive');
+	$(this).addClass('toolbaractive');
+});
+
+$(".toolbar_dropdownbtn").on('click', function(){
+	$(".toolbar_dropdownbtn").removeClass('toolbarmenu_active');
+	$(this).addClass('toolbarmenu_active');
+});
+
+
+/*Date picker*/
+$('#deliveryDate,#installationDate,#stoneInstallationDate').datepicker({
+	autoclose: true,
+	todayHighlight: true,
+});
+
+$('.clockpicker').clockpicker({
+	twelvehour: true,
+	autoclose: true,
+	placement: 'bottom',
+});
+
+$('#formAddNote').on('success.form.bv', function(e) {
+	e.preventDefault();
+	$('#loader').show();
+	$('#jobNotesModel').modal('hide');
+	var hidden_job_id = $('#hiddenJobId').val();
+	var job_note_desc = $('#jobNote').val();
+	var job_note_status = $('#hiddenJobStatus').val();
+	$.ajax({
+		url:'{{ route('storejobnote') }}',
+		data:{
+			hidden_job_id:hidden_job_id,
+			job_note_desc:job_note_desc,
+			job_note_status:job_note_status
+		},
+		type:'post',
+		dataType:'json',
+		success: function(data)
+		{
+			if(data.key == 1)
+			{
+				$('#loader').hide();
+				$('#jobNote').val('');
+				notify('Job note has been added successfully.','blackgloss');
+			}
+		}
+	});
+});
+
+@if(Session::has('successMessage'))
+notify('{{  Session::get('successMessage') }}','blackgloss');
+{{ Session::forget('successMessage') }}
+@endif
 </script>
 @stop

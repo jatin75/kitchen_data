@@ -43,7 +43,7 @@
                 </a>
                 <ul class="nav nav-second-level collapse">
                     <li> <a href="{{ route('activejobs') }}">Active</a></li>
-                    <li> <a href="{{ route('deactivatedjobs') }}">Deactived</a></li>
+                    <li> <a href="{{ route('deactivatedjobs') }}">Inactive</a></li>
                 </ul>
             </li>
             <li>

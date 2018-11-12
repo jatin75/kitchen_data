@@ -112,9 +112,9 @@ $(document).ready(function () {
 			companyEmail: {
 				trigger: 'blur',
 				validators: {
-					notEmpty: {
-						message: 'Email address is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Email address is required and can\'t be empty'
+					// },
 					emailAddress: {
 						message: 'Please enter valid email address.'
 					}
@@ -700,9 +700,9 @@ $(document).ready(function () {
 			plumbingInstallationDate: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Plumbing installation date is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Plumbing installation date is required and can\'t be empty'
+					// },
 					date: {
 						format: 'MM/DD/YYYY',
 						message: 'The date is not a valid'
@@ -712,9 +712,9 @@ $(document).ready(function () {
 			deliveryDate: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Delivery date is required.'
-					},
+					// notEmpty: {
+					// 	message: 'Delivery date is required.'
+					// },
 					date: {
 						format: 'MM/DD/YYYY',
 						message: 'The date is not a valid'
@@ -724,9 +724,9 @@ $(document).ready(function () {
 			deliveryTime: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Delivery time is required.'
-					},
+					// notEmpty: {
+					// 	message: 'Delivery time is required.'
+					// },
 					callback: {
 						callback: function (value, validator, $deliveryTime) {
 							if (value.indexOf("A") == 5) {
@@ -788,9 +788,9 @@ $(document).ready(function () {
 			jobContractorName: {
 				trigger: 'blur',
 				validators: {
-					notEmpty: {
-						message: 'Job contractor name is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Job contractor name is required and can\'t be empty'
+					// },
 					regexp: {
 						regexp: /^[a-zA-Z0-9\s]+$/i,
 						message: 'Job contractor name can only consist of alphanumeric.'
@@ -800,9 +800,9 @@ $(document).ready(function () {
 			contractorEmail: {
 				trigger: 'blur',
 				validators: {
-					notEmpty: {
-						message: 'Contractor email address is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Contractor email address is required and can\'t be empty'
+					// },
 					emailAddress: {
 						message: 'Please enter valid email address.'
 					}
@@ -811,9 +811,9 @@ $(document).ready(function () {
 			contractorPhoneNumber: {
 				trigger: 'keyup',
 				validators: {
-					notEmpty: {
-						message: 'Contractor phone number is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Contractor phone number is required and can\'t be empty'
+					// },
 					stringLength: {
 						min: 16,
 						max: 16,
@@ -825,30 +825,30 @@ $(document).ready(function () {
 					}
 				}
 			},
-			jobCompanyName: {
-				//trigger: 'blur',
-				validators: {
-					notEmpty: {
-						message: 'Job company name is required and can\'t be empty'
-					},
-				}
-			},
-			comapnyClients: {
-				//trigger: 'keyup',
-				validators: {
-					notEmpty: {
-						message: 'Company client is required and can\'t be empty'
-					},
-				}
-			},
-			workingEmployee: {
-				//trigger: 'blur',
-				validators: {
-					notEmpty: {
-						message: 'Working employee is required and can\'t be empty'
-					},
-				}
-			},
+			// jobCompanyName: {
+			// 	//trigger: 'blur',
+			// 	validators: {
+			// 		notEmpty: {
+			// 			message: 'Job company name is required and can\'t be empty'
+			// 		},
+			// 	}
+			// },
+			// comapnyClients: {
+			// 	//trigger: 'keyup',
+			// 	validators: {
+			// 		notEmpty: {
+			// 			message: 'Company client is required and can\'t be empty'
+			// 		},
+			// 	}
+			// },
+			// workingEmployee: {
+			// 	//trigger: 'blur',
+			// 	validators: {
+			// 		notEmpty: {
+			// 			message: 'Working employee is required and can\'t be empty'
+			// 		},
+			// 	}
+			// },
 			installationSelect: {
 				/*trigger: 'blur',*/
 				validators: {

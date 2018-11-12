@@ -19,13 +19,14 @@ use App\Company;
 use DB;
 use Session;
 use Mail;
+// use Auth;
 
 class JobsController extends Controller
 {
     public function index()
     {
         $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
-        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 1)->where('is_deleted', 0)->orderBy('created_at','DESC')->get();
+        $getJobDetails = Job::selectRaw('job_id,job_title,address_1,address_2,job_status_id,start_date,end_date')->where('is_active', 1)->where('is_deleted', 0)->orderBy('created_at','DESC')->get();
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
 
@@ -35,7 +36,7 @@ class JobsController extends Controller
 
     public function showDeactivated()
     {
-        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->orderBy('updated_at','DESC')->get();
+        $getJobDetails = Job::selectRaw('job_id,job_title,address_1,address_2,job_status_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->orderBy('updated_at','DESC')->get();
 
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
@@ -114,6 +115,9 @@ class JobsController extends Controller
         $comapny_clients = implode(',', $request->get('comapny_clients_id'));
         $is_installation = $request->get('installation_select');
         $is_stone_installation = $request->get('stone_installation_select');
+        // $currentuserid = Auth::user()->id;
+        // print_r($currentuserid);
+        // die;
         if (!empty($hidden_job_id)) {
             $objJob = Job::where('job_id', $hidden_job_id)->first();
             /*Audit Trail start*/
@@ -339,12 +343,12 @@ class JobsController extends Controller
                 <span id="updated_date">'. date('m/d/Y', strtotime($single_note->updated_at)) .'</span>
                 </div>';
                 if(Session::get('login_type_id') != 9) {
-                    $html .= '<div class="col-xs-2">
+                    $html .= '<div class="col-xs-4">
                     <a data-toggle="tooltip" data-placement="top" class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
                     <i class="ti-pencil-alt"></i>
                     </a>
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-2" style="display:none;">
                     <a data-toggle="tooltip" data-placement="top" class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
                     <i class="ti-trash"></i>
                     </a>
