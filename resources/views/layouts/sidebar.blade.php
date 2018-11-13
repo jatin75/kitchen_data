@@ -1,11 +1,11 @@
 <style type="text/css">
 /*.p-t-27 {
     padding-top: 27px!important;
-    }*/
-    .modal-footer {
-        padding-bottom: 0px !important;
-        margin-bottom: 0px !important;
-    }
+}*/
+.modal-footer {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
 </style>
 <div class="navbar-default sidebar" role="navigation">
     <div class="sidebar-nav navbar-collapse slimscrollsidebar">
@@ -23,6 +23,9 @@
                     @if(Session::get('login_type_id') == 9)
                     <li><a href="{{ route('clientprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
                     @endif
+                    @if(Session::get('login_type_id') == 10)
+                    <li><a href="{{ route('employeeprofile',['email'=>Session::get('email')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
+                    @endif
                     <li role="separator" class="divider"></li>
                     <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li>
                 </ul>  --}}
@@ -35,8 +38,9 @@
                     <i class="ti-home fa-fw" data-icon="v"></i>
                     <span class="hide-menu"> Dashboard </span>
                 </a>
-                @if(Session::get('login_type_id') != 9)    
+                @if(Session::get('login_type_id') != 9 )    
             </li>
+            @if(Session::get('login_type_id') != 10 )  
             <li>
                 <a id="staff" href="javascript:void(0);" class="waves-effect {!! (Request::is('jobs/*') ? 'active' : '') !!}"><i data-icon=")" class="ti-clipboard fa-fw"></i>
                     <span class="hide-menu">Jobs<span class="fa arrow"></span></span>
@@ -73,6 +77,7 @@
                 </a>
             </li>
             @endif
+            @endif
         </ul>
     </div>
 </div>
@@ -108,35 +113,35 @@
             $('#formAdmin').bootstrapValidator('resetForm', true);
             $('.fileinput').fileinput('clear');
         });
-    });*/
+});*/
 
-    $('#formAdmin').on('success.form.bv', function(e) {
-        e.preventDefault();
-        $('#loader').show();
-        $('#imageModel').modal('hide');
-        var formData = new FormData(this);
-        $.ajax({
-            url:'',
-            data:formData,
-            type:'post',
-            dataType:'json',
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(data)
+$('#formAdmin').on('success.form.bv', function(e) {
+    e.preventDefault();
+    $('#loader').show();
+    $('#imageModel').modal('hide');
+    var formData = new FormData(this);
+    $.ajax({
+        url:'',
+        data:formData,
+        type:'post',
+        dataType:'json',
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(data)
+        {
+            if(data.key == 1)
             {
-                if(data.key == 1)
-                {
-                    $("#userImage").attr('src', data.thumb_file + "?" + Math.random());
-                    $('#loader').hide();
-                    notify('Image edited successfully.','blackgloss');
-                }
-                else
-                {
-                    $('#loader').hide();
-                    notify('Something went wrong. Please try again.','blackgloss');
-                }
-            },
-        });
+                $("#userImage").attr('src', data.thumb_file + "?" + Math.random());
+                $('#loader').hide();
+                notify('Image edited successfully.','blackgloss');
+            }
+            else
+            {
+                $('#loader').hide();
+                notify('Something went wrong. Please try again.','blackgloss');
+            }
+        },
     });
+});
 </script>

@@ -93,6 +93,7 @@
 											<input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$accountDetail->email or ''}}"> --}} {{--
 											<input type="show" name="hiddenStatus" id="hiddenStatus" value="{{$new_account or ''}}"> --}}
 											<input type="hidden" name="hiddenJobId" id="hiddenJobId" value="{{$jobDetails->job_id or ''}}">
+											<input type="hidden" name="hiddenisclone" id="hiddenisclone" value="{{$cloneflag or ''}}">
 											<div class="row">
 												<div class="col-md-4">
 													<div class="form-group">
@@ -105,7 +106,7 @@
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
-															<b>JOB STATUS</b>
+															<b>JOB ACTIVE/INACTIVE</b>
 														</label>
 														<select id="jobStatus" name="jobStatus" class="form-control ">
 															<option value="1" @if(isset($jobDetails->is_active) && $jobDetails->is_active == '1') {{ "selected='selected'" }} @endif>ACTIVE</option>
@@ -113,13 +114,26 @@
 														</select>
 													</div>
 												</div>
-												<div class="col-md-4">
+												<!-- <div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
 															<b>JOB ID</b>
 														</label>
 														<br>
 														<span class="disabled-color" id="jobId">{{$jobDetails->job_id or '' }}</span>
+													</div>
+												</div> -->
+												<div class="col-md-4">
+													<div class="form-group">
+														<label class="control-label">
+															<b>JOB STATUS</b>
+														</label>
+														<select id="jobType" name="jobType" class="form-control ">
+															@foreach($jobTypeDetails as $jobType)
+															<option value="{{ $jobType->job_status_id }}" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $jobType->job_status_id) {{"selected='selected'"}} @endif>{{ $jobType->job_status_name }}</option>
+
+															@endforeach
+														</select>
 													</div>
 												</div>
 											</div>
@@ -213,6 +227,27 @@
 
 												<div class="col-md-4">
 													<div class="form-group">
+														<label class="control-label"><b>SALES PERSON</b></label>
+														<select id="salesEmployee" name="salesEmployee" class="form-control ">
+															<option value="">-- Select Sales Person --</option>
+															@foreach($salesemployeelist as $semployee)
+															<option value="{{ $semployee->id }}"
+																@if(sizeof($jobDetails->sales_employee_id) > 0)
+																@foreach($jobDetails->sales_employee_id as $single_id)
+																@if($single_id == $semployee->id) {{"selected='selected'"}}@endif @endforeach @endif
+																>
+																{{ $semployee->employee_name }}
+															</option>
+															@endforeach
+														</select>
+													</div>
+
+												</div>
+												
+											</div>
+											<div class="row">
+												<div class="col-md-4">
+													<div class="form-group">
 														<label class="control-label">
 															<b>JOB START DATE *</b>
 														</label>
@@ -220,9 +255,7 @@
 														maxlength="10" value="{{ $jobDetails->start_date or '' }}">
 													</div>
 												</div>
-												
-											</div>
-											<div class="row">
+
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -242,6 +275,11 @@
 													</div>
 												</div>
 												
+
+												
+											</div>
+											<div class="row">
+
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -260,9 +298,6 @@
 														</div>
 													</div>
 												</div>
-												
-											</div>
-											<div class="row">
 
 												<div class="col-md-4">
 													<div class="form-group">
@@ -281,7 +316,9 @@
 														class="form-control">
 													</div>
 												</div>
-
+												
+											</div>
+											<div class="row">
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -291,10 +328,6 @@
 														class="form-control" placeholder="Enter Job Contractor Name">
 													</div>
 												</div>
-												
-											</div>
-											<div class="row">
-												
 
 												<div class="col-md-4">
 													<div class="form-group">
@@ -315,6 +348,9 @@
 													</div>
 												</div>
 
+
+											</div>
+											<div class="row">
 												<div class="col-md-4">
 													<div class="form-group dropdown_select" style="overflow: visible!important;">
 														<label class="control-label"><b>WORKING EMPLOYEES</b></label>
@@ -330,22 +366,38 @@
 														</select>
 													</div>
 												</div>
-											</div>
-											<div class="row">
+
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
 															<b>INSTALLATION</b>
 														</label>
 														<select id="installationSelect" name="installationSelect" class="form-control ">
-														<option value="1" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Install</option>
-														
+															<option value="1" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Install</option>
+
 															<option value="2" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '2') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
 															
 															<option value="3" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '3') {{ "selected='selected'" }} @endif>Scheduled</option>
 														</select>
 													</div>
 												</div>
+
+												<div class="col-md-4">
+													<div class="form-group">
+														<label class="control-label">
+															<b>STONE INSTALLATION</b>
+														</label>
+														<select id="stoneInstallationSelect" name="stoneInstallationSelect" class="form-control ">
+															
+															<option value="1" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
+															<option value="2" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '2') {{ "selected='selected'" }} @endif>Scheduled</option>
+														</select>
+													</div>
+												</div>
+
+											</div>
+											<div class="row">
+
 												<div class="col-md-4 installationRow">
 													<div class="form-group">
 														<label class="control-label">
@@ -364,8 +416,9 @@
 														</div>
 													</div>
 												</div>
+												
 												<div class="col-md-4 installationRow">
-													<div class="form-group" style="overflow: visible!important;">
+													<div class="form-group dropdown_select" style="overflow: visible!important;">
 														<label class="control-label"><b>INSTALLATION EMPLOYEES</b></label>
 														<select data-size="5" id="installationEmployees" name="installationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 															@foreach($installEmployeeList as $installer)
@@ -378,20 +431,7 @@
 														</select>
 													</div>
 												</div>
-											</div>
-											<div class="row">
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label">
-															<b>STONE INSTALLATION</b>
-														</label>
-														<select id="stoneInstallationSelect" name="stoneInstallationSelect" class="form-control ">
-															
-															<option value="1" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
-															<option value="2" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '2') {{ "selected='selected'" }} @endif>Scheduled</option>
-														</select>
-													</div>
-												</div>
+
 												<div class="col-md-4 stoneInstallationRow">
 													<div class="form-group">
 														<label class="control-label">
@@ -410,8 +450,12 @@
 														</div>
 													</div>
 												</div>
+
+											</div>
+											<div class="row">
+
 												<div class="col-md-4 stoneInstallationRow">
-													<div class="form-group" style="overflow: visible!important;">
+													<div class="form-group dropdown_select" style="overflow: visible!important;">
 														<label class="control-label"><b>STONE INSTALLATION EMPLOYEES</b></label>
 														<select data-size="5" id="stoneInstallationEmployees" name="stoneInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 															@foreach($stoneEmployeeList as $stone)
@@ -424,11 +468,67 @@
 														</select>
 													</div>
 												</div>
+
+												<div class="col-md-4">
+													<div class="form-group">
+														<label class="control-label">
+															<b>DELIVERY  INSTALLATION</b>
+														</label>
+														<select id="deliveryInstallationSelect" name="deliveryInstallationSelect" class="form-control ">
+															<option value="1" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Materia</option>
+
+															<option value="2" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '2') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
+
+															<option value="3" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '3') {{ "selected='selected'" }} @endif>Received</option>
+
+															<option value="4" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '4') {{ "selected='selected'" }} @endif>Scheduled</option>
+														</select>
+													</div>
+												</div>
+
+												<div class="col-md-4 deliveryInstallationRow">
+													<div class="form-group">
+														<label class="control-label">
+															<b>DELIVERY INSTALLATION DATE AND TIME</b>
+														</label>
+														<div class="row">
+															<div class="col-md-4">
+																<input type="text" name="deliveryInstallationDate" id="deliveryInstallationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
+																maxlength="10" value="{{ $jobDetails->delivery_installation_date or '' }}">
+															</div>
+															<div class="col-md-8">
+																<div class="input-group clockpicker " data-placement="top">
+																	<input type="text" id="deliveryInstallationTime" name="deliveryInstallationTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->delivery_installation_time or '' }}">
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+
+											</div>
+
+											<div class="row">
+
+												<div class="col-md-4 deliveryInstallationRow">
+													<div class="form-group dropdown_select" style="overflow: visible!important;">
+														<label class="control-label"><b>DELIVERY INSTALLATION EMPLOYEES</b></label>
+														<select data-size="5" id="deliveryInstallationEmployees" name="deliveryInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+															@foreach($deliveryEmployeeList as $delivery)
+															<option value="{{ $delivery->id }}"
+																@if(isset($jobDetails->delivery_installation_employee_id) && sizeof($jobDetails->delivery_installation_employee_id) > 0)
+																@foreach($jobDetails->delivery_installation_employee_id as $single_id)
+																@if($single_id == $delivery->id) {{"selected='selected'"}}@endif @endforeach @endif>{{ $delivery->employee_name }}
+															</option>
+															@endforeach
+														</select>
+													</div>
+												</div>
 											</div>
 											<div class="form-group text-left p-t-md">
-												@if(!isset($jobDetails->job_id))
+												@if(!isset($jobDetails->job_id) || isset($cloneflag))
 												<button type="submit" class="btn btn-success jobformsubmit">CREATE JOB</button>
-												@endif @if(isset($jobDetails->job_id))
+												@endif @if(isset($jobDetails->job_id) && !isset($cloneflag))
 												<button type="submit" class="btn btn-info jobformsubmit">UPDATE</button>
 												@endif &nbsp; &nbsp;
 												<button id="resetPermission" type="button" class="btn btn-danger">CANCEL</button>
@@ -505,11 +605,14 @@
 
 			/*installation status*/
 			var installationStatus = $("#installationSelect").val();
-			(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
+			(installationStatus == 3) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
 
 			/* stone installation status*/
 			var stoneInstallationStatus = $("#stoneInstallationSelect").val();
-			(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
+			(stoneInstallationStatus == 2) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
+
+			var deliveryInstallationStatus = $("#deliveryInstallationSelect").val();
+			(deliveryInstallationStatus == 4) ? $('.deliveryInstallationRow').slideDown() : $('.deliveryInstallationRow').slideUp();
 
 			$('#resetPermission').click(function () {
 				location.reload();
@@ -518,7 +621,7 @@
 
 $("#installationSelect").change(function(){
 	var installationStatus = $(this).val();
-	(installationStatus == 1) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
+	(installationStatus == 3) ? $('.installationRow').slideDown() : $('.installationRow').slideUp();
 	$('#formAddJob').data('bootstrapValidator')
 	.enableFieldValidators('installationDate', false)
 	.enableFieldValidators('installationTime', false)
@@ -527,11 +630,20 @@ $("#installationSelect").change(function(){
 
 $("#stoneInstallationSelect").change(function(){
 	var stoneInstallationStatus = $(this).val();
-	(stoneInstallationStatus == 1) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
+	(stoneInstallationStatus == 2) ? $('.stoneInstallationRow').slideDown() : $('.stoneInstallationRow').slideUp();
 	$('#formAddJob').data('bootstrapValidator')
 	.enableFieldValidators('stoneInstallationDate', false)
 	.enableFieldValidators('stoneInstallationTime', false)
 	.enableFieldValidators('stoneInstallationEmployees', false);
+});
+
+$("#deliveryInstallationSelect").change(function(){
+	var deliveryInstallationStatus = $(this).val();
+	(deliveryInstallationStatus == 4) ? $('.deliveryInstallationRow').slideDown() : $('.deliveryInstallationRow').slideUp();
+	$('#formAddJob').data('bootstrapValidator')
+	.enableFieldValidators('deliveryInstallationDate', false)
+	.enableFieldValidators('deliveryInstallationTime', false)
+	.enableFieldValidators('deliveryInstallationEmployees', false);
 });
 
 $("#installationTime").change(function(){
@@ -558,12 +670,26 @@ $("#stoneInstallationEmployees").change(function(){
 	$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationEmployees');
 });
 
+$("#deliveryInstallationTime").change(function(){
+	$('#formAddJob').data('bootstrapValidator')
+	.enableFieldValidators('deliveryInstallationTime', true);
+	$('#formAddJob').bootstrapValidator('revalidateField', 'deliveryInstallationTime');
+});
+
+$("#deliveryInstallationEmployees").change(function(){
+	$('#formAddJob').data('bootstrapValidator')
+	.enableFieldValidators('deliveryInstallationEmployees', true);
+	$('#formAddJob').bootstrapValidator('revalidateField', 'deliveryInstallationEmployees');
+});
+
 /*check revalidation*/
 $(".jobformsubmit").click(function(){
 	var installationStatus = $("#installationSelect").val();
 	var stoneInstallationStatus = $("#stoneInstallationSelect").val();
-	var installStatus = (installationStatus == 1) ? true : false;
-	var StoneInstallStatus = (stoneInstallationStatus == 1) ? true : false;
+	var deliveryInstallationStatus = $("#deliveryInstallationSelect").val();
+	var installStatus = (installationStatus == 3) ? true : false;
+	var StoneInstallStatus = (stoneInstallationStatus == 2) ? true : false;
+	var DeliveryInstallStatus = (deliveryInstallationStatus == 4) ? true : false;
 
 	$('#formAddJob').data('bootstrapValidator')
 	.enableFieldValidators('installationDate', installStatus)
@@ -571,7 +697,10 @@ $(".jobformsubmit").click(function(){
 	.enableFieldValidators('installationEmployees', installStatus)
 	.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
 	.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
-	.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus);
+	.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus)
+	.enableFieldValidators('deliveryInstallationDate', DeliveryInstallStatus)
+	.enableFieldValidators('deliveryInstallationTime', DeliveryInstallStatus)
+	.enableFieldValidators('deliveryInstallationEmployees', DeliveryInstallStatus);
 });
 
 /* For select 2*/
@@ -586,8 +715,10 @@ $('#formAddJob').on('success.form.bv', function (e) {
 	e.preventDefault();
 	$('#loader').show();
 	var hidden_job_id = $('#hiddenJobId').val();
+	var hiddenisclone = $('#hiddenisclone').val();
 	var job_title = $('#jobTitle').val();
 	var job_status = $('#jobStatus').val();
+	var job_status_id = $('#jobType').val();
 	var address_1 = $('#locationAddress').val();
 	var address_2 = $('#subAddress').val();
 	var apartment_no = $('#apartmentNo').val();
@@ -605,6 +736,7 @@ $('#formAddJob').on('success.form.bv', function (e) {
 	var contractor_email = $('#contractorEmail').val();
 	var contractor_phone_number = $('#contractorPhoneNumber').val();
 	var job_company_id = $('#jobCompanyName').val();
+	var sales_employee_id = $('#salesEmployee').val();
 	var comapny_clients_id = $('#comapnyClients').val();
 	var working_employee_id = $('#workingEmployee').val();
 	var installation_select = $('#installationSelect').val();
@@ -615,13 +747,19 @@ $('#formAddJob').on('success.form.bv', function (e) {
 	var stone_installation_date = $('#stoneInstallationDate').val();
 	var stone_installation_time = $('#stoneInstallationTime').val();
 	var stone_installation_employees_id = $('#stoneInstallationEmployees').val();
+	var delivery_installation_select = $('#deliveryInstallationSelect').val();
+	var delivery_installation_date = $('#deliveryInstallationDate').val();
+	var delivery_installation_time = $('#deliveryInstallationTime').val();
+	var delivery_installation_employees_id = $('#deliveryInstallationEmployees').val();
 
 	$.ajax({
 		url: '{{ route('storejob') }}',
 		data: {
 			hidden_job_id: hidden_job_id,
+			hiddenisclone: hiddenisclone,
 			job_title: job_title,
 			job_status: job_status,
+			job_status_id: job_status_id,
 			address_1: address_1,
 			address_2: address_2,
 			apartment_no: apartment_no,
@@ -640,6 +778,7 @@ $('#formAddJob').on('success.form.bv', function (e) {
 			contractor_phone_number: contractor_phone_number,
 			job_company_id: job_company_id,
 			comapny_clients_id: comapny_clients_id,
+			sales_employee_id: sales_employee_id,
 			working_employee_id: working_employee_id,
 			installation_select: installation_select,
 			installation_date: installation_date,
@@ -649,6 +788,10 @@ $('#formAddJob').on('success.form.bv', function (e) {
 			stone_installation_date: stone_installation_date,
 			stone_installation_time: stone_installation_time,
 			stone_installation_employees_id: stone_installation_employees_id,
+			delivery_installation_select: delivery_installation_select,
+			delivery_installation_date: delivery_installation_date,
+			delivery_installation_time: delivery_installation_time,
+			delivery_installation_employees_id: delivery_installation_employees_id,
 		},
 		type: 'post',
 		dataType: 'json',

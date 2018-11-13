@@ -185,12 +185,16 @@ body{
 						<br><span id="jobTitle"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">JOB STATUS</label>
+						<label class="control-label">JOB ACTIVE/INACTIVE</label>
 						<br><span id="jobStatus"></span>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+				<!-- 	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB ID</label>
 						<br><span id="jobId"></span>
+					</div> -->
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">JOB STATUS</label>
+						<br><span id="jobType"></span>
 					</div>
 				</div>
 				<div class="row">
@@ -233,12 +237,18 @@ body{
 					</div>
 
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">JOB START DATE</label>
-						<br><span id="jobStartDate"></span>
+						<label class="control-label">SALES PERSON</label>
+						<br><span id="salesEmployee"></span>
 					</div>
 					
 				</div>
 				<div class="row">
+
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">JOB START DATE</label>
+						<br><span id="jobStartDate"></span>
+					</div>
+
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">EXPECTED COMPLETION DATE</label>
 						<br><span id="jobEndDate"></span>
@@ -247,13 +257,15 @@ body{
 						<label class="control-label">PLUMBING INSTALLATION DATE</label>
 						<br><span id="plumbingInstallationDate"></span>
 					</div>
+					
+					
+				</div>
+				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">DELIVERY DATE AND TIME</label>
 						<br><span id="deliveryDateTime"></span>
 					</div>
-					
-				</div>
-				<div class="row">
+
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB SUPER NAME</label>
 						<br><span id="jobSuperName"></span>
@@ -263,13 +275,14 @@ body{
 						<br><span id="superPhoneNumber"></span>
 					</div>
 
+					
+				</div>
+				<div class="row">
+
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB CONTRACTOR NAME</label>
 						<br><span id="jobContractorName"></span>
 					</div>
-					
-				</div>
-				<div class="row">
 					
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">CONTRACTOR EMAIL ADDRESS</label>
@@ -280,12 +293,15 @@ body{
 						<br><span id="contractorPhoneNumber"></span>
 					</div>
 
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+					
+				</div>
+				<div class="row">
+
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">WORKING EMPLOYEES</label>
 						<br><span id="workingEmployee"></span>
 					</div>
-				</div>
-				<div class="row">
+
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">INSTALLATION</label>
 						<br><span id="installationSelect"></span>
@@ -294,12 +310,15 @@ body{
 						<label class="control-label">INSTALLATION DATE AND TIME</label>
 						<br><span id="installationDateTime"></span>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+					
+				</div>
+				<div class="row">
+
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">INSTALLATION EMPLOYEES</label>
 						<br><span id="installationEmployees"></span>
 					</div>
-				</div>
-				<div class="row">
+
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">STONE INSTALLATION</label>
 						<br><span id="stoneInstallationSelect"></span>
@@ -308,12 +327,16 @@ body{
 						<label class="control-label">STONE INSTALLATION DATE AND TIME</label>
 						<br><span id="stoneInstallationDateTime"></span>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+					
+				</div>
+				<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">STONE INSTALLATION EMPLOYEES</label>
 						<br><span id="stoneInstallationEmployees"></span>
 					</div>
-				</div>
+					</div>
 				<div class="row">
+
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="scrollit p-l-10">
 							<div class="text-center p-b-10"><span><b>Job Notes</b></span></div>
@@ -633,7 +656,8 @@ $(document).on('click','.view-job', function() {
 				$('#notesData').html(data.job_notes_detail);
 				$('#jobTitle').html(data.employee_detail.job_title);
 				$('#jobStatus').html(data.employee_detail.is_active);
-				$('#jobId').html(data.employee_detail.job_id);
+				// $('#jobId').html(data.employee_detail.job_id);
+				$('#jobType').html(data.employee_detail.job_status_name);
 				$('#address1').html(data.employee_detail.address_1);
 				$('#address2').html(data.employee_detail.address_2);
 				$('#apartmentNo').html(data.employee_detail.apartment_number);
@@ -651,6 +675,7 @@ $(document).on('click','.view-job', function() {
 				$('#contractorPhoneNumber').html(data.employee_detail.contractor_phone_number);
 				$('#jobCompanyName').html(data.employee_detail.company_name);
 				$('#comapnyClients').html(data.employee_detail.company_clients_name);
+				$('#salesEmployee').html(data.employee_detail.sales_employee_name);
 				$('#workingEmployee').html(data.employee_detail.working_employee_name);
 				if(data.employee_detail.is_select_installation == 3)
 				{

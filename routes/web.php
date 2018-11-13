@@ -34,6 +34,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('jobs/activejobs', 'admin\JobsController@index')->name('activejobs');
     Route::get('jobs/deactivatedjobs', 'admin\JobsController@showDeactivated')->name('deactivatedjobs');
     Route::get('jobs/editjob/{job_id}', 'admin\JobsController@edit')->name('editjob');
+    Route::get('jobs/clonejob/{job_id}', 'admin\JobsController@clone')->name('clonejob');
     Route::get('jobs/addjob', 'admin\JobsController@create')->name('addjob');
     Route::post('jobs/storejob', 'admin\JobsController@store')->name('storejob');
     Route::get('jobs/deletejob/{job_id}', 'admin\JobsController@destroy')->name('deletejob');

@@ -61,8 +61,9 @@ tr th{
                         <tr>
                             <th class="text-center">Actions</th>
                             <th>Job Name</th>
-                            <th>Job Id</th>
+                            <!-- <th>Job Id</th> -->
                             <th>Job Status</th>
+                            <th>Employee</th>
                             <th>Start Date</th>
                             <th>Expected Completion Date</th>
                         </tr>
@@ -79,7 +80,7 @@ tr th{
                                     <span style="display:none;">{{$job->address_2}}</span>
                             </td>
                             <td>{{$job->job_title}}</td>
-                            <td>{{$job->job_id}}</td>
+                            <!-- <td>{{$job->job_id}}</td> -->
                             <td>
                                 <select class="form-control select2 jobType" name="jobType" id="jobType_{{$job->job_id}}" placeholder="Select your job type" data-id="{{$job->job_id}}">
                                     @foreach($jobTypeDetails as $jobType)
@@ -87,6 +88,9 @@ tr th{
                                     @endforeach
                                 </select>
                             </td>
+                            <td>
+                                    {{$job->employee_name}}
+                                </td>
                             <td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
                             <td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
                         </tr>

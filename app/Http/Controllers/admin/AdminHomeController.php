@@ -27,7 +27,7 @@ class AdminHomeController extends Controller
 
 		$email = $request->input('admin_email');
 		$password = $request->input('admin_password');
-		$checkLogin = Admin::where('email',$email)->where('is_deleted',0)->whereIn('login_type_id', [1, 2, 9])->first();
+		$checkLogin = Admin::where('email',$email)->where('is_deleted',0)->whereIn('login_type_id', [1, 2, 9, 10])->first();
 		if(!empty($checkLogin)) {
 			if($checkLogin->password == md5($password) || Hash::check($password, $checkLogin->password)) {
 				Session::put('employee_id', $checkLogin->id);
@@ -147,13 +147,20 @@ class AdminHomeController extends Controller
 	public function showJobDetails(Request $request) {
 		$getSessionEmail = Session::get('email');
 		$job_statusId = $request->get('jobStatusId');
+
 		if($job_statusId == 0) {
 			$jobStatusCond = '';
 		}else {
-			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
+			$jobStatusCond = "AND jb.job_status_id = {$job_statusId} ";
 		}
 
-		$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+		if(Session::get('login_type_id') == 10 ){
+
+			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.super_name,jb.working_employee_id,jb.sales_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN admin_users AS au ON au.login_type_id = 10 AND au.id = jb.sales_employee_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+
+		}else{  
+			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+		}
 
 		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
 
@@ -163,20 +170,30 @@ class AdminHomeController extends Controller
 			<tr>
 				<th class="text-center">Actions</th>
 				<th>Job Name</th>
-				<th>Job Id</th>
-				<th>Company Name</th>
+
+				<th>Company Name</th>				
 				<th>Job Status</th>
+				<th>Employee</th>
 				<th>Start Date</th>
 				<th>Expected Completion Date</th>
 			</tr>
 		</thead>
 		<tbody>';
 			if(!empty($getJobDetails)) {
-				if(Session::get('login_type_id') == 9) {
+
+				if(Session::get('login_type_id') == 9 ) {
+
 					foreach($getJobDetails as $jobDetail) {
+
 						$getDetail = Admin::where('email',$getSessionEmail)->first();
 						$session_userId = $getDetail->id;
 						$client_id_array = explode(',', $jobDetail->company_clients_id);
+
+						$employeeIds = explode(',', $jobDetail->working_employee_id);
+						$getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
+						$employee_name = $getEmployeeName->employee_name;
+
+
 						if(in_array($session_userId, $client_id_array)) {
 
 							$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
@@ -190,10 +207,11 @@ class AdminHomeController extends Controller
 								<span style="display:none;">'.$jobDetail->address_2.'</span>
 							</td>
 							<td>'.$jobDetail->job_title.'</td>
-							<td>'.$jobDetail->job_id.'</td>
+
 							<td>'.$jobDetail->name.'</td>
+							
 							<td>
-								<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+								<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" >';
 
 									foreach($getJobTypeDetails as $jobType) {
 										$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
@@ -202,6 +220,7 @@ class AdminHomeController extends Controller
 
 									$html .='</select>
 								</td>
+								<td>'.$employee_name.'</td>
 								<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 								<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
 							</tr>';
@@ -209,6 +228,16 @@ class AdminHomeController extends Controller
 					}
 				}else {
 					foreach($getJobDetails as $jobDetail) {
+						$employeeIds = explode(',', $jobDetail->working_employee_id);
+						$getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
+						$employee_name = $getEmployeeName->employee_name;
+
+						if(Session::get('login_type_id') == 10){
+							$disable = 'disabled';
+						}else{
+							$disable = '';
+						}
+
 						$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
 						<td class="text-center">
 							<span data-toggle="" data-target="#jobDetailModel">
@@ -225,11 +254,10 @@ class AdminHomeController extends Controller
 							<span style="display:none;">'.$jobDetail->address_1.'</span>
 							<span style="display:none;">'.$jobDetail->address_2.'</span>
 						</td>
-						<td>'.$jobDetail->job_title.'</td>
-						<td>'.$jobDetail->job_id.'</td>
+						<td>'.$jobDetail->job_title.'</td>						
 						<td>'.$jobDetail->name.'</td>
 						<td>
-							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
+							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" '.$disable.'>';
 
 								foreach($getJobTypeDetails as $jobType) {
 									$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
@@ -238,6 +266,9 @@ class AdminHomeController extends Controller
 
 								$html .='</select>
 							</td>
+
+							<td>'.$employee_name.'</td>
+
 							<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 							<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
 						</tr>';

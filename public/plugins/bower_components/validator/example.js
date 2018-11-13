@@ -841,14 +841,23 @@ $(document).ready(function () {
 			// 		},
 			// 	}
 			// },
-			// workingEmployee: {
+			
+			// salesEmployee: {
 			// 	//trigger: 'blur',
 			// 	validators: {
 			// 		notEmpty: {
-			// 			message: 'Working employee is required and can\'t be empty'
+			// 			message: 'Sales employee is required and can\'t be empty'
 			// 		},
 			// 	}
 			// },
+			workingEmployee: {
+				//trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Working employee is required and can\'t be empty'
+					},
+				}
+			},
 			installationSelect: {
 				/*trigger: 'blur',*/
 				validators: {
@@ -865,6 +874,16 @@ $(document).ready(function () {
 					},
 				}
 			},
+
+			deliveryInstallationSelect: {
+				/*trigger: 'blur',*/
+				validators: {
+					notEmpty: {
+						message: 'Delivery installation status is required and can\'t be empty'
+					},
+				}
+			},
+			
 			installationDate: {
 				trigger: 'change',
 				validators: {
@@ -973,6 +992,61 @@ $(document).ready(function () {
 				validators: {
 					notEmpty: {
 						message: 'Stone Installation Employee is required and can\'t be empty'
+					},
+				}
+			},
+			deliveryInstallationDate: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery Installation Date is required.'
+					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
+					},
+				}
+			},
+			deliveryInstallationTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery Installation Time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+			deliveryInstallationEmployees: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery Installation Employee is required and can\'t be empty'
 					},
 				}
 			},
