@@ -212,7 +212,8 @@ class JobsController extends Controller
         $working_employees = implode(',', $working_employee_ids);
         $comapny_clients = implode(',', $request->get('comapny_clients_id'));
         if(!empty($request->get('sales_employee_id'))){
-            $sales_employee_id = implode(',', $request->get('sales_employee_id'));
+            //$sales_employee_id = implode(',', $request->get('sales_employee_id'));
+            $sales_employee_id = $request->get('sales_employee_id');
         }else{
             $sales_employee_id = "";
         }

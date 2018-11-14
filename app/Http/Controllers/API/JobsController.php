@@ -95,7 +95,7 @@ class JobsController extends Controller
      */
     public function getAllJobDetails($user_id)
     {
-    	$getDetails = DB::select("SELECT * FROM jobs WHERE company_clients_id LIKE '%{$user_id}%' OR working_employee_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 ORDER BY created_at DESC");
+        $getDetails = DB::select("SELECT jb.*,c.name as company_name FROM jobs as jb,companies as c WHERE  c.company_id = jb.company_id AND (jb.company_clients_id LIKE '%{$user_id}%' OR jb.working_employee_id LIKE '%{$user_id}%') AND jb.is_deleted = 0 AND jb.is_active = 1 ORDER BY jb.created_at DESC");
     	if(sizeof($getDetails) > 0)
     	{
     		foreach ($getDetails as $job) {
@@ -139,19 +139,19 @@ class JobsController extends Controller
     {
     	switch ($job_status_id) {
     		case '5':
-    		$orderBy = 'delivery_datetime';
+    		$orderBy = 'jb.delivery_datetime';
     		break;
     		case '6':
-    		$orderBy = 'installation_datetime';
+    		$orderBy = 'jb.installation_datetime';
     		break;
     		case '7':
-    		$orderBy = 'stone_installation_datetime';
+    		$orderBy = 'jb.stone_installation_datetime';
     		break;
     		default:
-    		$orderBy = 'created_at';
+    		$orderBy = 'jb.created_at';
     		break;
     	}
-        $getDetails = DB::select("SELECT * FROM jobs WHERE working_employee_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 AND job_status_id = '{$job_status_id}' ORDER BY '{$orderBy}' DESC");
+        $getDetails = DB::select("SELECT jb.*,c.name as company_name FROM jobs as jb,companies as c WHERE c.company_id = jb.company_id AND jb.working_employee_id LIKE '%{$user_id}%' AND jb.is_deleted = 0 AND jb.is_active = 1 AND jb.job_status_id = '{$job_status_id}' ORDER BY '{$orderBy}' DESC");
         if(sizeof($getDetails) > 0)
     	{
     		foreach ($getDetails as $job) {
