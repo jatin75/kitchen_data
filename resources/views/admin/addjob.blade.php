@@ -1,64 +1,14 @@
 @extends('layouts/main') @section('pageSpecificCss')
-<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.css')}}"
-/>
-<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}"
-/>
-<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}"
-/>
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.css')}}"/>
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}"/>
+<link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}"/>
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" /> {{--
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/switchery/dist/switchery.min.css')}}" /> --}}
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
-<style type="text/css">
-	<style type="text/css">
-		.nav-pills {
-			background: #4c5667 !important;
-		}
-		.nav-link.active {
-			background: #4c5667 !important;
-		}
-		.nav-pills>li.active>a,
-		.nav-pills>li.active>a:focus,
-		.nav-pills>li.active>a:hover {
-			background: #4c5667 !important;
-			color: #ffffff !important;
-		}
-		.disabled-color {
-			color: #90989c !important;
-		}
-		.bootstrap-select .dropdown-toggle:focus {
-			outline: 0px auto -webkit-focus-ring-color!important;
-		}
-		.dropdown_select .dropdown-toggle::after {
-			display: inline-block;
-			position: relative;
-			right: 20px;
-		}
-		.bootstrap-select.btn-group .dropdown-toggle .filter-option {
-			padding-right: 15px;
-			text-overflow: ellipsis;
-		}
-		.previous-href{
-			background: #e4e7ea !important;
-			border: 1px solid #e4e7ea !important;
-			padding: 7px 5px !important;
-			font-size: 13px !important;
-			padding-bottom: 8px !important;
-			font-weight: 100 !important;
-		}
-		.btn-default {
-			background: #ffffff !important;
-			border: 1px solid #e4e7ea;
-			padding: 10px 5px !important;
-			font-size: 13px !important;
-			padding-bottom: 8px !important;
-			font-weight: 100 !important;
-		}
-		.btn-default:hover {
-			background: #e4e7ea !important;
-		}
-	</style>
-	@stop @section('content')
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/addjob.css')}}" />
+@stop
+@section('content')
 	<div class="container-fluid">
 		<div class="row bg-title">
 			<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
@@ -97,32 +47,31 @@
 											<div class="row">
 												<div class="col-md-4">
 													<div class="form-group">
-														<label class="control-label">
-															<b>JOB TITLE *</b>
-														</label>
-														<input type="text" name="jobTitle" id="jobTitle" value="{{$jobDetails->job_title or ''}}" class="form-control" placeholder="Job Title">
-													</div>
-												</div>
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label">
-															<b>JOB ACTIVE/INACTIVE</b>
-														</label>
-														<select id="jobStatus" name="jobStatus" class="form-control ">
-															<option value="1" @if(isset($jobDetails->is_active) && $jobDetails->is_active == '1') {{ "selected='selected'" }} @endif>ACTIVE</option>
-															<option value="0" @if(isset($jobDetails->is_active) && $jobDetails->is_active == '0') {{ "selected='selected'" }} @endif>INACTIVE</option>
+														<label class="control-label"><b>JOB COMPANY NAME *</b></label>
+														<select id="jobCompanyName" name="jobCompanyName" class="form-control select2">
+															<option value="">-- Select Company --</option>
+															@foreach($comapnyList as $company)
+															<option value="{{ $company->company_id }}" @if(isset($jobDetails->company_id) && $jobDetails->company_id == $company->company_id) {{"selected='selected'"}} @endif>{{ $company->name }}</option>
+															@endforeach
 														</select>
 													</div>
 												</div>
-												<!-- <div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label">
-															<b>JOB ID</b>
-														</label>
-														<br>
-														<span class="disabled-color" id="jobId">{{$jobDetails->job_id or '' }}</span>
+												<div class="col-md-4">
+													<div class="form-group dropdown_select" style="overflow: visible!important;">
+														<label class="control-label"><b>COMPANY CLIENTS *</b></label>
+														<select data-size="5" id="comapnyClients" name="comapnyClients" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+															@if(isset($companyClientList) && sizeof($companyClientList) > 0)
+															@foreach($companyClientList as $client)
+															<option value="{{ $client->id }}"
+																@if(isset($jobDetails->company_clients_id) && sizeof($jobDetails->company_clients_id) > 0)
+																@foreach($jobDetails->company_clients_id as $single_client)
+																@if($single_client == $client->id) {{"selected='selected'"}}@endif @endforeach @endif>{{ $client->client_name }}
+															</option>
+															@endforeach
+															@endif
+														</select>
 													</div>
-												</div> -->
+												</div>
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -130,8 +79,10 @@
 														</label>
 														<select id="jobType" name="jobType" class="form-control ">
 															@foreach($jobTypeDetails as $jobType)
-															<option value="{{ $jobType->job_status_id }}" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $jobType->job_status_id) {{"selected='selected'"}} @endif>{{ $jobType->job_status_name }}</option>
-
+															<option value="{{ $jobType->job_status_id }}" @if(isset($jobDetails->job_status_id) && $jobDetails->job_status_id == $jobType->job_status_id) {{"selected='selected'"}}
+															@elseif($jobType->job_status_id == 2)
+															{{"selected='selected'"}}
+															@endif>{{ $jobType->job_status_name }}</option>
 															@endforeach
 														</select>
 													</div>
@@ -169,62 +120,63 @@
 											</div>
 											<div class="row">
 												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label">
-															<b>CITY</b>
-														</label>
-														<input type="text" name="city" id="city" value="{{$jobDetails->city or ''}}" class="form-control" placeholder="Enter City">
+													<div class="row">
+														<div class="col-md-6">
+															<div class="form-group">
+																<label class="control-label"><b>CITY</b></label>
+																<input type="text" name="city" id="city" value="{{$jobDetails->city or ''}}" class="form-control" placeholder="Enter City">
+															</div>
+														</div>
+														<div class="col-md-6">
+															<div class="form-group">
+																<label class="control-label"><b>STATE</b></label>
+																<input type="text" name="state" id="state" value="{{$jobDetails->state or ''}}" class="form-control" placeholder="Enter State">
+															</div>
+														</div>
 													</div>
 												</div>
 												<div class="col-md-4">
 													<div class="form-group">
-														<label class="control-label">
-															<b>STATE</b>
-														</label>
-														<input type="text" name="state" id="state" value="{{$jobDetails->state or ''}}" class="form-control" placeholder="Enter State">
-													</div>
-												</div>
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label">
-															<b>ZIPCODE</b>
-														</label>
+														<label class="control-label"><b>ZIPCODE</b></label>
 														<input type="text" placeholder="Enter Zipcode" name="zipcode" id="zipcode" value="{{$jobDetails->zipcode or ''}}" class="form-control">
-													</div>
-												</div>
-											</div>
-											<div class="row">
-
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label">
-															<b>JOB COMPANY NAME *</b>
-														</label>
-														<select id="jobCompanyName" name="jobCompanyName" class="form-control select2">
-															<option value="">-- Select Company --</option>
-															@foreach($comapnyList as $company)
-															<option value="{{ $company->company_id }}" @if(isset($jobDetails->company_id) && $jobDetails->company_id == $company->company_id) {{"selected='selected'"}} @endif>{{ $company->name }}</option>
-															@endforeach
-														</select>
 													</div>
 												</div>
 												<div class="col-md-4">
 													<div class="form-group dropdown_select" style="overflow: visible!important;">
-														<label class="control-label"><b>COMPANY CLIENTS *</b></label>
-														<select data-size="5" id="comapnyClients" name="comapnyClients" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
-															@if(isset($companyClientList) && sizeof($companyClientList) > 0)
-															@foreach($companyClientList as $client)
-															<option value="{{ $client->id }}"
-																@if(isset($jobDetails->company_clients_id) && sizeof($jobDetails->company_clients_id) > 0)
-																@foreach($jobDetails->company_clients_id as $single_client)
-																@if($single_client == $client->id) {{"selected='selected'"}}@endif @endforeach @endif>{{ $client->client_name }}
+														<label class="control-label"><b>WORKING EMPLOYEES</b></label>
+														<select data-size="5" id="workingEmployee" name="workingEmployee" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+															@foreach($employeeList as $employee)
+															<option value="{{ $employee->id }}"
+																@if(isset($jobDetails->working_employee_id) && sizeof($jobDetails->working_employee_id) > 0)
+																@foreach($jobDetails->working_employee_id as $single_id)
+																@if($single_id == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif
+																>{{ $employee->employee_name }}
 															</option>
 															@endforeach
-															@endif
 														</select>
 													</div>
 												</div>
-
+											</div>
+											<div class="row">
+												<div class="col-md-4">
+													<div class="form-group">
+														<label class="control-label">
+															<b>JOB TITLE *</b>
+														</label>
+														<input type="text" name="jobTitle" id="jobTitle" value="{{$jobDetails->job_title or ''}}" class="form-control" placeholder="Job Title">
+													</div>
+												</div>
+												<div class="col-md-4">
+													<div class="form-group">
+														<label class="control-label">
+															<b>JOB ACTIVE/INACTIVE</b>
+														</label>
+														<select id="jobStatus" name="jobStatus" class="form-control ">
+															<option value="1" @if(isset($jobDetails->is_active) && $jobDetails->is_active == '1') {{ "selected='selected'" }} @endif>ACTIVE</option>
+															<option value="0" @if(isset($jobDetails->is_active) && $jobDetails->is_active == '0') {{ "selected='selected'" }} @endif>INACTIVE</option>
+														</select>
+													</div>
+												</div>
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label"><b>SALES PERSON</b></label>
@@ -241,25 +193,19 @@
 															@endforeach
 														</select>
 													</div>
-
 												</div>
-
 											</div>
 											<div class="row">
 												<div class="col-md-4">
 													<div class="form-group">
-														<label class="control-label">
-															<b>JOB START DATE *</b>
-														</label>
+														<label class="control-label"><b>JOB START DATE *</b></label>
 														<input type="text" name="jobStartDate" id="jobStartDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 														maxlength="10" value="{{ $jobDetails->start_date or '' }}">
 													</div>
 												</div>
-
 												<div class="col-md-4">
 													<div class="form-group">
-														<label class="control-label">
-															<b>EXPECTED COMPLETION DATE *</b>
+														<label class="control-label"><b>EXPECTED COMPLETION DATE *</b>
 														</label>
 														<input type="text" name="jobEndDate" id="jobEndDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy" maxlength="10"
 														value="{{ $jobDetails->end_date or '' }}">
@@ -267,19 +213,14 @@
 												</div>
 												<div class="col-md-4">
 													<div class="form-group">
-														<label class="control-label">
-															<b>PLUMBING INSTALLATION DATE</b>
+														<label class="control-label"><b>PLUMBING INSTALLATION DATE</b>
 														</label>
 														<input type="text" name="plumbingInstallationDate" id="plumbingInstallationDate" class="form-control complex-colorpicker"
 														placeholder="mm/dd/yyyy" maxlength="10" value="{{ $jobDetails->plumbing_installation_date or '' }}">
 													</div>
 												</div>
-												
-
-												
 											</div>
 											<div class="row">
-
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -298,7 +239,6 @@
 														</div>
 													</div>
 												</div>
-
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -316,7 +256,6 @@
 														class="form-control">
 													</div>
 												</div>
-												
 											</div>
 											<div class="row">
 												<div class="col-md-4">
@@ -328,7 +267,6 @@
 														class="form-control" placeholder="Enter Job Contractor Name">
 													</div>
 												</div>
-
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -347,26 +285,24 @@
 														class="form-control">
 													</div>
 												</div>
-
-
 											</div>
 											<div class="row">
 												<div class="col-md-4">
-													<div class="form-group dropdown_select" style="overflow: visible!important;">
-														<label class="control-label"><b>WORKING EMPLOYEES</b></label>
-														<select data-size="5" id="workingEmployee" name="workingEmployee" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
-															@foreach($employeeList as $employee)
-															<option value="{{ $employee->id }}"
-																@if(isset($jobDetails->working_employee_id) && sizeof($jobDetails->working_employee_id) > 0)
-																@foreach($jobDetails->working_employee_id as $single_id)
-																@if($single_id == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif
-																>{{ $employee->employee_name }}
-															</option>
-															@endforeach
+													<div class="form-group">
+														<label class="control-label">
+															<b>DELIVERY  INSTALLATION</b>
+														</label>
+														<select id="deliveryInstallationSelect" name="deliveryInstallationSelect" class="form-control ">
+															<option value="1" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Material</option>
+
+															<option value="2" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '2') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
+
+															<option value="3" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '3') {{ "selected='selected'" }} @endif>Received</option>
+
+															<option value="4" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '4') {{ "selected='selected'" }} @endif>Scheduled</option>
 														</select>
 													</div>
 												</div>
-
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -376,28 +312,24 @@
 															<option value="1" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Install</option>
 
 															<option value="2" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '2') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
-															
+
 															<option value="3" @if(isset($jobDetails->is_select_installation) && $jobDetails->is_select_installation == '3') {{ "selected='selected'" }} @endif>Scheduled</option>
 														</select>
 													</div>
 												</div>
-
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
 															<b>STONE INSTALLATION</b>
 														</label>
 														<select id="stoneInstallationSelect" name="stoneInstallationSelect" class="form-control ">
-															
 															<option value="1" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
 															<option value="2" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '2') {{ "selected='selected'" }} @endif>Scheduled</option>
 														</select>
 													</div>
 												</div>
-
 											</div>
 											<div class="row">
-
 												<div class="col-md-4 installationRow">
 													<div class="form-group">
 														<label class="control-label">
@@ -416,7 +348,6 @@
 														</div>
 													</div>
 												</div>
-												
 												<div class="col-md-4 installationRow">
 													<div class="form-group dropdown_select" style="overflow: visible!important;">
 														<label class="control-label"><b>INSTALLATION EMPLOYEES</b></label>
@@ -431,7 +362,6 @@
 														</select>
 													</div>
 												</div>
-
 												<div class="col-md-4 stoneInstallationRow">
 													<div class="form-group">
 														<label class="control-label">
@@ -450,10 +380,8 @@
 														</div>
 													</div>
 												</div>
-
 											</div>
 											<div class="row">
-
 												<div class="col-md-4 stoneInstallationRow">
 													<div class="form-group dropdown_select" style="overflow: visible!important;">
 														<label class="control-label"><b>STONE INSTALLATION EMPLOYEES</b></label>
@@ -468,24 +396,6 @@
 														</select>
 													</div>
 												</div>
-
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label">
-															<b>DELIVERY  INSTALLATION</b>
-														</label>
-														<select id="deliveryInstallationSelect" name="deliveryInstallationSelect" class="form-control ">
-															<option value="1" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Materia</option>
-
-															<option value="2" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '2') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
-
-															<option value="3" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '3') {{ "selected='selected'" }} @endif>Received</option>
-
-															<option value="4" @if(isset($jobDetails->is_select_delivery_installation) && $jobDetails->is_select_delivery_installation == '4') {{ "selected='selected'" }} @endif>Scheduled</option>
-														</select>
-													</div>
-												</div>
-
 												<div class="col-md-4 deliveryInstallationRow">
 													<div class="form-group">
 														<label class="control-label">
@@ -504,12 +414,8 @@
 														</div>
 													</div>
 												</div>
-
-
 											</div>
-
 											<div class="row">
-
 												<div class="col-md-4 deliveryInstallationRow">
 													<div class="form-group dropdown_select" style="overflow: visible!important;">
 														<label class="control-label"><b>DELIVERY INSTALLATION EMPLOYEES</b></label>
@@ -804,38 +710,6 @@ $('#formAddJob').on('success.form.bv', function (e) {
 			} else {
 				$('#loader').hide();
 				notify('Something went wrong.', 'blackgloss');
-			}
-		}
-	});
-});
-
-$("#formAccountSetting").on('success.form.bv', function (e) {
-	e.preventDefault();
-	$("#loader").show();
-	var current_password = $("#currentPassword").val();
-	var new_password = $('#newPassword').val();
-	var retype_password = $('#retypePassword').val();
-	var hidden_email = $('#hiddenMail').val();
-	if (new_password != retype_password) {
-		$("#loader").hide();
-		notify('New password and  Retype password is not match. Please try again.', 'blackgloss');
-		return;
-	}
-	$.ajax({
-		url: '{{ route('changepassword') }}',
-		data: {
-			current_password: current_password,
-			new_password: new_password,
-			hidden_email: hidden_email,
-		},
-		type: 'post',
-		success: function (data) {
-			if (data == 1) {
-				$('#loader').hide();
-				notify('Your password has been reset.', 'blackgloss');
-			} else if (data == 2) {
-				$('#loader').hide();
-				notify('Current password is invalid. Please try again.', 'blackgloss');
 			}
 		}
 	});

@@ -5,18 +5,7 @@
 {{-- <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}" /> --}}
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
 {{-- <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/switchery/dist/switchery.min.css')}}" /> --}}
-<style type="text/css">
-.nav-link.active {
-	background: #4c5667 !important;
-}
-.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
-	background: #4c5667 !important;
-	color: #ffffff !important;
-}
-.disabled-color{
-	color: #90989c !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/addclient.css')}}" />
 @stop
 @section('content')
 <div class="container-fluid">

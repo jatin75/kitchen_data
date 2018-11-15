@@ -3,11 +3,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
 @stop
 @section('content')
-<style type="text/css">
-.p-t-27 {
-    padding-top: 27px!important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/reports.css')}}" />
 <div class="container-fluid">
     <div class="row bg-title">
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">

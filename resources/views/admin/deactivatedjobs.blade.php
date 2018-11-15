@@ -6,42 +6,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.css')}}" />
-<style type="text/css">
-.modal-footer {
-    padding-bottom: 0px !important;
-    margin-bottom: 0px !important;
-}
-tr th{
-  padding-left: 10px !important;
-}
-.popover {
-    z-index: 999999;
-    /*display: block !important;*/
-}
-.bootstrap-select .dropdown-toggle:focus {
-    outline: 0px auto -webkit-focus-ring-color!important;
-}
-/*.dropdown-toggle::after {
-    display: inline-block;
-    position: relative;
-    right: 20px;
-}*/
-.bootstrap-select.btn-group .dropdown-toggle .filter-option {
-    padding-right: 15px;
-    text-overflow: ellipsis;
-}
-.btn-default {
-    background: #ffffff !important;
-    border: 1px solid #e4e7ea;
-    padding: 10px 5px !important;
-    font-size: 13px !important;
-    padding-bottom: 8px !important;
-    font-weight: 100 !important;
-}
-.btn-default:hover {
-    background: #e4e7ea !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/deactivatedjobs.css')}}" />
 @stop
 @section('content')
 <div class="container-fluid">
@@ -61,9 +26,9 @@ tr th{
                         <tr>
                             <th class="text-center">Actions</th>
                             <th>Job Name</th>
-                            <!-- <th>Job Id</th> -->
                             <th>Job Status</th>
                             <th>Employee</th>
+                            <th>Address</th>
                             <th>Start Date</th>
                             <th>Expected Completion Date</th>
                         </tr>
@@ -75,12 +40,14 @@ tr th{
                                 <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editjob',['job_id' => $job->job_id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
+
+                                <a data-toggle="tooltip" data-placement="top" title="Clone Job" class="btn btn-dribbble btn-circle" href="{{route('clonejob',['job_id' => $job->job_id])}}">
+                                    <i class="ti-layers"></i>
+                                </a>
+
                                 <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to remove this job?');" href="{{route('deletejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Remove Job"><i class="ti-trash"></i> </a>
-                                <span style="display:none;">{{$job->address_1}}</span>
-                                    <span style="display:none;">{{$job->address_2}}</span>
                             </td>
                             <td>{{$job->job_title}}</td>
-                            <!-- <td>{{$job->job_id}}</td> -->
                             <td>
                                 <select class="form-control select2 jobType" name="jobType" id="jobType_{{$job->job_id}}" placeholder="Select your job type" data-id="{{$job->job_id}}">
                                     @foreach($jobTypeDetails as $jobType)
@@ -88,9 +55,8 @@ tr th{
                                     @endforeach
                                 </select>
                             </td>
-                            <td>
-                                    {{$job->employee_name}}
-                                </td>
+                            <td><div class="word-wrap">{{$job->employee_name}}</div></td>
+                            <td><div class="word-wrap">{{$job->address}}</div></td>
                             <td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
                             <td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
                         </tr>
@@ -255,19 +221,10 @@ tr th{
                 extend: 'csv',
                 title: value,
                 exportOptions: {
-                    columns: [ 1,2,3,4,5 ],
+                    columns: [ 1,2,3,4,5,6 ],
                     format: {
                         body: function( data, row, col, node ) {
-                            if (col == 2) {
-                                return $('#jobList').DataTable()
-                                .cell( {row: row, column: 3} )
-                                .nodes()
-                                .to$()
-                                .find(':selected')
-                                .text().trim();
-                            } else {
-                                return data;
-                            }
+                            return data;
                         }
                     },
                 },
@@ -276,19 +233,10 @@ tr th{
                 extend: 'excel',
                 title: value,
                 exportOptions: {
-                    columns: [ 1,2,3,4,5 ],
+                    columns: [ 1,2,3,4,5,6 ],
                     format: {
                         body: function( data, row, col, node ) {
-                            if (col == 2) {
-                                return $('#jobList').DataTable()
-                                .cell( {row: row, column: 3} )
-                                .nodes()
-                                .to$()
-                                .find(':selected')
-                                .text().trim();
-                            } else {
-                                return data;
-                            }
+                            return data;
                         }
                     },
                 },
@@ -298,19 +246,10 @@ tr th{
                 pageSize: 'LEGAL',
                 title: value,
                 exportOptions: {
-                    columns: [ 1,2,3,4,5],
+                    columns: [ 1,2,3,4,5,6],
                     format: {
                         body: function( data, row, col, node ) {
-                            if (col == 2) {
-                                return $('#jobList').DataTable()
-                                .cell( {row: row, column: 3} )
-                                .nodes()
-                                .to$()
-                                .find(':selected')
-                                .text().trim();
-                            } else {
-                                return data;
-                            }
+                            return data;
                         }
                     },
                 },
@@ -319,19 +258,10 @@ tr th{
                 extend: 'print',
                 title: value,
                 exportOptions: {
-                    columns: [ 1,2,3,4,5 ],
+                    columns: [ 1,2,3,4,5,6 ],
                     format: {
                         body: function( data, row, col, node ) {
-                            if (col == 2) {
-                                return $('#jobList').DataTable()
-                                .cell( {row: row, column: 3} )
-                                .nodes()
-                                .to$()
-                                .find(':selected')
-                                .text().trim();
-                            } else {
-                                return data;
-                            }
+                            return data;
                         }
                     },
                 },
@@ -385,17 +315,17 @@ tr th{
             $('.addInstallingDateTime').hide();
             $('.addDeliveryDateTime').show();
             $('.addStoneInstallingDateTime').hide();
-            
+
         }else if(jobStatusId == 6) {
             $('.addInstallingDateTime').show();
             $('.addDeliveryDateTime').hide();
             $('.addStoneInstallingDateTime').hide();
-            
+
         }else if(jobStatusId == 7) {
             $('.addStoneInstallingDateTime').show();
             $('.addDeliveryDateTime').hide();
             $('.addInstallingDateTime').hide();
-            
+
         }
         else {
             changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);

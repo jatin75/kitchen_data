@@ -6,88 +6,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.css')}}" />
-<style type="text/css">
-	.nav-pills {
-		background: #4c5667 !important;
-	}
-	.nav-link.active {
-		background: #4c5667 !important;
-	}
-	.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
-		background: #4c5667 !important;
-		color: #ffffff !important;
-	}
-	.disabled-color{
-		color: #90989c !important;
-	}
-	tr th{
-		padding-left: 10px !important;
-	}
-	.nav_toolbar_menu{
-		padding-left: 8px;
-	}
-	.toolbar_btn{
-		padding: 10px 18px !important;
-		background-color: #fff !important;
-		font-weight: bold;
-		letter-spacing: 0.6px;
-		margin: 0 2px 3px 0 !important;
-		border: 1px solid #dcdbdbe0;
-	}
-	.toolbar_btn:focus {
-		background-color: #4c5667 !important;
-		color: #fff;
-		box-shadow: none;
-	}
-	.toolbaractive {
-		background-color: #4c5667 !important;
-		color: #fff !important;
-		box-shadow: none;
-	}
-	.toolbarmenu_active {
-		background-color: #4c5667 !important;
-		color: #fff !important;
-		box-shadow: none;
-	}
-	.nav_toggle ul li > a{
-		padding: 8px 12px !important;
-		border-bottom: 1px solid #e5e5e5;
-	}
-	.popover {
-		z-index: 999999;
-		/*display: block !important;*/
-	}
-	.bootstrap-select .dropdown-toggle:focus {
-		outline: 0px auto -webkit-focus-ring-color!important;
-	}
-/*.dropdown-toggle::after {
-	display: inline-block;
-	position: relative;
-	right: 20px;
-}*/
-.bootstrap-select.btn-group .dropdown-toggle .filter-option {
-	padding-right: 15px;
-	text-overflow: ellipsis;
-}
-.btn-default {
-	background: #ffffff !important;
-	border: 1px solid #e4e7ea;
-	padding: 10px 5px !important;
-	font-size: 13px !important;
-	padding-bottom: 8px !important;
-	font-weight: 100 !important;
-}
-.btn-default:hover {
-	background: #e4e7ea !important;
-}
-.word-wrap{word-break: normal;}
-.scrollit { height:150px; width: auto; overflow-y:scroll; border: 1px solid; background: #f4f8fb;}
-.edit-note{cursor: pointer;}
-.delete-note{cursor: pointer;}
-body{
-	padding-right:0 !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/dashboard.css')}}" />
 @stop
 @section('content')
 <!-- Page Content -->
@@ -240,7 +159,7 @@ body{
 						<label class="control-label">SALES PERSON</label>
 						<br><span id="salesEmployee"></span>
 					</div>
-					
+
 				</div>
 				<div class="row">
 
@@ -257,8 +176,8 @@ body{
 						<label class="control-label">PLUMBING INSTALLATION DATE</label>
 						<br><span id="plumbingInstallationDate"></span>
 					</div>
-					
-					
+
+
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -275,7 +194,7 @@ body{
 						<br><span id="superPhoneNumber"></span>
 					</div>
 
-					
+
 				</div>
 				<div class="row">
 
@@ -283,7 +202,7 @@ body{
 						<label class="control-label">JOB CONTRACTOR NAME</label>
 						<br><span id="jobContractorName"></span>
 					</div>
-					
+
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">CONTRACTOR EMAIL ADDRESS</label>
 						<br><span id="contractorEmail"></span>
@@ -293,7 +212,7 @@ body{
 						<br><span id="contractorPhoneNumber"></span>
 					</div>
 
-					
+
 				</div>
 				<div class="row">
 
@@ -310,7 +229,7 @@ body{
 						<label class="control-label">INSTALLATION DATE AND TIME</label>
 						<br><span id="installationDateTime"></span>
 					</div>
-					
+
 				</div>
 				<div class="row">
 
@@ -327,7 +246,7 @@ body{
 						<label class="control-label">STONE INSTALLATION DATE AND TIME</label>
 						<br><span id="stoneInstallationDateTime"></span>
 					</div>
-					
+
 				</div>
 				<div class="row">
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -546,19 +465,10 @@ body{
 							extend: 'csv',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5,6 ],
+								columns: [ 1,2,3,4,5,6,7 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 3) {
-											return $('#jobList').DataTable()
-											.cell( {row: row, column: 4} )
-											.nodes()
-											.to$()
-											.find(':selected')
-											.text()
-										} else {
-											return data;
-										}
+										return data;
 									}
 								},
 							},
@@ -567,19 +477,10 @@ body{
 							extend: 'excel',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5,6 ],
+								columns: [ 1,2,3,4,5,6,7 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 3) {
-											return $('#jobList').DataTable()
-											.cell( {row: row, column: 4} )
-											.nodes()
-											.to$()
-											.find(':selected')
-											.text()
-										} else {
-											return data;
-										}
+										return data;
 									}
 								},
 							},
@@ -589,19 +490,10 @@ body{
 							pageSize: 'LEGAL',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5,6],
+								columns: [ 1,2,3,4,5,6,7 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 3) {
-											return $('#jobList').DataTable()
-											.cell( {row: row, column: 4} )
-											.nodes()
-											.to$()
-											.find(':selected')
-											.text()
-										} else {
-											return data;
-										}
+										return data;
 									}
 								},
 							},
@@ -610,32 +502,23 @@ body{
 							extend: 'print',
 							title: value,
 							exportOptions: {
-								columns: [ 1,2,3,4,5,6 ],
+								columns: [ 1,2,3,4,5,6,7 ],
 								format: {
 									body: function( data, row, col, node ) {
-										if (col == 3) {
-											return $('#jobList').DataTable()
-											.cell( {row: row, column: 4} )
-											.nodes()
-											.to$()
-											.find(':selected')
-											.text()
-										} else {
-											return data;
-										}
+										return data;
 									}
 								},
 							},
 						}
 						],
-					});
-/* For select 2*/
-$(".select2").select2();
-/*tooltip*/
-$('[data-toggle="tooltip"]').tooltip();
-}
-}
-});
+				});
+				/* For select 2*/
+				$(".select2").select2();
+				/*tooltip*/
+				$('[data-toggle="tooltip"]').tooltip();
+			}
+		}
+	});
 }
 
 /*view job model*/

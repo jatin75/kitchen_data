@@ -8,79 +8,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/clockpicker/dist/jquery-clockpicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/owl.carousel/owl.carousel.min.css')}}" />
-<style type="text/css">
-	.modal-footer {
-		padding-bottom: 0px !important;
-		margin-bottom: 0px !important;
-	}
-	tr th{
-		padding-left: 10px !important;
-	}
-	.nav_toolbar_menu{
-		padding-left: 8px;
-	}
-	.toolbar_btn{
-		padding: 10px 18px !important;
-		background-color: #fff !important;
-		font-weight: bold;
-		letter-spacing: 0.6px;
-		margin: 0 2px 3px 0 !important;
-		border: 1px solid #dcdbdbe0;
-	}
-	.toolbar_btn:focus {
-		background-color: #4c5667 !important;
-		color: #fff;
-		box-shadow: none;
-	}
-	.toolbaractive {
-		background-color: #4c5667 !important;
-		color: #fff !important;
-		box-shadow: none;
-	}
-	.toolbarmenu_active {
-		background-color: #4c5667 !important;
-		color: #fff !important;
-		box-shadow: none;
-	}
-	.nav_toggle ul li > a{
-		padding: 8px 12px !important;
-		border-bottom: 1px solid #e5e5e5;
-	}
-	.popover {
-		z-index: 999999;
-		/*display: block !important;*/
-	}
-	.bootstrap-select .dropdown-toggle:focus {
-		outline: 0px auto -webkit-focus-ring-color!important;
-	}
-/*.dropdown-toggle::after {
-	display: inline-block;
-	position: relative;
-	right: 20px;
-}*/
-.bootstrap-select.btn-group .dropdown-toggle .filter-option {
-	padding-right: 15px;
-	text-overflow: ellipsis;
-}
-.btn-default {
-	background: #ffffff !important;
-	border: 1px solid #e4e7ea;
-	padding: 10px 5px !important;
-	font-size: 13px !important;
-	padding-bottom: 8px !important;
-	font-weight: 100 !important;
-}
-.btn-default:hover {
-	background: #e4e7ea !important;
-}
-.word-wrap{word-break: normal;}
-.scrollit { height:150px; width: auto; overflow-y:scroll; border: 1px solid; background: #f4f8fb;}
-.edit-note,.view-note-images{cursor: pointer;}
-.delete-note{cursor: pointer;}
-body{
-	padding-right:0 !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/jobs.css')}}" />
 @stop
 @section('content')
 <div class="container-fluid">
@@ -98,7 +26,7 @@ body{
 						<h3 class="box-title m-b-0 pull-left">All JOBS</h3>
 						<a href="{{route('addjob')}}" class="btn btn-success btn-rounded waves-effect waves-light pull-right m-b-15 m-r-15"><span>Add Job</span> <i class="fa fa-plus m-l-5"></i></a>
 					</div>
-				</div>	
+				</div>
 				<div class="nav_toggle user-profile" style="padding-top: 0;padding-bottom: 20px;text-align: left">
 					<div class="dropdown user-pro-body" style="margin: 0px  !important">
 						<a href="#" class="u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i style="border:  1px solid #d1d1d1; padding:  6px; border-radius: 3px;cursor: pointer;" class="ti-menu"></i></a>
@@ -124,10 +52,9 @@ body{
 							<tr>
 								<th class="text-center">Actions</th>
 								<th>Job Name</th>
-								<!-- <th>Job Id</th> -->
-								
 								<th>Job Status</th>
 								<th>Employee</th>
+								<th>Address</th>
 								<th>Start Date</th>
 								<th>Expected Completion Date</th>
 							</tr>
@@ -153,7 +80,7 @@ body{
 										<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="{{ $job->job_id }}">
 											<i class="ti-plus"></i>
 										</a>
-									</span>									
+									</span>
 									<span data-toggle="" data-target="#Auditmodel">
 										<a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-primary btn-circle view-audit" data-id="{{ $job->job_id }}">
 											<i class="ti-receipt"></i>
@@ -163,12 +90,8 @@ body{
 										<a data-toggle="tooltip" data-placement="top" title="View Image" class="btn btn-dribbble btn-circle view-images" data-id="{{ $job->job_id }}"><i class="ti-image"></i></a>
 									</span>
 									<a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to inactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Inactivate Job"><i class="ti-lock"></i></a>
-									<span style="display:none;">{{$job->address_1}}</span>
-									<span style="display:none;">{{$job->address_2}}</span>
 								</td>
 								<td>{{$job->job_title}}</td>
-								<!-- <td>{{$job->job_id}}</td> -->
-								
 								<td>
 									<select class="form-control select2 jobType" name="jobType" id="jobType_{{$job->job_id}}" placeholder="Select your job type" data-id="{{$job->job_id}}">
 										@foreach($jobTypeDetails as $jobType)
@@ -176,9 +99,8 @@ body{
 										@endforeach
 									</select>
 								</td>
-								<td>
-									{{$job->employee_name}}
-								</td>
+								<td><div class="word-wrap">{{$job->employee_name}}</div></td>
+								<td><div class="word-wrap">{{$job->address}}</div></td>
 								<td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
 								<td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
 							</tr>
@@ -317,8 +239,8 @@ body{
 						<label class="control-label">SALES PERSON</label>
 						<br><span id="salesEmployee"></span>
 					</div>
-					
-					
+
+
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -334,8 +256,8 @@ body{
 						<br><span id="plumbingInstallationDate"></span>
 					</div>
 
-					
-					
+
+
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -351,7 +273,7 @@ body{
 						<br><span id="superPhoneNumber"></span>
 					</div>
 
-					
+
 
 				</div>
 				<div class="row">
@@ -368,7 +290,7 @@ body{
 						<br><span id="contractorPhoneNumber"></span>
 					</div>
 
-					
+
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -383,7 +305,7 @@ body{
 						<label class="control-label">INSTALLATION DATE AND TIME</label>
 						<br><span id="installationDateTime"></span>
 					</div>
-					
+
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -398,7 +320,7 @@ body{
 						<label class="control-label">STONE INSTALLATION DATE AND TIME</label>
 						<br><span id="stoneInstallationDateTime"></span>
 					</div>
-					
+
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -615,28 +537,15 @@ body{
 		var value = 'Kitchen_job_' + date;
 		$('#jobList').DataTable({
 			dom: 'Bfrtip',
-			
 			buttons: [
-			{
-				extend:'pageLength',
-			},			
 			{
 				extend: 'csv',
 				title: value,
 				exportOptions: {
-					columns: [ 1,2,3,4,5 ],
+					columns: [ 1,2,3,4,5,6 ],
 					format: {
-						body: function( data, row, col, node ) {
-							if (col == 2) {
-								return $('#jobList').DataTable()
-								.cell( {row: row, column: 3} )
-								.nodes()
-								.to$()
-								.find(':selected')
-								.text().trim();
-							} else {
-								return data;
-							}
+						body: function(data) {
+							return data;
 						}
 					},
 				},
@@ -645,19 +554,10 @@ body{
 				extend: 'excel',
 				title: value,
 				exportOptions: {
-					columns: [ 1,2,3,4,5 ],
+					columns: [ 1,2,3,4,5,6 ],
 					format: {
-						body: function( data, row, col, node ) {
-							if (col == 2) {
-								return $('#jobList').DataTable()
-								.cell( {row: row, column: 3} )
-								.nodes()
-								.to$()
-								.find(':selected')
-								.text().trim();
-							} else {
-								return data;
-							}
+						body: function(data) {
+							return data;
 						}
 					},
 				},
@@ -665,21 +565,13 @@ body{
 			{
 				extend: 'pdf',
 				pageSize: 'LEGAL',
+				orientation: 'landscape',
 				title: value,
 				exportOptions: {
-					columns: [ 1,2,3,4,5 ],
+					columns: [ 1,2,3,4,5,6 ],
 					format: {
-						body: function( data, row, col, node ) {
-							if (col == 2) {
-								return $('#jobList').DataTable()
-								.cell( {row: row, column: 3} )
-								.nodes()
-								.to$()
-								.find(':selected')
-								.text().trim();
-							} else {
-								return data;
-							}
+						body: function(data) {
+							return data;
 						}
 					},
 				},
@@ -688,19 +580,10 @@ body{
 				extend: 'print',
 				title: value,
 				exportOptions: {
-					columns: [ 1,2,3,4,5 ],
+					columns: [ 1,2,3,4,5,6 ],
 					format: {
-						body: function( data, row, col, node ) {
-							if (col == 2) {
-								return $('#jobList').DataTable()
-								.cell( {row: row, column: 3} )
-								.nodes()
-								.to$()
-								.find(':selected')
-								.text().trim();
-							} else {
-								return data;
-							}
+						body: function(data) {
+							return data;
 						}
 					},
 				},
@@ -733,19 +616,10 @@ function getJobDetailsList(jobStatusId){
 						extend: 'csv',
 						title: value,
 						exportOptions: {
-							columns: [ 1,2,3,4,5 ],
+							columns: [ 1,2,3,4,5,6 ],
 							format: {
 								body: function( data, row, col, node ) {
-									if (col == 2) {
-										return $('#jobList').DataTable()
-										.cell( {row: row, column: 3} )
-										.nodes()
-										.to$()
-										.find(':selected')
-										.text()
-									} else {
-										return data;
-									}
+									return data;
 								}
 							},
 						},
@@ -754,19 +628,10 @@ function getJobDetailsList(jobStatusId){
 						extend: 'excel',
 						title: value,
 						exportOptions: {
-							columns: [ 1,2,3,4,5 ],
+							columns: [ 1,2,3,4,5,6 ],
 							format: {
 								body: function( data, row, col, node ) {
-									if (col == 2) {
-										return $('#jobList').DataTable()
-										.cell( {row: row, column: 3} )
-										.nodes()
-										.to$()
-										.find(':selected')
-										.text()
-									} else {
-										return data;
-									}
+									return data;
 								}
 							},
 						},
@@ -776,19 +641,10 @@ function getJobDetailsList(jobStatusId){
 						pageSize: 'LEGAL',
 						title: value,
 						exportOptions: {
-							columns: [ 1,2,3,4,5],
+							columns: [ 1,2,3,4,5,6],
 							format: {
 								body: function( data, row, col, node ) {
-									if (col == 2) {
-										return $('#jobList').DataTable()
-										.cell( {row: row, column: 3} )
-										.nodes()
-										.to$()
-										.find(':selected')
-										.text()
-									} else {
-										return data;
-									}
+									return data;
 								}
 							},
 						},
@@ -797,32 +653,23 @@ function getJobDetailsList(jobStatusId){
 						extend: 'print',
 						title: value,
 						exportOptions: {
-							columns: [ 1,2,3,4,5 ],
+							columns: [ 1,2,3,4,5,6 ],
 							format: {
 								body: function( data, row, col, node ) {
-									if (col == 2) {
-										return $('#jobList').DataTable()
-										.cell( {row: row, column: 3} )
-										.nodes()
-										.to$()
-										.find(':selected')
-										.text()
-									} else {
-										return data;
-									}
+									return data;
 								}
 							},
 						},
 					}
 					],
 				});
-/* For select 2*/
-$(".select2").select2();
-/*tooltip*/
-$('[data-toggle="tooltip"]').tooltip();
-}
-}
-});
+				/* For select 2*/
+				$(".select2").select2();
+				/*tooltip*/
+				$('[data-toggle="tooltip"]').tooltip();
+			}
+		}
+	});
 }
 
 /*set job id on models*/

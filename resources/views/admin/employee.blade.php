@@ -3,15 +3,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
-<style type="text/css">
-.modal-footer {
-    padding-bottom: 0px !important;
-    margin-bottom: 0px !important;
-}
-tr th{
-  padding-left: 10px !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/employee.css')}}" />
 @stop
 @section('content')
 <div class="container-fluid">

@@ -1,0 +1,10 @@
+.nav-link.active {
+	background: #4c5667 !important;
+}
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+	background: #4c5667 !important;
+	color: #ffffff !important;
+}
+.disabled-color{
+	color: #90989c !important;
+}

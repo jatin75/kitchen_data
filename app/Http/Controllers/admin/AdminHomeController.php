@@ -156,10 +156,10 @@ class AdminHomeController extends Controller
 
 		if(Session::get('login_type_id') == 10 ){
 
-			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.super_name,jb.working_employee_id,jb.sales_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN admin_users AS au ON au.login_type_id = 10 AND au.id = jb.sales_employee_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.sales_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN admin_users AS au ON au.login_type_id = 10 AND au.id = jb.sales_employee_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 
-		}else{  
-			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+		}else{
+			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 		}
 
 		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
@@ -170,10 +170,10 @@ class AdminHomeController extends Controller
 			<tr>
 				<th class="text-center">Actions</th>
 				<th>Job Name</th>
-
-				<th>Company Name</th>				
+				<th>Company Name</th>
 				<th>Job Status</th>
 				<th>Employee</th>
+				<th>Address</th>
 				<th>Start Date</th>
 				<th>Expected Completion Date</th>
 			</tr>
@@ -193,6 +193,16 @@ class AdminHomeController extends Controller
 						$getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
 						$employee_name = $getEmployeeName->employee_name;
 
+						/* Address */
+                        $delimiter = ',' . ' ';
+                        $job_address = $jobDetail->address_1 . $delimiter;
+                        $job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
+                        $job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
+                        $job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
+                        $job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
+                        $job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
+                        $jobDetail->address = $job_address;
+
 
 						if(in_array($session_userId, $client_id_array)) {
 
@@ -203,13 +213,11 @@ class AdminHomeController extends Controller
 										<i class="ti-eye"></i>
 									</a>
 								</span>
-								<span style="display:none;">'.$jobDetail->address_1.'</span>
-								<span style="display:none;">'.$jobDetail->address_2.'</span>
 							</td>
 							<td>'.$jobDetail->job_title.'</td>
 
 							<td>'.$jobDetail->name.'</td>
-							
+
 							<td>
 								<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" >';
 
@@ -220,7 +228,8 @@ class AdminHomeController extends Controller
 
 									$html .='</select>
 								</td>
-								<td>'.$employee_name.'</td>
+								<td><div class="word-wrap">'.$employee_name.'</div></td>
+								<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
 								<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 								<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
 							</tr>';
@@ -232,7 +241,18 @@ class AdminHomeController extends Controller
 						$getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
 						$employee_name = $getEmployeeName->employee_name;
 
+						/* Address */
+                        $delimiter = ',' . ' ';
+                        $job_address = $jobDetail->address_1 . $delimiter;
+                        $job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
+                        $job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
+                        $job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
+                        $job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
+                        $job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
+                        $jobDetail->address = $job_address;
+
 						if(Session::get('login_type_id') == 10){
+							/* sales employee */
 							$disable = 'disabled';
 						}else{
 							$disable = '';
@@ -251,10 +271,8 @@ class AdminHomeController extends Controller
 								</a>
 
 							</span>
-							<span style="display:none;">'.$jobDetail->address_1.'</span>
-							<span style="display:none;">'.$jobDetail->address_2.'</span>
 						</td>
-						<td>'.$jobDetail->job_title.'</td>						
+						<td>'.$jobDetail->job_title.'</td>
 						<td>'.$jobDetail->name.'</td>
 						<td>
 							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" '.$disable.'>';
@@ -267,8 +285,8 @@ class AdminHomeController extends Controller
 								$html .='</select>
 							</td>
 
-							<td>'.$employee_name.'</td>
-
+							<td><div class="word-wrap">'.$employee_name.'</div></td>
+							<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
 							<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 							<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
 						</tr>';
