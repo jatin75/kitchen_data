@@ -70,16 +70,20 @@ class JobsController extends Controller
     		case '6':
     		$getJobsDetail = $this->getSpecificJobDetails($user_id, 7);
     		break;
-            /* plumber */
+            /* Service */
             case '7':
             $getJobsDetail = $this->getAllJobDetails($user_id);
             break;
-            /* inspector */
+            /* Inspector */
             case '8':
             $getJobsDetail = $this->getAllJobDetails($user_id);
             break;
     		/* Client */
     		case '9':
+    		$getJobsDetail = $this->getAllJobDetails($user_id);
+    		break;
+    		/* Sales */
+    		case '10':
     		$getJobsDetail = $this->getAllJobDetails($user_id);
     		break;
     	}
@@ -192,9 +196,9 @@ class JobsController extends Controller
     	try {
     		$validator = Validator::make($request->all(), [
     			'user_id' => 'required',
+    			'user_name' => 'required',
     			'job_id' => 'required',
     			'user_login_type' => 'required',
-    			'user_name' => 'required',
     			'job_status' => 'required',
     		]);
     		if ($validator->fails()) {
@@ -203,13 +207,13 @@ class JobsController extends Controller
     			return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
     		}
 
-    		$user_id = $request->get('user_id');
+            $user_id = $request->get('user_id');
     		$user_name = $request->get('user_name');
     		$job_id = $request->get('job_id');
     		$user_login_type = $request->get('user_login_type');
     		$job_status = $request->get('job_status');
-    		$job_pics_name = $request->get('job_pics_name');
             $job_pics_url = $request->get('job_pics_url');
+            $job_thumbnail_url = $request->get('job_thumbnail_url');
             $job_notes = $request->get('job_notes');
     		switch ($user_login_type) {
     			/*measurer*/
@@ -221,7 +225,7 @@ class JobsController extends Controller
     				Job::where('job_id', $job_id)->update(['job_status_id' => 3]);
 
                     /*add notes and images*/
-    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url);
     				if(!empty($job_pics_url)) {
     				    $image_url = explode(',', $job_pics_url);
     				}else{
@@ -229,39 +233,42 @@ class JobsController extends Controller
     				}
                     /*get job details*/
                     $getDetail = Job::where('job_id', $job_id)->where('is_deleted', 0)->first();
-    				$working_employee_ids = explode(',', $getDetail->working_employee_id);
-    				$company_client_ids = explode(',', $getDetail->company_clients_id);
+                    if(!empty($getDetail))
+                    {
+                        $working_employee_ids = explode(',', $getDetail->working_employee_id);
+                        $company_client_ids = explode(',', $getDetail->company_clients_id);
 
-    				/*send notification as client */
-    				if(sizeof($company_client_ids) > 0)
-    				{
-                        $title = 'Change Job Status';
-    					$badge = '1';
-    					$sound = 'default';
+                        /*send notification as client */
+                        if(sizeof($company_client_ids) > 0)
+                        {
+                            $title = 'Change Job Status';
+                            $badge = '1';
+                            $sound = 'default';
 
-    					foreach ($company_client_ids as $client_id) {
-    						$device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
-                            if(!empty($device_detail->device_token)) {
-                                $messageBody = $getDetail->job_title .' has been measured and has moved into Design Stage';
-    							$deviceid = $device_detail->device_token;
-    							$device_type = $device_detail->device_type;
-                                $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
-    						}
-    					}
+                            foreach ($company_client_ids as $client_id) {
+                                $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
+                                if(!empty($device_detail->device_token)) {
+                                    $messageBody = $getDetail->job_title .' has been measured and has moved into Design Stage';
+                                    $deviceid = $device_detail->device_token;
+                                    $device_type = $device_detail->device_type;
+                                    $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                                }
+                            }
+
+                            /*send mail as measurer*/
+                            $this->sendMailDesign($working_employee_ids, $getDetail->job_title, $job_notes,$image_url);
+                            /*send mail as admin*/
+                            $adminMailBody = "Job has been measured and is now in Design stage.";
+                            $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody,$image_url);
+                        }
                     }
-    				/*send mail as measurer*/
-    				$this->sendMailDesign($working_employee_ids, $getDetail->job_title, $job_notes,$image_url);
-    				/*send mail as admin*/
-    				$adminMailBody = "Job has been measured and is now in Design stage.";
-    				$this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes,$adminMailBody,$image_url);
-
     				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
     				break;
 
                     /*pending & incomplete*/
     				case 2:
                     /*add notes and images*/
-    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url);
 
     				return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
     				break;
@@ -287,7 +294,7 @@ class JobsController extends Controller
                     }
 
                     /*add notes and images*/
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url);
 					if(!empty($job_pics_url)) {
                         $image_url = explode(',', $job_pics_url);
                     }else{
@@ -367,7 +374,7 @@ class JobsController extends Controller
     				case 2:
 
                     /*add notes and images*/
-    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+    				$getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url);
     				if(!empty($job_pics_url)) {
                         $image_url = explode(',', $job_pics_url);
                     }else{
@@ -439,7 +446,7 @@ class JobsController extends Controller
                     }
 
                     /*add notes and images*/
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url);
                     if(!empty($job_pics_url)) {
                         $image_url = explode(',', $job_pics_url);
                     }else{
@@ -522,7 +529,7 @@ class JobsController extends Controller
                     case 2:
 
                     /*add notes and images*/
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url);
                     if(!empty($job_pics_url)) {
                         $image_url = explode(',', $job_pics_url);
                     }else{
@@ -579,7 +586,7 @@ class JobsController extends Controller
                     /*complete*/
                     case 1:
                     /*add notes and images*/
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url);
                     if(!empty($job_pics_url)) {
                         $image_url = explode(',', $job_pics_url);
                     }else{
@@ -619,7 +626,7 @@ class JobsController extends Controller
                     /*incomplete*/
                     case 2:
                     /*add notes and images*/
-                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url);
+                    $getImageNote = $this->storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url);
                     if(!empty($job_pics_url)) {
                         $image_url = explode(',', $job_pics_url);
                     }else{
@@ -711,7 +718,7 @@ class JobsController extends Controller
     }
 
     /* storeJobNotesAndImage */
-    public function storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_name,$job_pics_url) {
+    public function storeJobNotesAndImage($user_id,$user_name,$job_id,$user_login_type,$job_notes,$job_pics_url,$job_thumbnail_url) {
         /* notes */
     	if (!empty($job_notes)) {
     		$ObjJobNote = new JobNote();
@@ -724,21 +731,19 @@ class JobsController extends Controller
     		$ObjJobNote->save();
     	}
     	/* images */
-    	if (!empty($job_pics_name)  && !empty($job_pics_url)) {
-    		//$images_data = $this->storeJobImages($job_id, $job_pics);
+    	if (!empty($job_pics_url) && !empty($job_thumbnail_url)) {
     		$images_url = $job_pics_url;
-            $images_name = $job_pics_name;
-    		$getExistedImages = Job::selectRaw('job_images_url,job_images_name')->where('job_id', $job_id)->where('is_deleted', 0)->first();
+    		$getExistedImages = Job::selectRaw('job_images_url,image_thumbnails_url')->where('job_id', $job_id)->where('is_deleted', 0)->first();
 
     		if (!empty($getExistedImages)) {
     			if (!empty($getExistedImages->job_images_url)) {
     				$images_url = $getExistedImages->job_images_url . ',' . $job_pics_url;
     			}
-    			if (!empty($getExistedImages->job_images_name)) {
-    				$images_name = $getExistedImages->job_images_name . ',' . $job_pics_name;
+    			if (!empty($getExistedImages->image_thumbnails_url)) {
+    				$thumb_images_url = $getExistedImages->image_thumbnails_url . ',' . $job_thumbnail_url;
     			}
     		}
-    		Job::where('job_id', $job_id)->where('is_deleted', 0)->update(['job_images_url' => $images_url, 'job_images_name' => $images_name]);
+    		Job::where('job_id', $job_id)->where('is_deleted', 0)->update(['job_images_url' => $images_url,'image_thumbnails_url' => $thumb_images_url]);
 
     	}
     	return;

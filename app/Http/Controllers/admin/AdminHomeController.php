@@ -23,8 +23,7 @@ class AdminHomeController extends Controller
 	}
 
 	/*do login*/
-	public function doLogin(Request $request){
-
+	public function doLogin(Request $request) {
 		$email = $request->input('admin_email');
 		$password = $request->input('admin_password');
 		$checkLogin = Admin::where('email',$email)->where('is_deleted',0)->whereIn('login_type_id', [1, 2, 9, 10])->first();

@@ -106,6 +106,16 @@
 											</div>
 											@endif
 										</div>
+										@if(!isset($employeeDetail->id))
+										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>PASSWORD</b></label>
+													<input autocomplete="new-password" type="password" name="employeePassword" id="employeePassword" class="form-control"  placeholder="Enter password">
+												</div>
+											</div>
+										</div>
+										@endif
 										<div class="form-group text-left p-t-md">
 											@if(!isset($employeeDetail->id))
 											<button type="submit" class="btn btn-success">Add</button>
@@ -181,6 +191,7 @@
 		$('#resetPermission').click(function(){
 			location.reload();
 		});
+		$('#employeePassword').val('');
 	});
 
 	/* For select 2*/
@@ -196,6 +207,7 @@
 		var employee_contactNo = $('#employeePhoneNo').val();
 		var employee_email = $('#employeeEmail').val();
 		var employee_type = $('#employeeType').val();
+		var employee_password = $('#employeePassword').val();
 
 		$.ajax({
 			url:'{{ route('storeemployee') }}',
@@ -207,6 +219,7 @@
 				employee_contactNo:employee_contactNo,
 				employee_email:employee_email,
 				employee_type:employee_type,
+				employee_password:employee_password,
 			},
 			type:'post',
 			dataType:'json',

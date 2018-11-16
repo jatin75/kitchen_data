@@ -542,63 +542,63 @@ class JobsController extends Controller
         $html = '';
         $auditList = AuditTrail::where('job_id', $job_id)->get();
         $html .= '<table id="auditList" class="display nowrap" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Name Of Field</th>
-            <th>Old Value</th>
-            <th>New Value</th>
-            <th>Date Of Edit</th>
-            <th>User</th>
-        </tr>
-    </thead><tbody>';
-        foreach ($auditList as $audit) {
-            $html .= '<tr>
-        <td>' . $audit->field_name . '</td>';
-            if (empty($audit->old_value)) {
-                $html .= '<td>--</td>';
-            } elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
-                $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->old_value)) . '</td>';
-            } elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {
-                $html .= '<td>' . substr_replace(substr_replace(substr_replace($audit->old_value, '(', 0, 0), ') ', 4, 0), ' - ', 9, 0) . '</td>';
-            } elseif ($audit->field_name == 'job_status_id') {
-                $status = JobType::selectRaw('job_status_name')->where('job_status_id', $audit->old_value)->first();
-                $html .= '<td>' . $status->job_status_name . ' </td>';
-            } elseif ($audit->field_name == 'plumbing_installation_date' || $audit->field_name == 'start_date' || $audit->field_name == 'end_date') {
-                $html .= '<td>' . date("m/d/Y", strtotime($audit->old_value)) . '</td>';
-            } elseif ($audit->field_name == 'is_select_installation' || $audit->field_name == 'is_select_stone_installation') {
-                $is_select = $audit->old_value == 1 ? "Yes" : "No";
-                $html .= '<td>' . $is_select . '</td>';
-            } elseif ($audit->field_name == 'is_active') {
-                $is_active = $audit->old_value == 1 ? "Active" : "Inactive";
-                $html .= '<td>' . $is_active . '</td>';
-            } else {
-                $html .= '<td>' . $audit->old_value . ' </td>';
-            }
+        <thead>
+            <tr>
+                <th>Name Of Field</th>
+                <th>Old Value</th>
+                <th>New Value</th>
+                <th>Date Of Edit</th>
+                <th>User</th>
+            </tr>
+        </thead><tbody>';
+            foreach ($auditList as $audit) {
+                $html .= '<tr>
+            <td>' . $audit->field_name . '</td>';
+                if (empty($audit->old_value)) {
+                    $html .= '<td>--</td>';
+                } elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
+                    $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->old_value)) . '</td>';
+                } elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {
+                    $html .= '<td>' . substr_replace(substr_replace(substr_replace($audit->old_value, '(', 0, 0), ') ', 4, 0), ' - ', 9, 0) . '</td>';
+                } elseif ($audit->field_name == 'job_status_id') {
+                    $status = JobType::selectRaw('job_status_name')->where('job_status_id', $audit->old_value)->first();
+                    $html .= '<td>' . $status->job_status_name . ' </td>';
+                } elseif ($audit->field_name == 'plumbing_installation_date' || $audit->field_name == 'start_date' || $audit->field_name == 'end_date') {
+                    $html .= '<td>' . date("m/d/Y", strtotime($audit->old_value)) . '</td>';
+                } elseif ($audit->field_name == 'is_select_installation' || $audit->field_name == 'is_select_stone_installation') {
+                    $is_select = $audit->old_value == 1 ? "Yes" : "No";
+                    $html .= '<td>' . $is_select . '</td>';
+                } elseif ($audit->field_name == 'is_active') {
+                    $is_active = $audit->old_value == 1 ? "Active" : "Inactive";
+                    $html .= '<td>' . $is_active . '</td>';
+                } else {
+                    $html .= '<td>' . $audit->old_value . ' </td>';
+                }
 
-            if (empty($audit->new_value)) {
-                $html .= '<td>--</td>';
-            } elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
-                $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->new_value)) . '</td>';
-            } elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {
-                $html .= '<td>' . substr_replace(substr_replace(substr_replace($audit->new_value, '(', 0, 0), ') ', 4, 0), ' - ', 9, 0) . '</td>';
-            } elseif ($audit->field_name == 'job_status_id') {
-                $status = JobType::selectRaw('job_status_name')->where('job_status_id', $audit->new_value)->first();
-                $html .= '<td>' . $status->job_status_name . ' </td>';
-            } elseif ($audit->field_name == 'plumbing_installation_date' || $audit->field_name == 'start_date' || $audit->field_name == 'end_date') {
-                $html .= '<td>' . date("m/d/Y", strtotime($audit->new_value)) . '</td>';
-            } elseif ($audit->field_name == 'is_select_installation' || $audit->field_name == 'is_select_stone_installation') {
-                $is_select = $audit->new_value == 1 ? "Yes" : "No";
-                $html .= '<td>' . $is_select . '</td>';
-            } elseif ($audit->field_name == 'is_active') {
-                $is_active = $audit->new_value == 1 ? "Active" : "Inactive";
-                $html .= '<td>' . $is_active . '</td>';
-            } else {
-                $html .= '<td>' . $audit->new_value . '</td>';
-            }
+                if (empty($audit->new_value)) {
+                    $html .= '<td>--</td>';
+                } elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
+                    $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->new_value)) . '</td>';
+                } elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {
+                    $html .= '<td>' . substr_replace(substr_replace(substr_replace($audit->new_value, '(', 0, 0), ') ', 4, 0), ' - ', 9, 0) . '</td>';
+                } elseif ($audit->field_name == 'job_status_id') {
+                    $status = JobType::selectRaw('job_status_name')->where('job_status_id', $audit->new_value)->first();
+                    $html .= '<td>' . $status->job_status_name . ' </td>';
+                } elseif ($audit->field_name == 'plumbing_installation_date' || $audit->field_name == 'start_date' || $audit->field_name == 'end_date') {
+                    $html .= '<td>' . date("m/d/Y", strtotime($audit->new_value)) . '</td>';
+                } elseif ($audit->field_name == 'is_select_installation' || $audit->field_name == 'is_select_stone_installation') {
+                    $is_select = $audit->new_value == 1 ? "Yes" : "No";
+                    $html .= '<td>' . $is_select . '</td>';
+                } elseif ($audit->field_name == 'is_active') {
+                    $is_active = $audit->new_value == 1 ? "Active" : "Inactive";
+                    $html .= '<td>' . $is_active . '</td>';
+                } else {
+                    $html .= '<td>' . $audit->new_value . '</td>';
+                }
 
-            $html .= '<td>' . date("m/d/Y", strtotime($audit->created_at)) . '</td>
-        <td>' . $audit->name . '</td>
-    </tr>';
+                $html .= '<td>' . date("m/d/Y", strtotime($audit->created_at)) . '</td>
+            <td>' . $audit->name . '</td>
+        </tr>';
         }
         $html .= '</tbody></table>';
         $response['audit_data'] = $html;
@@ -1041,6 +1041,47 @@ class JobsController extends Controller
         echo json_encode($response);
     }
 
+    public function removeFiles(Request $request)
+    {
+        $job_id = $request->get('job_id');
+        $image_id = $request->get('image_id');
+        $image_link = $request->get('image_link');
+        $image_thumb_link = $request->get('image_thumb_link');
+
+        $getJobDetail = Job::where('job_id', $job_id)->first();
+
+        $imageArray = explode(',', $getJobDetail->job_images_url);
+        $thumbImageArray = explode(',', $getJobDetail->image_thumbnails_url);
+        $fileArray = explode(',', $getJobDetail->job_files_url);
+        $newImageArray = [];
+        $newImageThumbArray = [];
+        $newFileArray = [];
+        foreach ($imageArray as $image) {
+            if (!stristr($image, $image_link)) {
+                $newImageArray[] = $image;
+            }
+        }
+        foreach ($thumbImageArray as $image) {
+            if (!stristr($image, $image_thumb_link)) {
+                $newImageThumbArray[] = $image;
+            }
+        }
+        foreach ($fileArray as $image) {
+            if (!stristr($image, $image_link)) {
+                $newFileArray[] = $image;
+            }
+        }
+        $final_image_link = implode(',', $newImageArray);
+        $final_thumb_image_link = implode(',', $newImageThumbArray);
+        $final_file_link = implode(',', $newFileArray);
+
+        $getJobDetail->job_images_url = (!empty($final_image_link)) ? $final_image_link : null;
+        $getJobDetail->image_thumbnails_url = (!empty($final_thumb_image_link)) ? $final_thumb_image_link : null;
+        $getJobDetail->job_files_url = (!empty($final_file_link)) ? $final_file_link : null;
+        $getJobDetail->save();
+        return 1;
+    }
+
     public function commonViewJobDetails($ids)
     {
         $allEmployeeId = explode(",", $ids);
@@ -1056,7 +1097,7 @@ class JobsController extends Controller
         }
     }
 
-/* New Status */
+    /* New Status */
     public function sendMailNew($working_employee_ids, $job_title)
     {
         $email_ids = [];
@@ -1078,7 +1119,7 @@ class JobsController extends Controller
         return;
     }
 
-/* Measuring Status */
+    /* Measuring Status */
     public function sendMailMeasuring($job_Detail)
     {
         $working_employee_ids = explode(',', $job_Detail->working_employee_id);
@@ -1132,7 +1173,7 @@ class JobsController extends Controller
         return;
     }
 
-/* Design Status */
+    /* Design Status */
     public function sendMailDesign($working_employee_ids, $job_title)
     {
         $email_ids = [];
@@ -1154,7 +1195,7 @@ class JobsController extends Controller
         return;
     }
 
-/* Delivery Status */
+    /* Delivery Status */
     public function sendMailDelivery($job_Detail)
     {
         $working_employee_ids = explode(',', $job_Detail->working_employee_id);
@@ -1213,7 +1254,7 @@ class JobsController extends Controller
         return;
     }
 
-/* Installation Status */
+    /* Installation Status */
     public function sendMailInstallation($job_title, $delivery_datetime, $contractor_email)
     {
         $delivery_date = date('m/d/Y', strtotime($delivery_datetime));
@@ -1231,7 +1272,7 @@ class JobsController extends Controller
         return;
     }
 
-/* Stone installation Status */
+    /* Stone installation Status */
     public function sendMailStoneInstallation($job_title, $delivery_datetime, $contractor_email)
     {
         $delivery_date = date('m/d/Y', strtotime($delivery_datetime));
@@ -1249,7 +1290,7 @@ class JobsController extends Controller
         return;
     }
 
-/*pushNotification */
+    /*pushNotification */
     public function pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound = 'dafault')
     {
         if (strtolower($device_type) == 'ios') {
