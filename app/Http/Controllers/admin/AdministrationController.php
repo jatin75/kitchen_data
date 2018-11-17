@@ -88,7 +88,7 @@ class AdministrationController extends Controller
 				Admin::where('id',$client_id)->update(['is_deleted' => 1]);
 			}
 		}*/
-				
+
 		$msg = 'Company deleted successfully.';
 		Session::flash('successMessage',$msg);
 		return back();

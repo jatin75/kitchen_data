@@ -20,6 +20,8 @@ use LaravelFCM\Message\PayloadNotificationBuilder;
 use Mail;
 use PushNotification;
 use Session;
+use Image;
+use Storage;
 
 class JobsController extends Controller
 {
@@ -160,7 +162,7 @@ class JobsController extends Controller
         return view('admin.addjob')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobTypeDetail)->with('comapnyList', $comapnyList)->with('employeeList', $employeeList)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('companyClientList', $getCompanyClients)->with('salesemployeelist', $salesEmployeelist)->with('deliveryEmployeeList', $deliveryEmployeeList);
     }
 
-    function clone ($job_id) {
+    public function clone ($job_id) {
         $getJobDetails = Job::where('job_id', $job_id)->first();
         $comapnyList = Company::selectRaw('company_id,name')->where('is_deleted', 0)->get();
         $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0");
@@ -211,24 +213,25 @@ class JobsController extends Controller
 
         return view('admin.addjob')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobTypeDetail)->with('comapnyList', $comapnyList)->with('employeeList', $employeeList)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('companyClientList', $getCompanyClients)->with('cloneflag', '1')->with('salesemployeelist', $salesEmployeelist)->with('deliveryEmployeeList', $deliveryEmployeeList);
     }
+
     public function store(Request $request)
     {
-        $hidden_job_id = $request->get('hidden_job_id');
+        $hidden_job_id = $request->get('hiddenJobId');
         $hiddenisclone = $request->get('hiddenisclone');
-        $working_employee_ids = $request->get('working_employee_id');
+        $working_employee_ids = $request->get('workingEmployee');
         $working_employees = implode(',', $working_employee_ids);
-        $comapny_clients = implode(',', $request->get('comapny_clients_id'));
-        if (!empty($request->get('sales_employee_id'))) {
-            //$sales_employee_id = implode(',', $request->get('sales_employee_id'));
-            $sales_employee_id = $request->get('sales_employee_id');
+        $comapny_clients = implode(',', $request->get('comapnyClients'));
+        if (!empty($request->get('salesEmployee'))) {
+            $sales_employee_id = $request->get('salesEmployee');
         } else {
-            $sales_employee_id = "";
+            $sales_employee_id = null;
         }
-        $is_installation = $request->get('installation_select');
-        $is_stone_installation = $request->get('stone_installation_select');
-        $is_delivery_installation = $request->get('delivery_installation_select');
+        $is_installation = $request->get('installationSelect');
+        $is_stone_installation = $request->get('stoneInstallationSelect');
+        $is_delivery_installation = $request->get('deliveryInstallationSelect');
 
         if (!empty($hidden_job_id) && empty($hiddenisclone)) {
+            /* Edit */
             $objJob = Job::where('job_id', $hidden_job_id)->first();
             /*Audit Trail start*/
             $oldValueArray = [];
@@ -236,30 +239,30 @@ class JobsController extends Controller
             $oldValueArray[] = $objJob->toArray();
             $oldValueArray = call_user_func_array('array_merge', $oldValueArray);
             /*Audit Trail end*/
-            $objJob->company_id = $request->get('job_company_id');
-            $objJob->job_title = $request->get('job_title');
-            $objJob->address_1 = $request->get('address_1');
-            $objJob->address_2 = $request->get('address_2');
+            $objJob->company_id = $request->get('jobCompanyName');
+            $objJob->job_title = $request->get('jobTitle');
+            $objJob->address_1 = $request->get('locationAddress');
+            $objJob->address_2 = $request->get('subAddress');
             $objJob->city = $request->get('city');
             $objJob->state = $request->get('state');
             $objJob->zipcode = $request->get('zipcode');
-            $objJob->apartment_number = $request->get('apartment_no');
-            $objJob->super_name = $request->get('job_super_name');
-            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('super_phone_number'));
-            $objJob->contractor_name = $request->get('job_contractor_name');
-            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractor_phone_number'));
-            $objJob->contractor_email = $request->get('contractor_email');
+            $objJob->apartment_number = $request->get('apartmentNo');
+            $objJob->super_name = $request->get('jobSuperName');
+            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('superPhoneNumber'));
+            $objJob->contractor_name = $request->get('jobContractorName');
+            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractorPhoneNumber'));
+            $objJob->contractor_email = $request->get('contractorEmail');
             $objJob->working_employee_id = $working_employees;
             $objJob->company_clients_id = $comapny_clients;
             $objJob->sales_employee_id = $sales_employee_id;
 
-            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbing_installation_date')));
-            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_date') . ' ' . $request->get('delivery_time')));
+            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbingInstallationDate')));
+            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryDate') . ' ' . $request->get('deliveryTime')));
 
             $objJob->is_select_installation = $is_installation;
             if ($is_installation == 3) {
-                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));
-                $objJob->installation_employee_id = implode(',', $request->get('installation_employees_id'));
+                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installationDate') . ' ' . $request->get('installationTime')));
+                $objJob->installation_employee_id = implode(',', $request->get('installationEmployees'));
             } else {
                 $objJob->installation_datetime = null;
                 $objJob->installation_employee_id = null;
@@ -267,8 +270,8 @@ class JobsController extends Controller
 
             $objJob->is_select_stone_installation = $is_stone_installation;
             if ($is_stone_installation == 2) {
-                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $request->get('stone_installation_time')));
-                $objJob->stone_installation_employee_id = implode(',', $request->get('stone_installation_employees_id'));
+                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stoneInstallationDate') . ' ' . $request->get('stoneInstallationTime')));
+                $objJob->stone_installation_employee_id = implode(',', $request->get('stoneInstallationEmployees'));
             } else {
                 $objJob->stone_installation_datetime = null;
                 $objJob->stone_installation_employee_id = null;
@@ -276,18 +279,89 @@ class JobsController extends Controller
 
             $objJob->is_select_delivery_installation = $is_delivery_installation;
             if ($is_delivery_installation == 4) {
-                $objJob->delivery_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_installation_date') . ' ' . $request->get('delivery_installation_time')));
-                $objJob->delivery_installation_employee_id = implode(',', $request->get('delivery_installation_employees_id'));
+                $objJob->delivery_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryInstallationDate') . ' ' . $request->get('deliveryInstallationTime')));
+                $objJob->delivery_installation_employee_id = implode(',', $request->get('deliveryInstallationEmployees'));
             } else {
                 $objJob->delivery_installation_datetime = null;
                 $objJob->delivery_installation_employee_id = null;
             }
 
-            $objJob->job_status_id = $request->get('job_status_id');
+            $objJob->job_status_id = $request->get('jobType');
 
-            $objJob->is_active = $request->get('job_status');
-            $objJob->start_date = date('Y-m-d', strtotime($request->get('job_start_date')));
-            $objJob->end_date = date('Y-m-d', strtotime($request->get('job_end_date')));
+            $objJob->is_active = $request->get('jobStatus');
+            $objJob->start_date = date('Y-m-d', strtotime($request->get('jobStartDate')));
+            $objJob->end_date = date('Y-m-d', strtotime($request->get('jobEndDate')));
+
+            /* uploade files */
+            $job_pics = $request->file('addAttachment');
+            /* S3 bucket */
+            if (isset($job_pics) && sizeof($job_pics) > 0) {
+                $imageURL = [];
+                $thumbImageURL = [];
+                $fileUrl = [];
+                foreach ($job_pics as $image) {
+                    $originalName = $image->getClientOriginalName();
+                    $checkExtension = pathinfo($originalName, PATHINFO_EXTENSION);
+                    switch ($checkExtension) {
+                        case 'jpg':
+                        case 'jpeg':
+                        case 'png':
+                        $flag = 1;
+                        break;
+                        case 'doc':
+                        case 'docx':
+                        case 'xls':
+                        case 'xlsx':
+                        case 'csv':
+                        case 'pdf':
+                        $flag = 2;
+                        break;
+                    }
+
+                    $imageFileName = uniqid(time()) . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+                    $thumbImageFileName = uniqid(time()) . '_thumb' . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+                    $s3 = Storage::disk('s3');
+                    $filePath = ($flag == 1)? 'jobsite_images/' : 'jobsite_files/' . $imageFileName;
+                    if($flag == 1)
+                    {
+                        $thumbFilePath = 'jobsite_images/' . $thumbImageFileName;
+                    }
+                    if ($s3->put($filePath, file_get_contents($image), 'public')) {
+                        if($flag == 1)
+                        {
+                            /* images */
+                            $thumbpath = public_path('uploads/' . $thumbImageFileName);
+                            $img = Image::make($image);
+                            $img->resize(100, 100)->save($thumbpath);
+                            $s3->put($thumbFilePath, file_get_contents($thumbpath), 'public');
+                            $thumbImageURL[] = $s3->url($thumbFilePath);
+                            unlink($thumbpath);
+                            $imageURL[] = $s3->url($filePath);
+                        }
+                        else
+                        {
+                            $fileUrl[] = $s3->url($filePath);
+                        }
+                    }
+                }
+                if(sizeof($imageURL) > 0)
+                {
+                    $imageURL = implode(',', $imageURL);
+                    $thumbImageURL = implode(',', $thumbImageURL);
+                    if (!empty($objJob->job_images_url)) {
+                        $objJob->job_images_url = $objJob->job_images_url . ',' . $imageURL;
+                        $objJob->image_thumbnails_url = $objJob->image_thumbnails_url . ',' . $thumbImageURL;
+                    } else {
+                        $objJob->job_images_url = $imageURL;
+                        $objJob->image_thumbnails_url = $thumbImageURL;
+                    }
+                }
+                if(sizeof($fileUrl) > 0)
+                {
+                    $fileUrl = implode(',', $fileUrl);
+                    $objJob->job_files_url = (!empty($objJob->job_files_url))? $objJob->job_files_url . ',' . $fileUrl : $fileUrl;
+                }
+            }
 
             /*Audit Trail start*/
             $newValueArray[] = $objJob->toArray();
@@ -313,36 +387,36 @@ class JobsController extends Controller
             $response['key'] = 2;
             return json_encode($response);
         } else {
+            /* Create */
             $newJobId = $this->getJobId();
             $objJob = new Job();
             $objJob->job_id = $newJobId;
-            $objJob->company_id = $request->get('job_company_id');
-            $objJob->job_title = $request->get('job_title');
-            $objJob->address_1 = $request->get('address_1');
-            $objJob->address_2 = $request->get('address_2');
+            $objJob->company_id = $request->get('jobCompanyName');
+            $objJob->job_title = $request->get('jobTitle');
+            $objJob->address_1 = $request->get('locationAddress');
+            $objJob->address_2 = $request->get('subAddress');
             $objJob->city = $request->get('city');
             $objJob->state = $request->get('state');
             $objJob->zipcode = $request->get('zipcode');
-            $objJob->apartment_number = $request->get('apartment_no');
-            $objJob->super_name = $request->get('job_super_name');
-            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('super_phone_number'));
-            $objJob->contractor_name = $request->get('job_contractor_name');
-            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractor_phone_number'));
-            $objJob->contractor_email = $request->get('contractor_email');
+            $objJob->apartment_number = $request->get('apartmentNo');
+            $objJob->super_name = $request->get('jobSuperName');
+            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('superPhoneNumber'));
+            $objJob->contractor_name = $request->get('jobContractorName');
+            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractorPhoneNumber'));
+            $objJob->contractor_email = $request->get('contractorEmail');
             $objJob->working_employee_id = $working_employees;
             $objJob->company_clients_id = $comapny_clients;
             $objJob->sales_employee_id = $sales_employee_id;
 
-            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbing_installation_date')));
-            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_date') . ' ' . $request->get('delivery_time')));
+            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbingInstallationDate')));
+            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryDate') . ' ' . $request->get('deliveryTime')));
 
-            // $objJob->job_status_id = 1;
-            $objJob->job_status_id = $request->get('job_status_id');
+            $objJob->job_status_id = $request->get('jobType');
 
             $objJob->is_select_installation = $is_installation;
             if ($is_installation == 3) {
-                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));
-                $objJob->installation_employee_id = implode(',', $request->get('installation_employees_id'));
+                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installationDate') . ' ' . $request->get('installationTime')));
+                $objJob->installation_employee_id = implode(',', $request->get('installationEmployees'));
             } else {
                 $objJob->installation_datetime = null;
                 $objJob->installation_employee_id = null;
@@ -350,8 +424,8 @@ class JobsController extends Controller
 
             $objJob->is_select_stone_installation = $is_stone_installation;
             if ($is_stone_installation == 2) {
-                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $request->get('stone_installation_time')));
-                $objJob->stone_installation_employee_id = implode(',', $request->get('stone_installation_employees_id'));
+                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stoneInstallationDate') . ' ' . $request->get('stoneInstallationTime')));
+                $objJob->stone_installation_employee_id = implode(',', $request->get('stoneInstallationEmployees'));
             } else {
                 $objJob->stone_installation_datetime = null;
                 $objJob->stone_installation_employee_id = null;
@@ -359,19 +433,84 @@ class JobsController extends Controller
 
             $objJob->is_select_delivery_installation = $is_delivery_installation;
             if ($is_delivery_installation == 4) {
-                $objJob->delivery_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_installation_date') . ' ' . $request->get('delivery_installation_time')));
-                $objJob->delivery_installation_employee_id = implode(',', $request->get('delivery_installation_employees_id'));
+                $objJob->delivery_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryInstallationDate') . ' ' . $request->get('deliveryInstallationTime')));
+                $objJob->delivery_installation_employee_id = implode(',', $request->get('deliveryInstallationEmployees'));
             } else {
                 $objJob->delivery_installation_datetime = null;
                 $objJob->delivery_installation_employee_id = null;
             }
 
-            // $objJob->admin_user_id = Session::get('employee_id');
-            $objJob->is_active = $request->get('job_status');
+            $objJob->is_active = $request->get('jobStatus');
             $objJob->is_deleted = 0;
-            $objJob->start_date = date('Y-m-d', strtotime($request->get('job_start_date')));
-            $objJob->end_date = date('Y-m-d', strtotime($request->get('job_end_date')));
+            $objJob->start_date = date('Y-m-d', strtotime($request->get('jobStartDate')));
+            $objJob->end_date = date('Y-m-d', strtotime($request->get('jobEndDate')));
             $objJob->created_at = date('Y-m-d H:i:s');
+
+            /* uploade files */
+            $job_pics = $request->file('addAttachment');
+            /* S3 bucket */
+            if (isset($job_pics) && sizeof($job_pics) > 0) {
+                $imageURL = [];
+                $thumbImageURL = [];
+                $fileUrl = [];
+                foreach ($job_pics as $image) {
+                    $originalName = $image->getClientOriginalName();
+                    $checkExtension = pathinfo($originalName, PATHINFO_EXTENSION);
+                    switch ($checkExtension) {
+                        case 'jpg':
+                        case 'jpeg':
+                        case 'png':
+                        $flag = 1;
+                        break;
+                        case 'doc':
+                        case 'docx':
+                        case 'xls':
+                        case 'xlsx':
+                        case 'csv':
+                        case 'pdf':
+                        $flag = 2;
+                        break;
+                    }
+
+                    $imageFileName = uniqid(time()) . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+                    $thumbImageFileName = uniqid(time()) . '_thumb' . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+                    $s3 = Storage::disk('s3');
+                    $filePath = ($flag == 1)? 'jobsite_images/' : 'jobsite_files/' . $imageFileName;
+                    if($flag == 1)
+                    {
+                        $thumbFilePath = 'jobsite_images/' . $thumbImageFileName;
+                    }
+                    if ($s3->put($filePath, file_get_contents($image), 'public')) {
+                        if($flag == 1)
+                        {
+                            /* images */
+                            $thumbpath = public_path('uploads/' . $thumbImageFileName);
+                            $img = Image::make($image);
+                            $img->resize(100, 100)->save($thumbpath);
+                            $s3->put($thumbFilePath, file_get_contents($thumbpath), 'public');
+                            $thumbImageURL[] = $s3->url($thumbFilePath);
+                            unlink($thumbpath);
+                            $imageURL[] = $s3->url($filePath);
+                        }
+                        else
+                        {
+                            $fileUrl[] = $s3->url($filePath);
+                        }
+                    }
+                }
+                if(sizeof($imageURL) > 0)
+                {
+                    $imageURL = implode(',', $imageURL);
+                    $thumbImageURL = implode(',', $thumbImageURL);
+                    $objJob->job_images_url = $imageURL;
+                    $objJob->image_thumbnails_url = $thumbImageURL;
+                }
+                if(sizeof($fileUrl) > 0)
+                {
+                    $fileUrl = implode(',', $fileUrl);
+                    $objJob->job_files_url = $fileUrl;
+                }
+            }
             $objJob->save();
 
             $finalArray[] = array(
@@ -391,7 +530,7 @@ class JobsController extends Controller
             $response['key'] = 1;
 
             /*send Mail*/
-            $this->sendMailNew($working_employee_ids, $request->get('job_title'));
+            $this->sendMailNew($working_employee_ids, $request->get('jobTitle'));
             return json_encode($response);
         }
     }
@@ -1044,7 +1183,6 @@ class JobsController extends Controller
     public function removeFiles(Request $request)
     {
         $job_id = $request->get('job_id');
-        $image_id = $request->get('image_id');
         $image_link = $request->get('image_link');
         $image_thumb_link = $request->get('image_thumb_link');
 

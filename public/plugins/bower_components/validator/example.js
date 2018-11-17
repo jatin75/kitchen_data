@@ -629,7 +629,7 @@ $(document).ready(function () {
 					},
 				}
 			},
-			comapnyClients: {
+			"comapnyClients[]": {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
@@ -689,7 +689,7 @@ $(document).ready(function () {
 					}
 				}
 			},
-			workingEmployee: {
+			"workingEmployee[]": {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
@@ -948,7 +948,7 @@ $(document).ready(function () {
 					},
 				}
 			},
-			deliveryInstallationEmployees: {
+			"deliveryInstallationEmployees[]": {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
@@ -1003,7 +1003,7 @@ $(document).ready(function () {
 					},
 				}
 			},
-			installationEmployees: {
+			"installationEmployees[]": {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
@@ -1058,7 +1058,7 @@ $(document).ready(function () {
 					},
 				}
 			},
-			stoneInstallationEmployees: {
+			"stoneInstallationEmployees[]": {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
@@ -1066,6 +1066,14 @@ $(document).ready(function () {
 					},
 				}
 			},
+			"addAttachment[]": {
+                validators: {
+                    file: {
+                        extension: 'jpeg,jpg,png,doc,docx,xls,xlsx,csv,pdf',
+                        message: 'The selected file is not valid. It should be in jpeg or jpg or png or doc or docx or xls or xlsx or csv or pdf format.'
+                    }
+                }
+            },
 		}
 	});
 

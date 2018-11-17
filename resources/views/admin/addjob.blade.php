@@ -39,7 +39,7 @@
 								<div class="tab-content br-n pn">
 									<!--tab1-->
 									<div id="tab1" class="tab-pane active">
-										<form id="formAddJob" method="post">
+										<form id="formAddJob" method="post" enctype="multipart/form-data">
 											{{ csrf_field() }} {{--
 											<input type="hidden" name="hiddenMail" id="hiddenMail" value="{{$accountDetail->email or ''}}"> --}} {{--
 											<input type="show" name="hiddenStatus" id="hiddenStatus" value="{{$new_account or ''}}"> --}}
@@ -63,7 +63,7 @@
 												<div class="col-md-4">
 													<div class="form-group dropdown_select" style="overflow: visible!important;">
 														<label class="control-label"><b>COMPANY CLIENTS *</b></label>
-														<select data-size="5" id="comapnyClients" name="comapnyClients" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+														<select data-size="5" id="comapnyClients" name="comapnyClients[]" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 															@if(isset($companyClientList) && sizeof($companyClientList) > 0)
 															@foreach($companyClientList as $client)
 															<option value="{{ $client->id }}"
@@ -148,7 +148,7 @@
 												<div class="col-md-4">
 													<div class="form-group dropdown_select" style="overflow: visible!important;">
 														<label class="control-label"><b>WORKING EMPLOYEES *</b></label>
-														<select data-size="5" id="workingEmployee" name="workingEmployee" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+														<select data-size="5" id="workingEmployee" name="workingEmployee[]" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 															@foreach($employeeList as $employee)
 															<option value="{{ $employee->id }}"
 																@if(isset($jobDetails->working_employee_id) && sizeof($jobDetails->working_employee_id) > 0)
@@ -404,7 +404,7 @@
 													<div class="hidden" id="deliveryEmployeeDiv">
 														<div class="form-group dropdown_select" style="overflow: visible!important;">
 															<label class="control-label"><b>DELIVERY INSTALLATION EMPLOYEES *</b></label>
-															<select data-size="5" id="deliveryInstallationEmployees" name="deliveryInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+															<select data-size="5" id="deliveryInstallationEmployees" name="deliveryInstallationEmployees[]" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 																@foreach($deliveryEmployeeList as $delivery)
 																<option value="{{ $delivery->id }}"
 																	@if(isset($jobDetails->delivery_installation_employee_id) && sizeof($jobDetails->delivery_installation_employee_id) > 0)
@@ -421,7 +421,7 @@
 													<div class="hidden" id="installationEmployeeDiv">
 														<div class="form-group dropdown_select" style="overflow: visible!important;">
 															<label class="control-label"><b>INSTALLATION EMPLOYEES *</b></label>
-															<select data-size="5" id="installationEmployees" name="installationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+															<select data-size="5" id="installationEmployees" name="installationEmployees[]" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 																@foreach($installEmployeeList as $installer)
 																<option value="{{ $installer->id }}"
 																	@if(isset($jobDetails->installation_employee_id) && sizeof($jobDetails->installation_employee_id) > 0)
@@ -438,7 +438,7 @@
 													<div class="hidden" id="stoneEmployeeDiv">
 														<div class="form-group dropdown_select" style="overflow: visible!important;">
 															<label class="control-label"><b>STONE INSTALLATION EMPLOYEES *</b></label>
-															<select data-size="5" id="stoneInstallationEmployees" name="stoneInstallationEmployees" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+															<select data-size="5" id="stoneInstallationEmployees" name="stoneInstallationEmployees[]" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
 																@foreach($stoneEmployeeList as $stone)
 																<option value="{{ $stone->id }}"
 																	@if(isset($jobDetails->stone_installation_employee_id) && sizeof($jobDetails->stone_installation_employee_id) > 0)
@@ -560,10 +560,9 @@
 			if(hidden_files != "")
 			{
 				var fileArray = hidden_files.split(",");
-				for(var i=0;i<fileArray.length;i++)
+				for(var i = 0;i<fileArray.length;i++)
 				{
-					var file_name=fileArray[i].name;
-					var extension = file_name.split('.').pop().toLowerCase();
+					var extension = fileArray[i].split('.').pop().toLowerCase();
 					if(extension == 'doc' || extension == 'docx') {
 					var upload_img = '<i class="screenshot p-t-6 p-l-14 m-t-5 m-r-5 m-b-5 m-l-5 fa fa-file-word-o" style="font-size:107px"></i>';
 					}else if(extension == 'xls' || extension == 'xlsx' || extension == 'csv') {
@@ -573,7 +572,7 @@
 					}else {
 					var upload_img = '<i class="screenshot p-t-6 p-l-14 m-t-5 m-r-5 m-b-5 m-l-5 fa fa-file" style="font-size:107px"></i>';
 					}
-					$('#image_preview').append('<div id="imageRemove_'+i+'" class="col-md-2 col-xs-2 col-sm-2"><i class="image-remove ti-close" onclick="removeFiles(\''+i+'\',\''+fileArray[i]+'\');"></i>'+upload_img+'</div>');
+					$('#image_preview').append('<div id="imageRemove_'+'file'+i+'" class="col-md-2 col-xs-2 col-sm-2"><i class="image-remove ti-close" onclick="removeFiles(\''+'file'+i+'\',\''+fileArray[i]+'\');"></i>'+upload_img+'</div>');
 				}
 			}
 			$('.image-popup-vertical-fit').magnificPopup({
@@ -602,28 +601,28 @@
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('deliveryInstallationDate', false)
 					.enableFieldValidators('deliveryInstallationTime', false)
-					.enableFieldValidators('deliveryInstallationEmployees', false);
+					.enableFieldValidators('deliveryInstallationEmployees[]', false);
 					break;
 					case '2':
 					$('#deliveryDateDiv,#deliveryEmployeeDiv').addClass('hidden');
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('deliveryInstallationDate', false)
 					.enableFieldValidators('deliveryInstallationTime', false)
-					.enableFieldValidators('deliveryInstallationEmployees', false);
+					.enableFieldValidators('deliveryInstallationEmployees[]', false);
 					break;
 					case '3':
 					$('#deliveryDateDiv,#deliveryEmployeeDiv').addClass('hidden');
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('deliveryInstallationDate', false)
 					.enableFieldValidators('deliveryInstallationTime', false)
-					.enableFieldValidators('deliveryInstallationEmployees', false);
+					.enableFieldValidators('deliveryInstallationEmployees[]', false);
 					break;
 					case '4':
 					$('#deliveryDateDiv,#deliveryEmployeeDiv').removeClass('hidden');
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('deliveryInstallationDate', true)
 					.enableFieldValidators('deliveryInstallationTime', true)
-					.enableFieldValidators('deliveryInstallationEmployees', true);
+					.enableFieldValidators('deliveryInstallationEmployees[]', true);
 					break;
 				}
 			}
@@ -641,21 +640,21 @@
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('installationDate', false)
 					.enableFieldValidators('installationTime', false)
-					.enableFieldValidators('installationEmployees', false);
+					.enableFieldValidators('installationEmployees[]', false);
 					break;
 					case '2':
 					$('#installationDateDiv,#installationEmployeeDiv').addClass('hidden');
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('installationDate', false)
 					.enableFieldValidators('installationTime', false)
-					.enableFieldValidators('installationEmployees', false);
+					.enableFieldValidators('installationEmployees[]', false);
 					break;
 					case '3':
 					$('#installationDateDiv,#installationEmployeeDiv').removeClass('hidden');
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('installationDate', true)
 					.enableFieldValidators('installationTime', true)
-					.enableFieldValidators('installationEmployees', true);
+					.enableFieldValidators('installationEmployees[]', true);
 					break;
 				}
 			}
@@ -673,14 +672,14 @@
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('stoneInstallationDate', false)
 					.enableFieldValidators('stoneInstallationTime', false)
-					.enableFieldValidators('stoneInstallationEmployees', false);
+					.enableFieldValidators('stoneInstallationEmployees[]', false);
 					break;
 					case '2':
 					$('#stoneDateDiv,#stoneEmployeeDiv').removeClass('hidden');
 					$('#formAddJob').data('bootstrapValidator')
 					.enableFieldValidators('stoneInstallationDate', true)
 					.enableFieldValidators('stoneInstallationTime', true)
-					.enableFieldValidators('stoneInstallationEmployees', true);
+					.enableFieldValidators('stoneInstallationEmployees[]', true);
 					break;
 				}
 			}
@@ -699,28 +698,28 @@
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('deliveryInstallationDate', false)
 				.enableFieldValidators('deliveryInstallationTime', false)
-				.enableFieldValidators('deliveryInstallationEmployees', false);
+				.enableFieldValidators('deliveryInstallationEmployees[]', false);
 				break;
 				case '2':
 				$('#deliveryDateDiv,#deliveryEmployeeDiv').addClass('hidden');
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('deliveryInstallationDate', false)
 				.enableFieldValidators('deliveryInstallationTime', false)
-				.enableFieldValidators('deliveryInstallationEmployees', false);
+				.enableFieldValidators('deliveryInstallationEmployees[]', false);
 				break;
 				case '3':
 				$('#deliveryDateDiv,#deliveryEmployeeDiv').addClass('hidden');
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('deliveryInstallationDate', false)
 				.enableFieldValidators('deliveryInstallationTime', false)
-				.enableFieldValidators('deliveryInstallationEmployees', false);
+				.enableFieldValidators('deliveryInstallationEmployees[]', false);
 				break;
 				case '4':
 				$('#deliveryDateDiv,#deliveryEmployeeDiv').removeClass('hidden');
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('deliveryInstallationDate', true)
 				.enableFieldValidators('deliveryInstallationTime', true)
-				.enableFieldValidators('deliveryInstallationEmployees', true);
+				.enableFieldValidators('deliveryInstallationEmployees[]', true);
 				break;
 			}
 		}
@@ -739,21 +738,21 @@
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('installationDate', false)
 				.enableFieldValidators('installationTime', false)
-				.enableFieldValidators('installationEmployees', false);
+				.enableFieldValidators('installationEmployees[]', false);
 				break;
 				case '2':
 				$('#installationDateDiv,#installationEmployeeDiv').addClass('hidden');
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('installationDate', false)
 				.enableFieldValidators('installationTime', false)
-				.enableFieldValidators('installationEmployees', false);
+				.enableFieldValidators('installationEmployees[]', false);
 				break;
 				case '3':
 				$('#installationDateDiv,#installationEmployeeDiv').removeClass('hidden');
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('installationDate', true)
 				.enableFieldValidators('installationTime', true)
-				.enableFieldValidators('installationEmployees', true);
+				.enableFieldValidators('installationEmployees[]', true);
 				break;
 			}
 		}
@@ -772,14 +771,14 @@
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('stoneInstallationDate', false)
 				.enableFieldValidators('stoneInstallationTime', false)
-				.enableFieldValidators('stoneInstallationEmployees', false);
+				.enableFieldValidators('stoneInstallationEmployees[]', false);
 				break;
 				case '2':
 				$('#stoneDateDiv,#stoneEmployeeDiv').removeClass('hidden');
 				$('#formAddJob').data('bootstrapValidator')
 				.enableFieldValidators('stoneInstallationDate', true)
 				.enableFieldValidators('stoneInstallationTime', true)
-				.enableFieldValidators('stoneInstallationEmployees', true);
+				.enableFieldValidators('stoneInstallationEmployees[]', true);
 				break;
 			}
 		}
@@ -797,8 +796,8 @@
 
 	$("#deliveryInstallationEmployees").change(function(){
 		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('deliveryInstallationEmployees', true);
-		$('#formAddJob').bootstrapValidator('revalidateField', 'deliveryInstallationEmployees');
+		.enableFieldValidators('deliveryInstallationEmployees[]', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'deliveryInstallationEmployees[]');
 	});
 
 	$("#installationTime").change(function(){
@@ -809,8 +808,8 @@
 
 	$("#installationEmployees").change(function(){
 		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('installationEmployees', true);
-		$('#formAddJob').bootstrapValidator('revalidateField', 'installationEmployees');
+		.enableFieldValidators('installationEmployees[]', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'installationEmployees[]');
 	});
 
 	$("#stoneInstallationTime").change(function(){
@@ -821,8 +820,8 @@
 
 	$("#stoneInstallationEmployees").change(function(){
 		$('#formAddJob').data('bootstrapValidator')
-		.enableFieldValidators('stoneInstallationEmployees', true);
-		$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationEmployees');
+		.enableFieldValidators('stoneInstallationEmployees[]', true);
+		$('#formAddJob').bootstrapValidator('revalidateField', 'stoneInstallationEmployees[]');
 	});
 
 	/*check revalidation*/
@@ -837,13 +836,13 @@
 		$('#formAddJob').data('bootstrapValidator')
 		.enableFieldValidators('installationDate', installStatus)
 		.enableFieldValidators('installationTime', installStatus)
-		.enableFieldValidators('installationEmployees', installStatus)
+		.enableFieldValidators('installationEmployees[]', installStatus)
 		.enableFieldValidators('stoneInstallationDate', StoneInstallStatus)
 		.enableFieldValidators('stoneInstallationTime', StoneInstallStatus)
-		.enableFieldValidators('stoneInstallationEmployees', StoneInstallStatus)
+		.enableFieldValidators('stoneInstallationEmployees[]', StoneInstallStatus)
 		.enableFieldValidators('deliveryInstallationDate', DeliveryInstallStatus)
 		.enableFieldValidators('deliveryInstallationTime', DeliveryInstallStatus)
-		.enableFieldValidators('deliveryInstallationEmployees', DeliveryInstallStatus);
+		.enableFieldValidators('deliveryInstallationEmployees[]', DeliveryInstallStatus);
 	});
 
 	/* For select 2*/
@@ -880,87 +879,15 @@
 	$('#formAddJob').on('success.form.bv', function (e) {
 		e.preventDefault();
 		$('#loader').show();
-		var hidden_job_id = $('#hiddenJobId').val();
-		var hiddenisclone = $('#hiddenisclone').val();
-		var job_title = $('#jobTitle').val();
-		var job_status = $('#jobStatus').val();
-		var job_status_id = $('#jobType').val();
-		var address_1 = $('#locationAddress').val();
-		var address_2 = $('#subAddress').val();
-		var apartment_no = $('#apartmentNo').val();
-		var city = $('#city').val();
-		var state = $('#state').val();
-		var zipcode = $('#zipcode').val();
-		var job_start_date = $('#jobStartDate').val();
-		var job_end_date = $('#jobEndDate').val();
-		var plumbing_installation_date = $('#plumbingInstallationDate').val();
-		var delivery_date = $('#deliveryDate').val();
-		var delivery_time = $('#deliveryTime').val();
-		var job_super_name = $('#jobSuperName').val();
-		var super_phone_number = $('#superPhoneNumber').val();
-		var job_contractor_name = $('#jobContractorName').val();
-		var contractor_email = $('#contractorEmail').val();
-		var contractor_phone_number = $('#contractorPhoneNumber').val();
-		var job_company_id = $('#jobCompanyName').val();
-		var sales_employee_id = $('#salesEmployee').val();
-		var comapny_clients_id = $('#comapnyClients').val();
-		var working_employee_id = $('#workingEmployee').val();
-		var installation_select = $('#installationSelect').val();
-		var installation_date = $('#installationDate').val();
-		var installation_time = $('#installationTime').val();
-		var installation_employees_id = $('#installationEmployees').val();
-		var stone_installation_select = $('#stoneInstallationSelect').val();
-		var stone_installation_date = $('#stoneInstallationDate').val();
-		var stone_installation_time = $('#stoneInstallationTime').val();
-		var stone_installation_employees_id = $('#stoneInstallationEmployees').val();
-		var delivery_installation_select = $('#deliveryInstallationSelect').val();
-		var delivery_installation_date = $('#deliveryInstallationDate').val();
-		var delivery_installation_time = $('#deliveryInstallationTime').val();
-		var delivery_installation_employees_id = $('#deliveryInstallationEmployees').val();
-
+		var formData = new FormData(this);
 		$.ajax({
 			url: '{{ route('storejob') }}',
-			data: {
-				hidden_job_id: hidden_job_id,
-				hiddenisclone: hiddenisclone,
-				job_title: job_title,
-				job_status: job_status,
-				job_status_id: job_status_id,
-				address_1: address_1,
-				address_2: address_2,
-				apartment_no: apartment_no,
-				city: city,
-				state: state,
-				zipcode: zipcode,
-				job_start_date: job_start_date,
-				job_end_date: job_end_date,
-				plumbing_installation_date: plumbing_installation_date,
-				delivery_date: delivery_date,
-				delivery_time: delivery_time,
-				job_super_name: job_super_name,
-				super_phone_number: super_phone_number,
-				job_contractor_name: job_contractor_name,
-				contractor_email: contractor_email,
-				contractor_phone_number: contractor_phone_number,
-				job_company_id: job_company_id,
-				comapny_clients_id: comapny_clients_id,
-				sales_employee_id: sales_employee_id,
-				working_employee_id: working_employee_id,
-				installation_select: installation_select,
-				installation_date: installation_date,
-				installation_time: installation_time,
-				installation_employees_id: installation_employees_id,
-				stone_installation_select: stone_installation_select,
-				stone_installation_date: stone_installation_date,
-				stone_installation_time: stone_installation_time,
-				stone_installation_employees_id: stone_installation_employees_id,
-				delivery_installation_select: delivery_installation_select,
-				delivery_installation_date: delivery_installation_date,
-				delivery_installation_time: delivery_installation_time,
-				delivery_installation_employees_id: delivery_installation_employees_id,
-			},
+			data:formData,
 			type: 'post',
 			dataType: 'json',
+			cache: false,
+			contentType: false,
+			processData: false,
 			success: function (data) {
 				if (data.key == 1) {
 					location.href = '{{ route('activejobs') }}';
@@ -983,7 +910,7 @@
 		this.value = this.value.toLowerCase();
 	});
 
-	$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
+	$('#jobStartDate,#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryTime,#deliveryInstallationTime,#deliveryInstallationDate,#installationDate,#installationTime,#stoneInstallationDate,#stoneInstallationTime').attr('readonly', true);
 
 	/*prevent form to submit on enter*/
 	$(document).on("keypress", ":input:not(textarea)", function (event) {
@@ -1001,7 +928,7 @@ jQuery('#jobStartDate').datepicker({
 });
 
 /*Date picker*/
-jQuery('#jobEndDate,#plumbingInstallationDate,#deliveryDate,#installationDate,#stoneInstallationDate').datepicker({
+jQuery('#jobEndDate,#plumbingInstallationDate,#deliveryDate,#deliveryInstallationDate,#installationDate,#stoneInstallationDate').datepicker({
 	autoclose: true,
 	todayHighlight: true,
 });
@@ -1018,6 +945,12 @@ $("#installationDate").change(function(){
 	.enableFieldValidators('installationDate', true);
 	$('#formAddJob').bootstrapValidator('revalidateField', 'installationDate');
 });
+/*delivery installation date*/
+$("#deliveryInstallationDate").change(function(){
+	$('#formAddJob').data('bootstrapValidator')
+	.enableFieldValidators('deliveryInstallationDate', true);
+	$('#formAddJob').bootstrapValidator('revalidateField', 'deliveryInstallationDate');
+});
 
 	function removeFiles(image_id,image_link,image_thumb_link=null)
 	{
@@ -1027,7 +960,6 @@ $("#installationDate").change(function(){
 			url:'{{ url('removefiles') }}',
 			data:{
 				job_id:job_id,
-				image_id:image_id,
 				image_link:image_link,
 				image_thumb_link:image_thumb_link,
 			},

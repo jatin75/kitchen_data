@@ -57,14 +57,14 @@ class JobsController extends Controller
     		$getJobsDetail = $this->getSpecificJobDetails($user_id, 2);
     		break;
     		/* Delivery */
-    		case '4':
-    		$getJobsDetail = $this->getSpecificJobDetails($user_id, 5);
-            $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+            case '4':
+            $getJobsDetail = $this->getSpecificJobDetails($user_id, 5);
+            $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
     		break;
     		/* Installer */
     		case '5':
     		$getJobsDetail = $this->getSpecificJobDetails($user_id, 6);
-            $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+            $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
     		break;
     		/* Stone */
     		case '6':
@@ -733,41 +733,17 @@ class JobsController extends Controller
     	/* images */
     	if (!empty($job_pics_url) && !empty($job_thumbnail_url)) {
     		$images_url = $job_pics_url;
+    		$thumb_images_url = $job_thumbnail_url;
     		$getExistedImages = Job::selectRaw('job_images_url,image_thumbnails_url')->where('job_id', $job_id)->where('is_deleted', 0)->first();
-
-    		if (!empty($getExistedImages)) {
-    			if (!empty($getExistedImages->job_images_url)) {
-    				$images_url = $getExistedImages->job_images_url . ',' . $job_pics_url;
-    			}
-    			if (!empty($getExistedImages->image_thumbnails_url)) {
-    				$thumb_images_url = $getExistedImages->image_thumbnails_url . ',' . $job_thumbnail_url;
-    			}
-    		}
+            if (!empty($getExistedImages->job_images_url)) {
+                $images_url = $getExistedImages->job_images_url . ',' . $job_pics_url;
+            }
+            if (!empty($getExistedImages->image_thumbnails_url)) {
+                $thumb_images_url = $getExistedImages->image_thumbnails_url . ',' . $job_thumbnail_url;
+            }
     		Job::where('job_id', $job_id)->where('is_deleted', 0)->update(['job_images_url' => $images_url,'image_thumbnails_url' => $thumb_images_url]);
-
     	}
     	return;
-    }
-
-    public function storeJobImages($job_id, $job_pics)
-    {
-    	/* S3 bucket */
-    	if (sizeof($job_pics) > 0) {
-    		$imageURL = [];
-    		$imageName = [];
-    		foreach ($job_pics as $images) {
-    			$originalName = $images->getClientOriginalName();
-    			$imageFileName = $job_id . '_' . time() . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
-    			$s3 = Storage::disk('s3');
-    			$filePath = 'jobsite_images/' . $imageFileName;
-    			if ($s3->put($filePath, file_get_contents($images), 'public')) {
-    				$imageURL[] = $s3->url($filePath);
-    				$imageName[] = $imageFileName;
-    			}
-    		}
-    		$result = array($imageURL, $imageName);
-    		return $result;
-    	}
     }
 
     /*pushNotification */
