@@ -606,7 +606,7 @@ class JobsController extends Controller
             if (!empty($getJobDetails->sales_employee_id)) {
                 $getJobDetails->sales_employee_name = $this->commonViewJobDetails($getJobDetails->sales_employee_id);
             } else {
-                $getJobDetails->sales_employee_name = '';
+                $getJobDetails->sales_employee_name = '--';
             }
 
             if (!empty($getJobDetails->company_clients_id)) {

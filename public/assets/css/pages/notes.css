@@ -1,0 +1,8 @@
+.modal-footer {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+tr th{
+  padding-left: 10px !important;
+}
+.word-wrap{word-wrap: break-word; white-space: normal;width: 400;}
