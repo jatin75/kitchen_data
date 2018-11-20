@@ -183,14 +183,20 @@
 						<label class="control-label">JOB TITLE</label>
 						<br><span id="jobTitle"></span>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">JOB ACTIVE/INACTIVE</label>
-						<br><span id="jobStatus"></span>
-					</div>
 					<!-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB ID</label>
 						<br><span id="jobId"></span>
 					</div> -->
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">JOB COMPANY NAME</label>
+						<br><span id="jobCompanyName"></span>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">COMPANY CLIENTS</label>
+						<br><span id="comapnyClients"></span>
+					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB STATUS</label>
 						<br><span id="jobType"></span>
@@ -225,22 +231,18 @@
 					</div>
 				</div>
 				<div class="row">
-
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">JOB COMPANY NAME</label>
-						<br><span id="jobCompanyName"></span>
+						<label class="control-label">JOB ACTIVE/INACTIVE</label>
+						<br><span id="jobStatus"></span>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">COMPANY CLIENTS</label>
-						<br><span id="comapnyClients"></span>
-					</div>
-
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">SALES PERSON</label>
 						<br><span id="salesEmployee"></span>
 					</div>
-
-
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">WORKING EMPLOYEES</label>
+						<br><span id="workingEmployee"></span>
+					</div>
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -255,9 +257,6 @@
 						<label class="control-label">PLUMBING INSTALLATION DATE</label>
 						<br><span id="plumbingInstallationDate"></span>
 					</div>
-
-
-
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -272,9 +271,6 @@
 						<label class="control-label">JOB SUPER PHONE NUMBER</label>
 						<br><span id="superPhoneNumber"></span>
 					</div>
-
-
-
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -289,40 +285,44 @@
 						<label class="control-label">CONTRACTOR PHONE NUMBER</label>
 						<br><span id="contractorPhoneNumber"></span>
 					</div>
-
-
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">WORKING EMPLOYEES</label>
-						<br><span id="workingEmployee"></span>
+						<label class="control-label">DELIVERY INSTALLATION</label>
+						<br><span id="deliveryInstallationSelect"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">INSTALLATION</label>
 						<br><span id="installationSelect"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">INSTALLATION DATE AND TIME</label>
-						<br><span id="installationDateTime"></span>
+						<label class="control-label">STONE INSTALLATION</label>
+						<br><span id="stoneInstallationSelect"></span>
 					</div>
-
 				</div>
 				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">DELIVERY INSTALLATION DATE & TIME</label>
+						<br><span id="deliveryInstallationDateTime"></span>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">INSTALLATION DATE & TIME</label>
+						<br><span id="installationDateTime"></span>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">STONE INSTALLATION DATE & TIME</label>
+						<br><span id="stoneInstallationDateTime"></span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">DELIVERY INSTALLATION EMPLOYEES</label>
+						<br><span id="deliveryInstallationEmployees"></span>
+					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">INSTALLATION EMPLOYEES</label>
 						<br><span id="installationEmployees"></span>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">STONE INSTALLATION</label>
-						<br><span id="stoneInstallationSelect"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">STONE INSTALLATION DATE AND TIME</label>
-						<br><span id="stoneInstallationDateTime"></span>
-					</div>
-
-				</div>
-				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">STONE INSTALLATION EMPLOYEES</label>
 						<br><span id="stoneInstallationEmployees"></span>
@@ -933,22 +933,48 @@ $(document).on('click','.view-job', function(){
 				$('#salesEmployee').html(data.employee_detail.sales_employee_name);
 				$('#workingEmployee').html(data.employee_detail.working_employee_name);
 
+				if(data.employee_detail.is_select_delivery_installation == 4)
+				{
+					$('#deliveryInstallationSelect').html('Scheduled');
+					$('#deliveryInstallationDateTime').html(data.employee_detail.delivery_installation_datetime);
+					$('#deliveryInstallationEmployees').html(data.employee_detail.delivery_installation_employee_name);
+				}
+				else
+				{
+					switch (data.employee_detail.is_select_delivery_installation) {
+						case 3:
+						$('#deliveryInstallationSelect').html('Received');
+						break;
+						case 2:
+						$('#deliveryInstallationSelect').html('Awaiting Approval');
+						break;
+						case 1:
+						$('#deliveryInstallationSelect').html('Awaiting Material');
+						break;
+					}
+					$('#deliveryInstallationDateTime').html('--');
+					$('#deliveryInstallationEmployees').html('--');
+				}
 				if(data.employee_detail.is_select_installation == 3)
 				{
 					$('#installationSelect').html('Scheduled');
 					$('#installationDateTime').html(data.employee_detail.installation_datetime);
 					$('#installationEmployees').html(data.employee_detail.installation_employee_name);
 				}
-				else if(data.employee_detail.is_select_installation == 2)
+				else
 				{
-					$('#installationSelect').html('Awaiting Approval');
-					$('#installationDateTime').html('--');
-					$('#installationEmployees').html('--');
-				}else
-				{
-					$('#installationSelect').html('Awaiting Install');
-					$('#installationDateTime').html('--');
-					$('#installationEmployees').html('--');
+					switch (data.employee_detail.is_select_installation) {
+						case 2:
+						$('#installationSelect').html('Awaiting Approval');
+						$('#installationDateTime').html('--');
+						$('#installationEmployees').html('--');
+						break;
+						case 1:
+						$('#installationSelect').html('Awaiting Install');
+						$('#installationDateTime').html('--');
+						$('#installationEmployees').html('--');
+						break;
+					}
 				}
 				if(data.employee_detail.is_select_stone_installation == 2)
 				{

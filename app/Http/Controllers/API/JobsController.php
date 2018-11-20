@@ -686,7 +686,7 @@ class JobsController extends Controller
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Invalid user. Please try again."]);
                 break;
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {echo $e->getMessage();die;}
     }
 
     /* Design Status */

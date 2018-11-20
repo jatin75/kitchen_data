@@ -51,6 +51,16 @@
 											<div class="row">
 												<div class="col-md-4">
 													<div class="form-group">
+														<label class="control-label">
+															<b>JOB TITLE *</b>
+														</label>
+														<input type="text" name="jobTitle" id="jobTitle" value="{{$jobDetails->job_title or ''}}" class="form-control" placeholder="Job Title">
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-4">
+													<div class="form-group">
 														<label class="control-label"><b>JOB COMPANY NAME *</b></label>
 														<select id="jobCompanyName" name="jobCompanyName" class="form-control select2">
 															<option value="">-- Select Company --</option>
@@ -124,19 +134,17 @@
 											</div>
 											<div class="row">
 												<div class="col-md-4">
-													<div class="row">
-														<div class="col-md-6">
-															<div class="form-group">
-																<label class="control-label"><b>CITY</b></label>
-																<input type="text" name="city" id="city" value="{{$jobDetails->city or ''}}" class="form-control" placeholder="Enter City">
-															</div>
+													<div class="col-md-4">
+														<div class="form-group">
+															<label class="control-label"><b>CITY</b></label>
+															<input type="text" name="city" id="city" value="{{$jobDetails->city or ''}}" class="form-control" placeholder="Enter City">
 														</div>
-														<div class="col-md-6">
-															<div class="form-group">
-																<label class="control-label"><b>STATE</b></label>
-																<input type="text" name="state" id="state" value="{{$jobDetails->state or ''}}" class="form-control" placeholder="Enter State">
-															</div>
-														</div>
+													</div>
+												</div>
+												<div class="col-md-4">
+													<div class="form-group">
+														<label class="control-label"><b>STATE</b></label>
+														<input type="text" name="state" id="state" value="{{$jobDetails->state or ''}}" class="form-control" placeholder="Enter State">
 													</div>
 												</div>
 												<div class="col-md-4">
@@ -145,31 +153,8 @@
 														<input type="text" placeholder="Enter Zipcode" name="zipcode" id="zipcode" value="{{$jobDetails->zipcode or ''}}" class="form-control">
 													</div>
 												</div>
-												<div class="col-md-4">
-													<div class="form-group dropdown_select" style="overflow: visible!important;">
-														<label class="control-label"><b>WORKING EMPLOYEES *</b></label>
-														<select data-size="5" id="workingEmployee" name="workingEmployee[]" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
-															@foreach($employeeList as $employee)
-															<option value="{{ $employee->id }}"
-																@if(isset($jobDetails->working_employee_id) && sizeof($jobDetails->working_employee_id) > 0)
-																@foreach($jobDetails->working_employee_id as $single_id)
-																@if($single_id == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif
-																>{{ $employee->employee_name }}
-															</option>
-															@endforeach
-														</select>
-													</div>
-												</div>
 											</div>
 											<div class="row">
-												<div class="col-md-4">
-													<div class="form-group">
-														<label class="control-label">
-															<b>JOB TITLE *</b>
-														</label>
-														<input type="text" name="jobTitle" id="jobTitle" value="{{$jobDetails->job_title or ''}}" class="form-control" placeholder="Job Title">
-													</div>
-												</div>
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
@@ -193,6 +178,21 @@
 																@if($single_id == $semployee->id) {{"selected='selected'"}}@endif @endforeach @endif
 																>
 																{{ $semployee->employee_name }}
+															</option>
+															@endforeach
+														</select>
+													</div>
+												</div>
+												<div class="col-md-4">
+													<div class="form-group dropdown_select" style="overflow: visible!important;">
+														<label class="control-label"><b>WORKING EMPLOYEES *</b></label>
+														<select data-size="5" id="workingEmployee" name="workingEmployee[]" class="form-control selectpicker" multiple data-actions-box="true"  data-style="form-control">
+															@foreach($employeeList as $employee)
+															<option value="{{ $employee->id }}"
+																@if(isset($jobDetails->working_employee_id) && sizeof($jobDetails->working_employee_id) > 0)
+																@foreach($jobDetails->working_employee_id as $single_id)
+																@if($single_id == $employee->id) {{"selected='selected'"}}@endif @endforeach @endif
+																>{{ $employee->employee_name }}
 															</option>
 															@endforeach
 														</select>

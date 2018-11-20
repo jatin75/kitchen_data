@@ -578,7 +578,7 @@ class JobsController extends Controller
     public function viewJobDetails(Request $request)
     {
         $job_id = $request->get('job_id');
-        $getJobDetails = DB::select("SELECT j.job_id,j.company_id,j.job_title,j.address_1,j.address_2,j.city,j.state,j.zipcode,j.apartment_number,j.super_name,j.super_phone_number,j.contractor_name,j.contractor_phone_number,j.contractor_email,j.working_employee_id,j.sales_employee_id,j.company_clients_id,j.plumbing_installation_date,j.delivery_datetime,j.job_status_id,j.is_select_installation,j.installation_datetime,j.installation_employee_id,j.is_select_stone_installation,j.stone_installation_datetime,j.stone_installation_employee_id,j.is_active,j.start_date,j.end_date,j.created_at,cmp.name AS company_name,jbt.job_status_name
+        $getJobDetails = DB::select("SELECT j.job_id,j.company_id,j.job_title,j.address_1,j.address_2,j.city,j.state,j.zipcode,j.apartment_number,j.super_name,j.super_phone_number,j.contractor_name,j.contractor_phone_number,j.contractor_email,j.working_employee_id,j.sales_employee_id,j.company_clients_id,j.plumbing_installation_date,j.delivery_datetime,j.job_status_id,j.is_select_installation,j.installation_datetime,j.installation_employee_id,j.is_select_stone_installation,j.stone_installation_datetime,j.stone_installation_employee_id,j.is_select_delivery_installation,j.delivery_installation_datetime,j.delivery_installation_employee_id,j.is_active,j.start_date,j.end_date,j.created_at,cmp.name AS company_name,jbt.job_status_name
             FROM jobs AS j
             JOIN companies AS cmp ON cmp.company_id = j.company_id
             JOIN job_types AS jbt ON jbt.job_status_id = j.job_status_id
@@ -593,6 +593,8 @@ class JobsController extends Controller
             $getJobDetails->end_date = date('m/d/Y', strtotime($getJobDetails->end_date));
             $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
             $getJobDetails->delivery_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->delivery_datetime));
+
+            $getJobDetails->delivery_installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->delivery_installation_datetime));
 
             $getJobDetails->installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->installation_datetime));
 
@@ -609,6 +611,9 @@ class JobsController extends Controller
 
             if (!empty($getJobDetails->company_clients_id)) {
                 $getJobDetails->company_clients_name = $this->commonViewJobDetails($getJobDetails->company_clients_id);
+            }
+            if (!empty($getJobDetails->delivery_installation_employee_id)) {
+                $getJobDetails->delivery_installation_employee_name = $this->commonViewJobDetails($getJobDetails->delivery_installation_employee_id);
             }
             if (!empty($getJobDetails->installation_employee_id)) {
                 $getJobDetails->installation_employee_name = $this->commonViewJobDetails($getJobDetails->installation_employee_id);
