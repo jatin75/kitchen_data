@@ -327,6 +327,7 @@
 															<b>STONE INSTALLATION</b>
 														</label>
 														<select id="stoneInstallationSelect" name="stoneInstallationSelect" class="form-control ">
+															<option value="">-- Select Stone Installation</option>
 															<option value="1" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '1') {{ "selected='selected'" }} @endif>Awaiting Approval</option>
 															<option value="2" @if(isset($jobDetails->is_select_stone_installation) && $jobDetails->is_select_stone_installation == '2') {{ "selected='selected'" }} @endif>Scheduled</option>
 														</select>
@@ -381,7 +382,7 @@
 													<div class="hidden" id="stoneDateDiv">
 														<div class="form-group">
 															<label class="control-label">
-																<b>STONE INSTALLATION DATE AND TIME *</b>
+																<b>STONE INSTALLATION DATE AND TIME</b>
 															</label>
 															<div class="row">
 																<div class="col-md-4">

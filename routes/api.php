@@ -22,6 +22,7 @@ Route::middleware('auth:api')->group(function () {
     //-------------- Jobs --------------
     Route::post('getUserJobDetails', 'API\JobsController@getUserJobDetails');
     Route::post('changeJobStatus', 'API\JobsController@changeJobStatus');
+    Route::post('getJobCheckList', 'API\JobsController@getJobCheckList');
 
     //-------------- Chat --------------
     Route::post('chatPost', 'API\AdminHomeController@chatPost');

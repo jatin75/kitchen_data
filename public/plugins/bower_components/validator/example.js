@@ -896,8 +896,11 @@ $(document).ready(function () {
 			stoneInstallationSelect: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Stone installation status is required and can\'t be empty'
+					// notEmpty: {
+					// 	message: 'Stone installation status is required and can\'t be empty'
+					// },
+					regexp: {
+						enabled: false,
 					},
 				}
 			},
@@ -1014,9 +1017,9 @@ $(document).ready(function () {
 			stoneInstallationDate: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Date is required.'
-					},
+					// notEmpty: {
+					// 	message: 'Date is required.'
+					// },
 					date: {
 						format: 'MM/DD/YYYY',
 						message: 'The date is not a valid'
@@ -1026,9 +1029,9 @@ $(document).ready(function () {
 			stoneInstallationTime: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Time is required.'
-					},
+					// notEmpty: {
+					// 	message: 'Time is required.'
+					// },
 					callback: {
 						callback: function (value, validator, $deliveryTime) {
 							if (value.indexOf("A") == 5) {
