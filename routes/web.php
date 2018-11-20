@@ -79,4 +79,6 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('reports/showreports', 'admin\ReportsController@index')->name('showreports');
     Route::post('downloadjobexcel', 'admin\ReportsController@downloadJobExcel')->name('downloadjobexcel');
 
+    /*Notes */
+    Route::get('notes/shownotes', 'admin\NotesController@index')->name('shownotes');
 });

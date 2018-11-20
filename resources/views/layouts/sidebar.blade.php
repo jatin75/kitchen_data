@@ -38,9 +38,8 @@
                     <i class="ti-home fa-fw" data-icon="v"></i>
                     <span class="hide-menu"> Dashboard </span>
                 </a>
-                @if(Session::get('login_type_id') != 9 )
             </li>
-            @if(Session::get('login_type_id') != 10 )
+            @if(Session::get('login_type_id') != 9  || Session::get('login_type_id') != 10 )
             <li>
                 <a id="staff" href="javascript:void(0);" class="waves-effect {!! (Request::is('jobs/*') ? 'active' : '') !!}"><i data-icon=")" class="ti-clipboard fa-fw"></i>
                     <span class="hide-menu">Jobs<span class="fa arrow"></span></span>
@@ -76,7 +75,12 @@
                     <span class="hide-menu">Reports</span>
                 </a>
             </li>
-            @endif
+            <li>
+                <a id="invoices" href="{{ route('shownotes') }}" class="waves-effect {!! (Request::is('notes/*')? 'active' : '') !!}">
+                    <i class="ti-book fa-fw" data-icon="l"></i>
+                    <span class="hide-menu">Notes</span>
+                </a>
+            </li>
             @endif
         </ul>
     </div>
