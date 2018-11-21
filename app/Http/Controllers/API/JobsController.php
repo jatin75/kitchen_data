@@ -72,7 +72,7 @@ class JobsController extends Controller
                     break;
                 /* Service */
                 case '7':
-                    $getJobsDetail = $this->getAllJobDetails($user_id);
+                    $getJobsDetail = $this->getSpecificJobDetails($user_id, 8);
                     break;
                 /* Inspector */
                 case '8':
@@ -185,7 +185,10 @@ class JobsController extends Controller
                 $orderBy = 'jb.created_at';
                 break;
         }
-        $getDetails = DB::select("SELECT jb.*,c.name as company_name FROM jobs as jb,companies as c WHERE c.company_id = jb.company_id AND jb.working_employee_id LIKE '%{$user_id}%' AND jb.is_deleted = 0 AND jb.is_active = 1 AND jb.job_status_id = '{$job_status_id}' ORDER BY '{$orderBy}' DESC");
+
+        $serviceWhere = ($job_status_id == 8) ?  "" : "AND jb.job_status_id = 8";
+        $getDetails = DB::select("SELECT jb.*,c.name as company_name FROM jobs as jb,companies as c WHERE c.company_id = jb.company_id AND (jb.working_employee_id LIKE '%{$user_id}%' AND jb.job_status_id = '{$job_status_id}' OR  jb.service_employee_id LIKE '%{$user_id}%'  $serviceWhere)  AND jb.is_deleted = 0 AND jb.is_active = 1  ORDER BY '{$orderBy}' DESC");
+
         if (sizeof($getDetails) > 0) {
             foreach ($getDetails as $job) {
                 $notes = [];
@@ -362,7 +365,7 @@ class JobsController extends Controller
                                 $stone_employee_id = null;
                                 $stoneinstallation_datetime = null;
                                 $stage = 'Complete';
-                                $job_status = 8;
+                                $job_status = 9;
                                 $is_active = 0;
                             }
 
@@ -515,7 +518,7 @@ class JobsController extends Controller
                                 $installation_employee_id = null;
                                 $installation_datetime = null;
                                 $stage = 'COMPLETE';
-                                $job_status = 8;
+                                $job_status = 9;
                                 $is_active = 0;
                             }
 
@@ -637,7 +640,7 @@ class JobsController extends Controller
                                 }
                             }
                             /*update job*/
-                            Job::where('job_id', $job_id)->update(['job_status_id' => 8, 'is_active' => 0]);
+                            Job::where('job_id', $job_id)->update(['job_status_id' => 9, 'is_active' => 0]);
 
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                             break;

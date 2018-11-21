@@ -18,7 +18,7 @@ tr th{
     padding-left: 8px;
 }
 .toolbar_btn{
-    padding: 10px 18px !important;
+    padding: 10px 14px !important;
     background-color: #fff !important;
     font-weight: bold;
     letter-spacing: 0.6px;
@@ -72,7 +72,7 @@ font-weight: 100 !important;
 background: #e4e7ea !important;
 }
 .scrollit { height:150px; width: auto; overflow-y:scroll; border: 1px solid; background: #f4f8fb;}
-.edit-note{cursor: pointer;}
+.edit-note,.view-note-images{cursor: pointer;}
 .delete-note{cursor: pointer;}
 body{
 padding-right:0 !important;

@@ -59,7 +59,7 @@
 								<th>Expected Completion Date</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody id="jobListTbody">
 							@foreach($jobDetails as $job)
 							<tr class="changestatus_{{ $job->job_id }}">
 								<td class="text-center">
@@ -217,23 +217,29 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">CITY</label>
-						<br><span id="city"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">STATE</label>
-						<br><span id="state"></span>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20 p-l-0">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+							<label class="control-label">CITY</label>
+							<br><span id="city"></span>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+							<label class="control-label">STATE</label>
+							<br><span id="state"></span>
+						</div>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">ZIPCODE</label>
 						<br><span id="zipcode"></span>
 					</div>
-				</div>
-				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB ACTIVE/INACTIVE</label>
 						<br><span id="jobStatus"></span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">SERVICE EMPLOYEES</label>
+						<br><span id="serviceEmployee"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">SALES PERSON</label>
@@ -590,11 +596,11 @@
 			},
 			],
 		});
-});
+	});
 
 /*get job detail list*/
 function getJobDetailsList(jobStatusId){
-	$('.jobDetailList').html('<div id="jobchart" class="box" style="padding: inherit;"><p style="text-align: center;margin: 10px;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px"></i></p></div>');
+	$('#jobListTbody').html('<tr id="jobchart" class="box" style="padding: inherit;"><td colspan="7" style="text-align: center;margin: 10px;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px"></i></td></tr>');
 	$.ajax({
 		url:'{{ route('showfilterwisejob') }}',
 		data:{
@@ -604,70 +610,68 @@ function getJobDetailsList(jobStatusId){
 		dataType:'json',
 		success: function(data)
 		{
-			if(data.html != '')
-			{
-				$('.jobDetailList').html(data.html);
-				var date = $('#formatedDate').val();
-				var value = 'Kitchen_job_' + date;
-				$('#jobList').DataTable({
-					dom: 'Bfrtip',
-					buttons: [
-					{
-						extend: 'csv',
-						title: value,
-						exportOptions: {
-							columns: [ 1,2,3,4,5,6 ],
-							format: {
-								body: function( data, row, col, node ) {
-									return data;
-								}
-							},
+			$('#jobList').DataTable().destroy();
+			$('#jobListTbody').html(data.html);
+			var date = $('#formatedDate').val();
+			var value = 'Kitchen_job_' + date;
+			$('#jobList').DataTable({
+				dom: 'Bfrtip',
+				buttons: [
+				{
+					extend: 'csv',
+					title: value,
+					exportOptions: {
+						columns: [ 1,2,3,4,5,6 ],
+						format: {
+							body: function( data, row, col, node ) {
+								return data;
+							}
 						},
 					},
-					{
-						extend: 'excel',
-						title: value,
-						exportOptions: {
-							columns: [ 1,2,3,4,5,6 ],
-							format: {
-								body: function( data, row, col, node ) {
-									return data;
-								}
-							},
+				},
+				{
+					extend: 'excel',
+					title: value,
+					exportOptions: {
+						columns: [ 1,2,3,4,5,6 ],
+						format: {
+							body: function( data, row, col, node ) {
+								return data;
+							}
 						},
 					},
-					{
-						extend: 'pdf',
-						pageSize: 'LEGAL',
-						title: value,
-						exportOptions: {
-							columns: [ 1,2,3,4,5,6],
-							format: {
-								body: function( data, row, col, node ) {
-									return data;
-								}
-							},
+				},
+				{
+					extend: 'pdf',
+					pageSize: 'LEGAL',
+					title: value,
+					exportOptions: {
+						columns: [ 1,2,3,4,5,6],
+						format: {
+							body: function( data, row, col, node ) {
+								return data;
+							}
 						},
 					},
-					{
-						extend: 'print',
-						title: value,
-						exportOptions: {
-							columns: [ 1,2,3,4,5,6 ],
-							format: {
-								body: function( data, row, col, node ) {
-									return data;
-								}
-							},
+				},
+				{
+					extend: 'print',
+					title: value,
+					exportOptions: {
+						columns: [ 1,2,3,4,5,6 ],
+						format: {
+							body: function( data, row, col, node ) {
+								return data;
+							}
 						},
-					}
-					],
-				});
-				/* For select 2*/
-				$(".select2").select2();
-				/*tooltip*/
-				$('[data-toggle="tooltip"]').tooltip();
-			}
+					},
+				}
+				],
+			});
+			/* For select 2*/
+			$(".select2").select2();
+			/*tooltip*/
+			$('[data-toggle="tooltip"]').tooltip();
 		}
 	});
 }
@@ -931,6 +935,7 @@ $(document).on('click','.view-job', function(){
 				$('#jobCompanyName').html(data.employee_detail.company_name);
 				$('#comapnyClients').html(data.employee_detail.company_clients_name);
 				$('#salesEmployee').html(data.employee_detail.sales_employee_name);
+				$('#serviceEmployee').html(data.employee_detail.service_employee_name);
 				$('#workingEmployee').html(data.employee_detail.working_employee_name);
 
 				if(data.employee_detail.is_select_delivery_installation == 4)
@@ -1023,6 +1028,8 @@ $(document).on('click','.edit-note', function(){
 
 $(document).on('click','.view-note-images', function(){
 	var jobId = $(this).attr('data-id');
+	$('#jobDetailModel').modal('hide');
+	$("#loader").show();
 	$.ajax({
 		url:'{{ route('getjobimages') }}',
 		data:{
@@ -1037,7 +1044,6 @@ $(document).on('click','.view-note-images', function(){
 				$('.carousel-indicators').html(response.html1);
 				$('.carousel-inner').html(response.html2);
 				$('#loader').hide();
-				$('#jobDetailModel').modal('hide');
 				$('#jobImageModel').modal('show');
 			}
 			else

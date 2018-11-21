@@ -145,9 +145,9 @@ class JobsController extends Controller
             $getJobDetails->working_employee_id = explode(",", $getJobDetails->working_employee_id);
         }
 
-        // if (!empty($getJobDetails->sales_employee_id)) {
-        //     $getJobDetails->sales_employee_id = explode(",", $getJobDetails->sales_employee_id);
-        // }
+        if (!empty($getJobDetails->service_employee_id)) {
+            $getJobDetails->service_employee_id = explode(",", $getJobDetails->service_employee_id);
+        }
 
         $getJobDetails->sales_employee_id = !empty($getJobDetails->sales_employee_id) ? explode(",", $getJobDetails->sales_employee_id) : [];
 
@@ -226,6 +226,11 @@ class JobsController extends Controller
         } else {
             $sales_employee_id = null;
         }
+        if($request->get('serviceEmployee') && sizeof($request->get('serviceEmployee'))  > 0) {
+            $service_employee_id = implode(',', $request->get('serviceEmployee'));
+        }else {
+            $service_employee_id = null;
+        }
         $is_installation = $request->get('installationSelect');
         $is_stone_installation = $request->get('stoneInstallationSelect');
         $is_delivery_installation = $request->get('deliveryInstallationSelect');
@@ -252,6 +257,7 @@ class JobsController extends Controller
             $objJob->contractor_name = $request->get('jobContractorName');
             $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractorPhoneNumber'));
             $objJob->contractor_email = $request->get('contractorEmail');
+            $objJob->service_employee_id = $service_employee_id;
             $objJob->working_employee_id = $working_employees;
             $objJob->company_clients_id = $comapny_clients;
             $objJob->sales_employee_id = $sales_employee_id;
@@ -321,7 +327,7 @@ class JobsController extends Controller
                     $imageFileName = uniqid(time()) . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
                     $thumbImageFileName = uniqid(time()) . '_thumb' . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
                     $s3 = Storage::disk('s3');
-                    $filePath = ($flag == 1)? 'jobsite_images/' : 'jobsite_files/' . $imageFileName;
+                    $filePath = ($flag == 1)? 'jobsite_images/'.$imageFileName : 'jobsite_files/' . $imageFileName;
                     if($flag == 1)
                     {
                         $thumbFilePath = 'jobsite_images/' . $thumbImageFileName;
@@ -404,6 +410,7 @@ class JobsController extends Controller
             $objJob->contractor_name = $request->get('jobContractorName');
             $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractorPhoneNumber'));
             $objJob->contractor_email = $request->get('contractorEmail');
+            $objJob->service_employee_id = $service_employee_id;
             $objJob->working_employee_id = $working_employees;
             $objJob->company_clients_id = $comapny_clients;
             $objJob->sales_employee_id = $sales_employee_id;
@@ -475,7 +482,7 @@ class JobsController extends Controller
                     $imageFileName = uniqid(time()) . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
                     $thumbImageFileName = uniqid(time()) . '_thumb' . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
                     $s3 = Storage::disk('s3');
-                    $filePath = ($flag == 1)? 'jobsite_images/' : 'jobsite_files/' . $imageFileName;
+                    $filePath = ($flag == 1)? 'jobsite_images/'.$imageFileName : 'jobsite_files/' . $imageFileName;
                     if($flag == 1)
                     {
                         $thumbFilePath = 'jobsite_images/' . $thumbImageFileName;
@@ -544,7 +551,7 @@ class JobsController extends Controller
 
     public function deactivateJob($job_id)
     {
-        Job::where('job_id', $job_id)->update(['is_active' => 0, 'job_status_id' => 8]);
+        Job::where('job_id', $job_id)->update(['is_active' => 0, 'job_status_id' => 9]);
         Session::flash('successMessage', 'Job has been deactivated Successfully');
         return redirect()->route('activejobs');
     }
@@ -578,7 +585,7 @@ class JobsController extends Controller
     public function viewJobDetails(Request $request)
     {
         $job_id = $request->get('job_id');
-        $getJobDetails = DB::select("SELECT j.job_id,j.company_id,j.job_title,j.address_1,j.address_2,j.city,j.state,j.zipcode,j.apartment_number,j.super_name,j.super_phone_number,j.contractor_name,j.contractor_phone_number,j.contractor_email,j.working_employee_id,j.sales_employee_id,j.company_clients_id,j.plumbing_installation_date,j.delivery_datetime,j.job_status_id,j.is_select_installation,j.installation_datetime,j.installation_employee_id,j.is_select_stone_installation,j.stone_installation_datetime,j.stone_installation_employee_id,j.is_select_delivery_installation,j.delivery_installation_datetime,j.delivery_installation_employee_id,j.is_active,j.start_date,j.end_date,j.created_at,cmp.name AS company_name,jbt.job_status_name
+        $getJobDetails = DB::select("SELECT j.job_id,j.company_id,j.job_title,j.address_1,j.address_2,j.city,j.state,j.zipcode,j.apartment_number,j.super_name,j.super_phone_number,j.contractor_name,j.contractor_phone_number,j.contractor_email, j.service_employee_id, j.working_employee_id,j.sales_employee_id,j.company_clients_id,j.plumbing_installation_date,j.delivery_datetime,j.job_status_id,j.is_select_installation,j.installation_datetime,j.installation_employee_id,j.is_select_stone_installation,j.stone_installation_datetime,j.stone_installation_employee_id,j.is_select_delivery_installation,j.delivery_installation_datetime,j.delivery_installation_employee_id,j.is_active,j.start_date,j.end_date,j.created_at,cmp.name AS company_name,jbt.job_status_name
             FROM jobs AS j
             JOIN companies AS cmp ON cmp.company_id = j.company_id
             JOIN job_types AS jbt ON jbt.job_status_id = j.job_status_id
@@ -599,6 +606,13 @@ class JobsController extends Controller
             $getJobDetails->installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->installation_datetime));
 
             $getJobDetails->stone_installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->stone_installation_datetime));
+
+            if (!empty($getJobDetails->service_employee_id)) {
+                $getJobDetails->service_employee_name = $this->commonViewJobDetails($getJobDetails->service_employee_id);
+            } else {
+                $getJobDetails->service_employee_name = '--';
+            }
+
             if (!empty($getJobDetails->working_employee_id)) {
                 $getJobDetails->working_employee_name = $this->commonViewJobDetails($getJobDetails->working_employee_id);
             }
@@ -799,38 +813,25 @@ class JobsController extends Controller
         $getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
 
         $html = '';
-        $html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th class="text-center">Actions</th>
-                <th>Job Name</th>
-                <th>Job Status</th>
-                <th>Employee</th>
-                <th>Address</th>
-                <th>Start Date</th>
-                <th>Expected Completion Date</th>
-            </tr>
-        </thead>
-        <tbody>';
-                if (!empty($getJobDetails)) {
-                    foreach ($getJobDetails as $jobDetail) {
+        if (!empty($getJobDetails)) {
+            foreach ($getJobDetails as $jobDetail) {
 
-                        $employeeNames = "";
-                        $employeeIds = explode(',', $jobDetail->working_employee_id);
-                        $getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
-                        $jobDetail->employee_name = $getEmployeeName->employee_name;
+                $employeeNames = "";
+                $employeeIds = explode(',', $jobDetail->working_employee_id);
+                $getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
+                $jobDetail->employee_name = $getEmployeeName->employee_name;
 
-                        /* Address */
-                        $delimiter = ',' . ' ';
-                        $job_address = $jobDetail->address_1 . $delimiter;
-                        $job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
-                        $jobDetail->address = $job_address;
+                /* Address */
+                $delimiter = ',' . ' ';
+                $job_address = $jobDetail->address_1 . $delimiter;
+                $job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
+                $job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
+                $job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
+                $job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
+                $job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
+                $jobDetail->address = $job_address;
 
-                        $html .= '<tr class="changestatus_' . $jobDetail->job_id . '">
+                $html .= '<tr class="changestatus_' . $jobDetail->job_id . '">
                     <td class="text-center">
                         <span data-toggle="" data-target="#jobDetailModel">
                             <a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="' . $jobDetail->job_id . '">
@@ -872,14 +873,12 @@ class JobsController extends Controller
                         $html .= '</select>
                         </td>
                         <td><div class="word-wrap">'.$jobDetail->employee_name.'</div></td>
-						<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
+                        <td><div class="word-wrap">'.$jobDetail->address.'</div></td>
                         <td>' . date('m/d/Y', strtotime($jobDetail->start_date)) . '</td>
                         <td>' . date('m/d/Y', strtotime($jobDetail->end_date)) . '</td>
                     </tr>';
-                    }
-                }
-                $html .= '</tbody>
-        </table>';
+            }
+        }
 
         $response['html'] = $html;
         echo json_encode($response);
@@ -890,8 +889,8 @@ class JobsController extends Controller
         $jobId = $request->get('jobId');
         $jobStatusId = $request->get('jobStatusId');
 
-        $is_active = ($jobStatusId == 8) ? 0 : 1;
-        $key1 = ($jobStatusId == 8) ? 1 : 2;
+        $is_active = ($jobStatusId == 9) ? 0 : 1;
+        $key1 = ($jobStatusId == 9) ? 1 : 2;
         $oldValueArray = [];
         $newValueArray = [];
 

@@ -43,7 +43,23 @@
 							@endforeach
 						</div>
 						<div class="table-responsive jobDetailList">
+							<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
+								<thead>
+									<tr>
+										<th class="text-center">Actions</th>
+										<th>Job Name</th>
+										<th>Company Name</th>
+										<th>Job Status</th>
+										<th>Employee</th>
+										<th>Address</th>
+										<th>Start Date</th>
+										<th>Expected Completion Date</th>
+									</tr>
+								</thead>
+								<tbody id="jobListTbody">
 
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
@@ -133,23 +149,29 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">CITY</label>
-						<br><span id="city"></span>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">STATE</label>
-						<br><span id="state"></span>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20 p-l-0">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+							<label class="control-label">CITY</label>
+							<br><span id="city"></span>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+							<label class="control-label">STATE</label>
+							<br><span id="state"></span>
+						</div>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">ZIPCODE</label>
 						<br><span id="zipcode"></span>
 					</div>
-				</div>
-				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">JOB ACTIVE/INACTIVE</label>
 						<br><span id="jobStatus"></span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
+						<label class="control-label">SERVICE EMPLOYEES</label>
+						<br><span id="serviceEmployee"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
 						<label class="control-label">SALES PERSON</label>
@@ -405,6 +427,35 @@
 	</div>
 </div>
 <!--/.Job status change event model-->
+<!--jobImage model-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="jobImageModel" style="display: none; z-index:100000;">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Job Images</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<!-- START carousel-->
+						<div id="slide-id" data-ride="carousel" class="carousel slide">
+							<ol class="carousel-indicators"></ol>
+							<div class="carousel-inner"></div>
+							<a href="#slide-id" role="button" data-slide="prev" class="left carousel-control"> <span aria-hidden="true" class="fa fa-angle-left"></span> <span class="sr-only">Previous</span> </a>
+							<a href="#slide-id" role="button" data-slide="next" class="right carousel-control"> <span aria-hidden="true" class="fa fa-angle-right"></span> <span class="sr-only">Next</span> </a>
+						</div>
+						<!-- END carousel-->
+					</div>
+				</div>
+				<div class="modal-footer p-r-0">
+					<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--/.jobImage model-->
 
 @stop
 @section('pageSpecificJs')
@@ -422,6 +473,64 @@
 <script type="text/javascript" src="{{asset('plugins/bower_components/bootstrap-select/bootstrap-select.min.js')}}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
+		var date = $('#formatedDate').val();
+		var value = 'Kitchen_job_' + date;
+		$('#jobList').DataTable({
+			dom: 'Bfrtip',
+			buttons: [
+			{
+				extend: 'csv',
+				title: value,
+				exportOptions: {
+					columns: [ 1,2,3,4,5,6,7 ],
+					format: {
+						body: function(data) {
+							return data;
+						}
+					},
+				},
+			},
+			{
+				extend: 'excel',
+				title: value,
+				exportOptions: {
+					columns: [ 1,2,3,4,5,6,7 ],
+					format: {
+						body: function(data) {
+							return data;
+						}
+					},
+				},
+			},
+			{
+				extend: 'pdf',
+				pageSize: 'LEGAL',
+				orientation: 'landscape',
+				title: value,
+				exportOptions: {
+					columns: [ 1,2,3,4,5,6,7 ],
+					format: {
+						body: function(data) {
+							return data;
+						}
+					},
+				},
+			},
+			{
+				extend: 'print',
+				title: value,
+				exportOptions: {
+					columns: [ 1,2,3,4,5,6,7 ],
+					format: {
+						body: function(data) {
+							return data;
+						}
+					},
+				},
+			},
+			],
+		});
+
 		/*get job detail list*/
 		getJobDetailsList(0);
 
@@ -429,7 +538,7 @@
 
 	/*get job detail list*/
 	function getJobDetailsList(jobStatusId){
-		$('.jobDetailList').html('<div id="jobchart" class="box" style="padding: inherit;"><p style="text-align: center;margin: 10px;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px"></i></p></div>');
+		$('#jobListTbody').html('<tr id="jobchart" class="box" style="padding: inherit;"><td colspan="8" style="text-align: center;margin: 10px;"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:24px"></i></td></tr>');
 		$.ajax({
 			url:'{{ route('showjobdetailstatus') }}',
 			data:{
@@ -439,73 +548,71 @@
 			dataType:'json',
 			success: function(data)
 			{
-				if(data.html != '')
-				{
-					$('.jobDetailList').html(data.html);
-					var date = $('#formatedDate').val();
-					var value = 'Kitchen_job_' + date;
-					$('#jobList').DataTable({
-						dom: 'Bfrtip',
-						buttons: [
-						{
-							extend:'pageLength',
-						},
-						{
-							extend: 'csv',
-							title: value,
-							exportOptions: {
-								columns: [ 1,2,3,4,5,6,7 ],
-								format: {
-									body: function( data, row, col, node ) {
-										return data;
-									}
-								},
+				$('#jobList').DataTable().destroy();
+				$('#jobListTbody').html(data.html);
+				var date = $('#formatedDate').val();
+				var value = 'Kitchen_job_' + date;
+				$('#jobList').DataTable({
+					dom: 'Bfrtip',
+					buttons: [
+					{
+						extend:'pageLength',
+					},
+					{
+						extend: 'csv',
+						title: value,
+						exportOptions: {
+							columns: [ 1,2,3,4,5,6,7 ],
+							format: {
+								body: function( data, row, col, node ) {
+									return data;
+								}
 							},
 						},
-						{
-							extend: 'excel',
-							title: value,
-							exportOptions: {
-								columns: [ 1,2,3,4,5,6,7 ],
-								format: {
-									body: function( data, row, col, node ) {
-										return data;
-									}
-								},
+					},
+					{
+						extend: 'excel',
+						title: value,
+						exportOptions: {
+							columns: [ 1,2,3,4,5,6,7 ],
+							format: {
+								body: function( data, row, col, node ) {
+									return data;
+								}
 							},
 						},
-						{
-							extend: 'pdf',
-							pageSize: 'LEGAL',
-							title: value,
-							exportOptions: {
-								columns: [ 1,2,3,4,5,6,7 ],
-								format: {
-									body: function( data, row, col, node ) {
-										return data;
-									}
-								},
+					},
+					{
+						extend: 'pdf',
+						pageSize: 'LEGAL',
+						title: value,
+						exportOptions: {
+							columns: [ 1,2,3,4,5,6,7 ],
+							format: {
+								body: function( data, row, col, node ) {
+									return data;
+								}
 							},
 						},
-						{
-							extend: 'print',
-							title: value,
-							exportOptions: {
-								columns: [ 1,2,3,4,5,6,7 ],
-								format: {
-									body: function( data, row, col, node ) {
-										return data;
-									}
-								},
+					},
+					{
+						extend: 'print',
+						title: value,
+						exportOptions: {
+							columns: [ 1,2,3,4,5,6,7 ],
+							format: {
+								body: function( data, row, col, node ) {
+									return data;
+								}
 							},
-						}
-						],
-				});
-				/* For select 2*/
-				$(".select2").select2();
-				/*tooltip*/
-				$('[data-toggle="tooltip"]').tooltip();
-			}
+						},
+					}
+					],
+			});
+			/* For select 2*/
+			$(".select2").select2();
+			/*tooltip*/
+			$('[data-toggle="tooltip"]').tooltip();
 		}
 	});
 }
@@ -548,11 +655,10 @@ $(document).on('click','.view-job', function() {
 				$('#jobCompanyName').html(data.employee_detail.company_name);
 				$('#comapnyClients').html(data.employee_detail.company_clients_name);
 				$('#salesEmployee').html(data.employee_detail.sales_employee_name);
+				$('#serviceEmployee').html(data.employee_detail.service_employee_name);
 				$('#workingEmployee').html(data.employee_detail.working_employee_name);
-				console.log(data.employee_detail.is_select_delivery_installation);
 				if(data.employee_detail.is_select_delivery_installation == 4)
 				{
-					console.log(data.employee_detail.is_select_delivery_installation);
 					$('#deliveryInstallationSelect').html('Scheduled');
 					$('#deliveryInstallationDateTime').html(data.employee_detail.delivery_installation_datetime);
 					$('#deliveryInstallationEmployees').html(data.employee_detail.delivery_installation_employee_name);
@@ -561,15 +667,12 @@ $(document).on('click','.view-job', function() {
 				{
 					switch (data.employee_detail.is_select_delivery_installation) {
 						case 3:
-						console.log(3);
 						$('#deliveryInstallationSelect').html('Received');
 						break;
 						case 2:
-						console.log(2);
 						$('#deliveryInstallationSelect').html('Awaiting Approval');
 						break;
 						case 1:
-						console.log(1);
 						$('#deliveryInstallationSelect').html('Awaiting Material');
 						break;
 					}
@@ -649,6 +752,36 @@ $(document).on('click','.edit-note', function(){
 			}
 		}
 	});
+});
+
+$(document).on('click','.view-note-images', function(){
+	var jobId = $(this).attr('data-id');
+	$('#jobDetailModel').modal('hide');
+	$("#loader").show();
+	$.ajax({
+		url:'{{ route('getjobimages') }}',
+		data:{
+			jobId:jobId,
+		},
+		type:'post',
+		dataType:'json',
+		success: function(response)
+		{
+			if(response.key == 1)
+			{
+				$('.carousel-indicators').html(response.html1);
+				$('.carousel-inner').html(response.html2);
+				$('#loader').hide();
+				$('#jobImageModel').modal('show');
+			}
+			else
+			{
+				$('#loader').hide();
+				notify('Job images not found.','blackgloss');
+			}
+		}
+	});
+
 });
 
 /*delete Note*/

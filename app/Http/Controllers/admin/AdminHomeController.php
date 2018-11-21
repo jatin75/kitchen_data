@@ -154,109 +154,37 @@ class AdminHomeController extends Controller
 		}
 
 		if(Session::get('login_type_id') == 10 ){
-
 			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.sales_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN admin_users AS au ON au.login_type_id = 10 AND au.id = jb.sales_employee_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
-
 		}else{
 			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 		}
 
 		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
-
 		$html = '';
-		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
-		<thead>
-			<tr>
-				<th class="text-center">Actions</th>
-				<th>Job Name</th>
-				<th>Company Name</th>
-				<th>Job Status</th>
-				<th>Employee</th>
-				<th>Address</th>
-				<th>Start Date</th>
-				<th>Expected Completion Date</th>
-			</tr>
-		</thead>
-		<tbody>';
-			if(!empty($getJobDetails)) {
+		if(!empty($getJobDetails)) {
 
-				if(Session::get('login_type_id') == 9 ) {
+			if(Session::get('login_type_id') == 9 ) {
+				foreach($getJobDetails as $jobDetail) {
+					$getDetail = Admin::where('email',$getSessionEmail)->first();
+					$session_userId = $getDetail->id;
+					$client_id_array = explode(',', $jobDetail->company_clients_id);
 
-					foreach($getJobDetails as $jobDetail) {
+					$employeeIds = explode(',', $jobDetail->working_employee_id);
+					$getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
+					$employee_name = $getEmployeeName->employee_name;
 
-						$getDetail = Admin::where('email',$getSessionEmail)->first();
-						$session_userId = $getDetail->id;
-						$client_id_array = explode(',', $jobDetail->company_clients_id);
-
-						$employeeIds = explode(',', $jobDetail->working_employee_id);
-						$getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
-						$employee_name = $getEmployeeName->employee_name;
-
-						/* Address */
-                        $delimiter = ',' . ' ';
-                        $job_address = $jobDetail->address_1 . $delimiter;
-                        $job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
-                        $jobDetail->address = $job_address;
+					/* Address */
+					$delimiter = ',' . ' ';
+					$job_address = $jobDetail->address_1 . $delimiter;
+					$job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
+					$job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
+					$job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
+					$job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
+					$job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
+					$jobDetail->address = $job_address;
 
 
-						if(in_array($session_userId, $client_id_array)) {
-
-							$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
-							<td class="text-center">
-								<span data-toggle="" data-target="#jobDetailModel">
-									<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
-										<i class="ti-eye"></i>
-									</a>
-								</span>
-							</td>
-							<td>'.$jobDetail->job_title.'</td>
-
-							<td>'.$jobDetail->name.'</td>
-
-							<td>
-								<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" >';
-
-									foreach($getJobTypeDetails as $jobType) {
-										$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
-										$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
-									}
-
-									$html .='</select>
-								</td>
-								<td><div class="word-wrap">'.$employee_name.'</div></td>
-								<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
-								<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
-								<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
-							</tr>';
-						}
-					}
-				}else {
-					foreach($getJobDetails as $jobDetail) {
-						$employeeIds = explode(',', $jobDetail->working_employee_id);
-						$getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
-						$employee_name = $getEmployeeName->employee_name;
-
-						/* Address */
-                        $delimiter = ',' . ' ';
-                        $job_address = $jobDetail->address_1 . $delimiter;
-                        $job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
-                        $job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
-                        $jobDetail->address = $job_address;
-
-						if(Session::get('login_type_id') == 10){
-							/* sales employee */
-							$disable = 'disabled';
-						}else{
-							$disable = '';
-						}
-
+					if(in_array($session_userId, $client_id_array)) {
 						$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
 						<td class="text-center">
 							<span data-toggle="" data-target="#jobDetailModel">
@@ -264,26 +192,17 @@ class AdminHomeController extends Controller
 									<i class="ti-eye"></i>
 								</a>
 							</span>
-							<span data-toggle="modal" data-target="#jobNotesModel">
-								<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="'.$jobDetail->job_id.'">
-									<i class="ti-plus"></i>
-								</a>
-
-							</span>
 						</td>
 						<td>'.$jobDetail->job_title.'</td>
 						<td>'.$jobDetail->name.'</td>
 						<td>
-							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" '.$disable.'>';
-
+							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" >';
 								foreach($getJobTypeDetails as $jobType) {
 									$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
 									$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
 								}
-
 								$html .='</select>
 							</td>
-
 							<td><div class="word-wrap">'.$employee_name.'</div></td>
 							<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
 							<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
@@ -291,9 +210,63 @@ class AdminHomeController extends Controller
 						</tr>';
 					}
 				}
+			}else {
+				foreach($getJobDetails as $jobDetail) {
+					$employeeIds = explode(',', $jobDetail->working_employee_id);
+					$getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
+					$employee_name = $getEmployeeName->employee_name;
+
+					/* Address */
+					$delimiter = ',' . ' ';
+					$job_address = $jobDetail->address_1 . $delimiter;
+					$job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
+					$job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
+					$job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
+					$job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
+					$job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
+					$jobDetail->address = $job_address;
+
+					if(Session::get('login_type_id') == 10){
+						/* sales employee */
+						$disable = 'disabled';
+					}else{
+						$disable = '';
+					}
+
+					$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
+					<td class="text-center">
+						<span data-toggle="" data-target="#jobDetailModel">
+							<a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
+								<i class="ti-eye"></i>
+							</a>
+						</span>
+						<span data-toggle="modal" data-target="#jobNotesModel">
+							<a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="'.$jobDetail->job_id.'">
+								<i class="ti-plus"></i>
+							</a>
+
+						</span>
+					</td>
+					<td>'.$jobDetail->job_title.'</td>
+					<td>'.$jobDetail->name.'</td>
+					<td>
+						<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" '.$disable.'>';
+
+							foreach($getJobTypeDetails as $jobType) {
+								$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+								$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+							}
+
+							$html .='</select>
+					</td>
+					<td><div class="word-wrap">'.$employee_name.'</div></td>
+					<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
+					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+				</tr>';
+				}
 			}
-			$html .='</tbody>
-		</table>';
+		}
 
 		$response['html'] = $html;
 		echo json_encode($response);
