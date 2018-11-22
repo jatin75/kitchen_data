@@ -18,7 +18,8 @@ class NotesController extends Controller
             ->selectRaw('jn.id as notes_id, jn.job_note, jn.name, jn.created_at, j.job_id, j.job_title')
             ->join('jobs as j', 'j.job_id', 'jn.job_id')
             ->where('jn.is_deleted', 0)
-            ->orderBy('jn.created_at', 'desc')->get();
+            ->orderBy('jn.created_at', 'asc')->get();
+            JobNote::where('is_seen',0)->update(['is_seen'=>1]);
         return view('admin.notes')->with('jobNotesList', $jobNotesList);
     }
 }

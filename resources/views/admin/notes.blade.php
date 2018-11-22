@@ -63,7 +63,7 @@
         var value = 'Kitchen_jobnotes_' + date;
         $('#jobNoteList').DataTable({
             dom: 'Bfrtip',
-            order: [[ 4, "desc" ]],
+            order: [[ 4, "asc" ]],
             buttons: [
             {
                 extend: 'csv',
