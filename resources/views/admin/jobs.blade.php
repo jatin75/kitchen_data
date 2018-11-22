@@ -788,10 +788,12 @@ function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employe
 		success:function(data){
 			$('#loader').hide();
 			if(activeJobStatus != 0) {
-				$('.changestatus_'+jobId).fadeOut(300, function(){
-					var table = $('#jobList').DataTable();
-					table.row('.changestatus_'+jobId).remove().draw(false);
-				});
+				if((activeJobStatus != 5 && (jobStatusId == 5 || jobStatusId == 10)) || (activeJobStatus != 6 && (jobStatusId == 6 || jobStatusId == 11)) || (activeJobStatus != 7 && (jobStatusId == 7 || jobStatusId == 12 ))){
+					$('.changestatus_'+jobId).fadeOut(300, function(){
+						var table = $('#jobList').DataTable();
+						table.row('.changestatus_'+jobId).remove().draw(false);
+					});
+				}
 			}
 			notify('Job Status has been Changed Successfully.','blackgloss');
 		}
