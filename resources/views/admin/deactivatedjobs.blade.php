@@ -48,12 +48,12 @@
                                 <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to remove this job?');" href="{{route('deletejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Remove Job"><i class="ti-trash"></i> </a>
                             </td>
                             <td>{{$job->job_title}}</td>
-                            <td>
+                            <td><div style="width:300px;">
                                 <select class="form-control select2 jobType" name="jobType" id="jobType_{{$job->job_id}}" placeholder="Select your job type" data-id="{{$job->job_id}}">
                                     @foreach($jobTypeDetails as $jobType)
                                     <option value="{{ $jobType->job_status_id }}" @if(isset($job->job_status_id) && $job->job_status_id == $jobType->job_status_id) {{"selected='selected'"}} @endif> {{ $jobType->job_status_name }}</option>
                                     @endforeach
-                                </select>
+                                </select></div>
                             </td>
                             <td><div class="word-wrap">{{$job->employee_name}}</div></td>
                             <td><div class="word-wrap">{{$job->address}}</div></td>

@@ -47,7 +47,7 @@ class AdminHomeController extends Controller
 
 	/*showdashboard*/
 	public function showDashboard(){
-		$getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
+		$getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->whereNotIn('job_status_id', [10, 11, 12])->get();
 		$stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
 		$installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
 
@@ -149,17 +149,23 @@ class AdminHomeController extends Controller
 
 		if($job_statusId == 0) {
 			$jobStatusCond = '';
+		}elseif($job_statusId == 5) {
+			$jobStatusCond = "AND jb.job_status_id = 5 OR jb.job_status_id = 10 ";
+		}elseif($job_statusId == 6) {
+			$jobStatusCond = "AND jb.job_status_id = 6 OR jb.job_status_id = 11 ";
+		}elseif($job_statusId == 7) {
+			$jobStatusCond = "AND jb.job_status_id = 7 OR jb.job_status_id = 12 ";
 		}else {
 			$jobStatusCond = "AND jb.job_status_id = {$job_statusId} ";
 		}
 
 		if(Session::get('login_type_id') == 10 ){
-			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.sales_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN admin_users AS au ON au.login_type_id = 10 AND au.id = jb.sales_employee_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.sales_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name,jt.job_status_name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN admin_users AS au ON au.login_type_id = 10 AND au.id = jb.sales_employee_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 		}else{
 			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 		}
 
-		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
+		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->orderBy('display_order')->get();
 		$html = '';
 		if(!empty($getJobDetails)) {
 
@@ -226,13 +232,6 @@ class AdminHomeController extends Controller
 					$job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
 					$jobDetail->address = $job_address;
 
-					if(Session::get('login_type_id') == 10){
-						/* sales employee */
-						$disable = 'disabled';
-					}else{
-						$disable = '';
-					}
-
 					$html .='<tr class="changestatus_'.$jobDetail->job_id.'">
 					<td class="text-center">
 						<span data-toggle="" data-target="#jobDetailModel">
@@ -248,18 +247,22 @@ class AdminHomeController extends Controller
 						</span>
 					</td>
 					<td>'.$jobDetail->job_title.'</td>
-					<td>'.$jobDetail->name.'</td>
-					<td>
-						<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" '.$disable.'>';
+					<td>'.$jobDetail->name.'</td>';
+					if(Session::get('login_type_id') == 10){
+						$html .='<td>'.$jobDetail->job_status_name.'</td>';
+					}else {
+						$html .='<td><div style="width:300px;">
+							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
 
-							foreach($getJobTypeDetails as $jobType) {
-								$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
-								$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
-							}
+								foreach($getJobTypeDetails as $jobType) {
+									$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
+									$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+								}
 
-							$html .='</select>
-					</td>
-					<td><div class="word-wrap">'.$employee_name.'</div></td>
+								$html .='</select>
+						</div></td>';
+					}
+					$html .='<td><div class="word-wrap">'.$employee_name.'</div></td>
 					<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
 					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>

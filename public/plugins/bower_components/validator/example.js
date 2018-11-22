@@ -703,10 +703,10 @@ $(document).ready(function () {
 					notEmpty: {
 						message: 'Job title is required and can\'t be empty.'
 					},
-					regexp: {
-						regexp: /^[a-zA-Z0-9\s]+$/i,
-						message: 'Job title can only consist of alphanumeric.'
-					}
+					// regexp: {
+					// 	regexp: /^[a-zA-Z0-9\s]+$/i,
+					// 	message: 'Job title can only consist of alphanumeric.'
+					// }
 				}
 			},
 			jobStatus: {

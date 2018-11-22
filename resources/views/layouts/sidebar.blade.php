@@ -39,7 +39,7 @@
                     <span class="hide-menu"> Dashboard </span>
                 </a>
             </li>
-            @if(Session::get('login_type_id') != 9  || Session::get('login_type_id') != 10 )
+            @if(Session::get('login_type_id') != 9  && Session::get('login_type_id') != 10 )
             <li>
                 <a id="staff" href="javascript:void(0);" class="waves-effect {!! (Request::is('jobs/*') ? 'active' : '') !!}"><i data-icon=")" class="ti-clipboard fa-fw"></i>
                     <span class="hide-menu">Jobs<span class="fa arrow"></span></span>
@@ -91,33 +91,6 @@
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-
-    /*$(document).ready(function() {
-        var hidden_email = $('#hiddenEmail').val();
-        $.ajax({
-            url:'',
-            data:{hidden_email:hidden_email},
-            type:'post',
-            dataType:'json',
-            success: function(data)
-            {
-                if(data.key == 1)
-                {
-                    $("#userImage").attr('src', data.thumb_file);
-                    $('#loader').hide();
-                }
-                else
-                {
-                    $('#loader').hide();
-                }
-            },
-        });
-
-        $('#imageModel').on('hidden.bs.modal', function () {
-            $('#formAdmin').bootstrapValidator('resetForm', true);
-            $('.fileinput').fileinput('clear');
-        });
-});*/
 
 $('#formAdmin').on('success.form.bv', function(e) {
     e.preventDefault();

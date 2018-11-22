@@ -27,7 +27,7 @@ class JobsController extends Controller
 {
     public function index()
     {
-        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
+        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->orderBy('display_order')->get();
         $getJobDetails = Job::selectRaw('job_id,job_title,address_1,address_2,apartment_number,city,state,zipcode,job_status_id,working_employee_id,job_status_id,start_date,end_date')->where('is_active', 1)->where('is_deleted', 0)->orderBy('created_at', 'DESC')->get();
         if (sizeof($getJobDetails) > 0) {
             foreach ($getJobDetails as $jobValue) {
@@ -52,8 +52,8 @@ class JobsController extends Controller
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
         $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
 
-        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
-        return view('admin.jobs')->with('jobTypeDetails', $getJobTypeDetail)->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
+        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->whereNotIn('job_status_id', [10, 11, 12])->get();
+        return view('admin.jobs')->with('jobStatusDetails', $getJobTypeDetail)->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
     }
 
     public function showDeactivated()
@@ -83,7 +83,7 @@ class JobsController extends Controller
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
         $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
 
-        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
+        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->orderBy('display_order')->get();
         return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
     }
 
@@ -95,7 +95,7 @@ class JobsController extends Controller
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
         $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
-        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
+        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->orderBy('display_order')->get();
 
         $salesEmployeelist = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 10");
 
@@ -113,7 +113,7 @@ class JobsController extends Controller
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
         $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
         $getCompanyClients = DB::select("SELECT UPPER(CONCAT(au.first_name,' ',au.last_name)) AS client_name,au.id FROM clients AS cl JOIN admin_users AS au ON au.id = cl.client_id WHERE cl.company_id = '{$getJobDetails->company_id}'");
-        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
+        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->orderBy('display_order')->get();
 
         $salesEmployeelist = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 10");
 
@@ -804,13 +804,19 @@ class JobsController extends Controller
         $job_statusId = $request->get('jobStatusId');
         if ($job_statusId == 0) {
             $jobStatusCond = '';
-        } else {
+        }elseif($job_statusId == 5) {
+			$jobStatusCond = "AND jb.job_status_id = 5 OR jb.job_status_id = 10 ";
+		}elseif($job_statusId == 6) {
+			$jobStatusCond = "AND jb.job_status_id = 6 OR jb.job_status_id = 11 ";
+		}elseif($job_statusId == 7) {
+			$jobStatusCond = "AND jb.job_status_id = 7 OR jb.job_status_id = 12 ";
+		} else {
             $jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
         }
 
         $getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 
-        $getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
+        $getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->orderBy('display_order')->get();
 
         $html = '';
         if (!empty($getJobDetails)) {
@@ -863,6 +869,7 @@ class JobsController extends Controller
                     </td>
                     <td>' . $jobDetail->job_title . '</td>
                     <td>
+                    <div style="width:300px;">
                         <select class="form-control select2 jobType" name="jobType" id="jobType_' . $jobDetail->job_id . '" placeholder="Select your job type" data-id="' . $jobDetail->job_id . '">';
 
                         foreach ($getJobTypeDetails as $jobType) {
@@ -876,7 +883,7 @@ class JobsController extends Controller
                         <td><div class="word-wrap">'.$jobDetail->address.'</div></td>
                         <td>' . date('m/d/Y', strtotime($jobDetail->start_date)) . '</td>
                         <td>' . date('m/d/Y', strtotime($jobDetail->end_date)) . '</td>
-                    </tr>';
+                    </div></tr>';
             }
         }
 

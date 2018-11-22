@@ -94,7 +94,7 @@
 								<td>{{$job->job_title}}</td>
 								<td>
 									<select class="form-control select2 jobType" name="jobType" id="jobType_{{$job->job_id}}" placeholder="Select your job type" data-id="{{$job->job_id}}">
-										@foreach($jobTypeDetails as $jobType)
+										@foreach($jobStatusDetails as $jobType)
 										<option value="{{ $jobType->job_status_id }}" @if(isset($job->job_status_id) && $job->job_status_id == $jobType->job_status_id) {{"selected='selected'"}} @endif> {{ $jobType->job_status_name }}</option>
 										@endforeach
 									</select>

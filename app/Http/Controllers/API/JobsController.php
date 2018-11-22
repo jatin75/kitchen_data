@@ -171,23 +171,28 @@ class JobsController extends Controller
      */
     public function getSpecificJobDetails($user_id, $job_status_id)
     {
+        $approveJobWhere = '';
         switch ($job_status_id) {
             case '5':
                 $orderBy = 'jb.delivery_datetime';
+                $approveJobWhere = 'OR jb.job_status_id = 10';
                 break;
             case '6':
                 $orderBy = 'jb.installation_datetime';
+                $approveJobWhere = 'OR jb.job_status_id = 11';
                 break;
             case '7':
                 $orderBy = 'jb.stone_installation_datetime';
+                $approveJobWhere = 'OR jb.job_status_id = 12';
                 break;
             default:
                 $orderBy = 'jb.created_at';
                 break;
         }
-
+        /*user servicer*/
         $serviceWhere = ($job_status_id == 8) ?  "" : "AND jb.job_status_id = 8";
-        $getDetails = DB::select("SELECT jb.*,c.name as company_name FROM jobs as jb,companies as c WHERE c.company_id = jb.company_id AND (jb.working_employee_id LIKE '%{$user_id}%' AND jb.job_status_id = '{$job_status_id}' OR  jb.service_employee_id LIKE '%{$user_id}%'  $serviceWhere)  AND jb.is_deleted = 0 AND jb.is_active = 1  ORDER BY '{$orderBy}' DESC");
+
+        $getDetails = DB::select("SELECT jb.*,c.name as company_name FROM jobs as jb,companies as c WHERE c.company_id = jb.company_id AND (jb.working_employee_id LIKE '%{$user_id}%' AND (jb.job_status_id = '{$job_status_id}' $approveJobWhere) OR  jb.service_employee_id LIKE '%{$user_id}%'  $serviceWhere)  AND jb.is_deleted = 0 AND jb.is_active = 1  ORDER BY '{$orderBy}' DESC");
 
         if (sizeof($getDetails) > 0) {
             foreach ($getDetails as $job) {
@@ -243,6 +248,7 @@ class JobsController extends Controller
             $job_pics_url = $request->get('job_pics_url');
             $job_thumbnail_url = $request->get('job_thumbnail_url');
             $job_notes = $request->get('job_notes');
+            $checked_list = $request->get('checked_list');
             switch ($user_login_type) {
                 /*measurer*/
                 case 3:
@@ -343,8 +349,8 @@ class JobsController extends Controller
                                 }
 
                                 $stone_employee_id = implode(',', $stoneinstallation_employees);
-                                $stage = 'Stone installation stage';
-                                $job_status = 7;
+                                $stage = 'Installing Awaiting Approval stage';
+                                $job_status = 11;
                                 $is_active = 1;
 
                                 $title = 'Change Job Status';
@@ -355,44 +361,45 @@ class JobsController extends Controller
                                 foreach ($stoneinstallation_employees as $stoneinstaller_id) {
                                     $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $stoneinstaller_id)->first();
                                     if (!empty($device_detail->device_token)) {
-                                        $messageBody = $getDetail->job_title . " has been installed and is awaiting Stone Installation.";
+                                        $messageBody = $getDetail->job_title . " has been installed and is now awaiting Installing Approval.";
                                         $deviceid = $device_detail->device_token;
                                         $device_type = $device_detail->device_type;
                                         $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
                                     }
                                 }
-                            } else {
-                                $stone_employee_id = null;
-                                $stoneinstallation_datetime = null;
-                                $stage = 'Complete';
-                                $job_status = 9;
-                                $is_active = 0;
-                            }
 
-                            /*send mail as admin*/
-                            $adminMailBody = "Job has been Installed and is now in " . $stage . ".";
-                            $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                                /*send mail as admin*/
+                                $adminMailBody = "Job has been Installed and is now in " . $stage . ".";
+                                $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
-                            /*send notification as client */
-                            if (sizeof($company_client_ids) > 0) {
-                                $title = 'Change Job Status';
-                                $badge = '1';
-                                $sound = 'default';
+                                /*send notification as client */
+                                if (sizeof($company_client_ids) > 0) {
+                                    $title = 'Change Job Status';
+                                    $badge = '1';
+                                    $sound = 'default';
 
-                                foreach ($company_client_ids as $client_id) {
-                                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $client_id)->first();
-                                    if (!empty($device_detail->device_token)) {
-                                        $messageBody = $getDetail->job_title . " has been measured and has moved To " . $stage . ".";
-                                        $deviceid = $device_detail->device_token;
-                                        $device_type = $device_detail->device_type;
-                                        $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                                    foreach ($company_client_ids as $client_id) {
+                                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $client_id)->first();
+                                        if (!empty($device_detail->device_token)) {
+                                            $messageBody = $getDetail->job_title . " has been installed and has moved To " . $stage . ".";
+                                            $deviceid = $device_detail->device_token;
+                                            $device_type = $device_detail->device_type;
+                                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                                        }
                                     }
                                 }
+
+                                /*update job*/
+                                Job::where('job_id', $job_id)->update(['job_status_id' => $job_status, 'is_select_stone_installation' => $is_stone_installation, 'stone_installation_employee_id' => $stone_employee_id, 'stone_installation_datetime' => $stoneinstallation_datetime, 'is_active' => $is_active]);
                             }
-
-                            /*update job*/
-                            Job::where('job_id', $job_id)->update(['job_status_id' => $job_status, 'is_select_stone_installation' => $is_stone_installation, 'stone_installation_employee_id' => $stone_employee_id, 'stone_installation_datetime' => $stoneinstallation_datetime, 'is_active' => $is_active]);
-
+                            // else {
+                            //     $stone_employee_id = null;
+                            //     $stoneinstallation_datetime = null;
+                            //     $stage = 'Complete';
+                            //     $job_status = 9;
+                            //     $is_active = 0;
+                            // }
+                            $this->saveCheckList($job_id,$user_login_type,$checked_list);
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                             break;
                         /*incomplete*/
@@ -446,6 +453,7 @@ class JobsController extends Controller
                             /*send mail as admin*/
                             $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
+                            $this->saveCheckList($job_id,$user_login_type,$checked_list);
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                             break;
                         default:
@@ -493,8 +501,8 @@ class JobsController extends Controller
                                     $installation_datetime = date('Y-m-d H:i:s', strtotime($installation_date . ' 09:55AM'));
                                 }
                                 $installation_employee_id = implode(',', $installation_employees);
-                                $stage = 'Installation stage';
-                                $job_status = 6;
+                                $stage = 'Delivering Awaiting Approval stage';
+                                $job_status = 10;
                                 $is_active = 1;
 
                                 $title = 'Change Job Status';
@@ -505,7 +513,7 @@ class JobsController extends Controller
                                 foreach ($installation_employees as $installer_id) {
                                     $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $installer_id)->first();
                                     if (!empty($device_detail->device_token)) {
-                                        $messageBody = $getDetail->job_title . " is ready for Installation";
+                                        $messageBody = $getDetail->job_title . " is ready for Delivering Awaiting Approval";
                                         $deviceid = $device_detail->device_token;
                                         $device_type = $device_detail->device_type;
                                         $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
@@ -514,37 +522,38 @@ class JobsController extends Controller
 
                                 /*send mail as contractor*/
                                 $this->sendMailInstallation($getDetail->job_title, $installation_date, $getDetail->contractor_email);
-                            } else {
-                                $installation_employee_id = null;
-                                $installation_datetime = null;
-                                $stage = 'COMPLETE';
-                                $job_status = 9;
-                                $is_active = 0;
-                            }
 
-                            /*send mail as admin*/
-                            $adminMailBody = "Job has been delivered and is now In " . $stage . ".Please enter INSTALLATION DATE.";
-                            $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                                /*send mail as admin*/
+                                $adminMailBody = "Job has been delivered and is now In " . $stage . ".Please enter INSTALLATION DATE.";
+                                $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
-                            /*send notification as client */
-                            if (sizeof($company_client_ids) > 0) {
-                                $title = 'Change Job Status';
-                                $badge = '1';
-                                $sound = 'default';
+                                /*send notification as client */
+                                if (sizeof($company_client_ids) > 0) {
+                                    $title = 'Change Job Status';
+                                    $badge = '1';
+                                    $sound = 'default';
 
-                                foreach ($company_client_ids as $client_id) {
-                                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $client_id)->first();
-                                    if (!empty($device_detail->device_token)) {
-                                        $messageBody = $getDetail->job_title . " has been delivered and Has moved to " . $stage . ".";
-                                        $deviceid = $device_detail->device_token;
-                                        $device_type = $device_detail->device_type;
-                                        $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                                    foreach ($company_client_ids as $client_id) {
+                                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $client_id)->first();
+                                        if (!empty($device_detail->device_token)) {
+                                            $messageBody = $getDetail->job_title . " has been delivered and Has moved to " . $stage . ".";
+                                            $deviceid = $device_detail->device_token;
+                                            $device_type = $device_detail->device_type;
+                                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                                        }
                                     }
                                 }
-                            }
 
-                            /* status */
-                            Job::where('job_id', $job_id)->update(['job_status_id' => $job_status, 'is_select_installation' => $is_installation, 'installation_employee_id' => $installation_employee_id, 'installation_datetime' => $installation_datetime, 'is_active' => $is_active]);
+                                /* status */
+                                Job::where('job_id', $job_id)->update(['job_status_id' => $job_status, 'is_select_installation' => $is_installation, 'installation_employee_id' => $installation_employee_id, 'installation_datetime' => $installation_datetime, 'is_active' => $is_active]);
+                            }
+                            // else {
+                            //     $installation_employee_id = null;
+                            //     $installation_datetime = null;
+                            //     $stage = 'COMPLETE';
+                            //     $job_status = 9;
+                            //     $is_active = 0;
+                            // }
 
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                             break;
@@ -620,7 +629,7 @@ class JobsController extends Controller
                             $company_client_ids = explode(',', $getDetail->company_clients_id);
 
                             /*send mail as admin*/
-                            $adminMailBody = "Job STONE has been installed and is now COMPLETE.";
+                            $adminMailBody = "Job STONE has been installed and is now Stone Installing Awaiting Approval.";
                             $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
                             /*send notification as client */
@@ -640,8 +649,8 @@ class JobsController extends Controller
                                 }
                             }
                             /*update job*/
-                            Job::where('job_id', $job_id)->update(['job_status_id' => 9, 'is_active' => 0]);
-
+                            Job::where('job_id', $job_id)->update(['job_status_id' => 12, 'is_active' => 1]);
+                            $this->saveCheckList($job_id,$user_login_type,$checked_list);
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                             break;
                         /*incomplete*/
@@ -694,7 +703,7 @@ class JobsController extends Controller
                             }
                             /*send mail as admin*/
                             $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
-
+                            $this->saveCheckList($job_id,$user_login_type,$checked_list);
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                             break;
                         default:
@@ -707,6 +716,56 @@ class JobsController extends Controller
                     break;
             }
         } catch (\Exception $e) {echo $e->getMessage();die;}
+    }
+
+    public function saveCheckList($job_id,$login_type_id,$checked_list){
+        try {
+            $getTotalJobCheckLists = DB::select("SELECT checklist_id FROM check_lists WHERE login_type_id = '{$login_type_id}'");
+            $getSpecificJobCheckList = DB::select("SELECT checklist_id FROM jobs_checklists WHERE job_id = '{$job_id}'");
+            /* Add job check list */
+            if (sizeof($getSpecificJobCheckList) > 0) {
+                /* check list exist */
+                $getSpecificJobCheckList = array_column($getSpecificJobCheckList, 'checklist_id');
+                $newCheckListArray = array();
+
+                foreach ($getTotalJobCheckLists as $value) {
+                    if (!in_array($value->checklist_id, $getSpecificJobCheckList)) {
+                        $newCheckListArray[] = array(
+                            'checklist_id' => $value->checklist_id,
+                            'job_id' => $job_id,
+                            'is_completed' => 0,
+                            'created_at' => date('Y-m-d H:i:s'),
+                        );
+                    }
+                }
+                if (sizeof($newCheckListArray) > 0) {
+                    JobChecklist::insert($newCheckListArray);
+                }
+            } else {
+                $newCheckListArray = [];
+                foreach ($getTotalJobCheckLists as $value) {
+                    $newCheckListArray[] = array(
+                        'checklist_id' => $value->checklist_id,
+                        'job_id' => $job_id,
+                        'is_completed' => 0,
+                        'created_at' => date('Y-m-d H:i:s'),
+                    );
+                }
+                if (sizeof($newCheckListArray) > 0) {
+                    JobChecklist::insert($newCheckListArray);
+                }
+            }
+            /* Change check list status */
+            if (sizeof($checked_list) > 0) {
+                JobChecklist::whereIn('checklist_id', $checked_list)->update(['is_completed' => 1]);
+                JobChecklist::whereNotIn('checklist_id', $checked_list)->update(['is_completed' => 0]);
+
+                return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully']);
+            } else {
+                return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'No data found.']);
+            }
+            
+        } catch (\Exception $e) {}
     }
 
     /* Design Status */
