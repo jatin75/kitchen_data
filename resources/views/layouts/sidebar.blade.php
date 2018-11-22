@@ -79,6 +79,7 @@
                 <a id="invoices" href="{{ route('shownotes') }}" class="waves-effect {!! (Request::is('notes/*')? 'active' : '') !!}">
                     <i class="ti-book fa-fw" data-icon="l"></i>
                     <span class="hide-menu">Notes</span>
+                    <span id="noteBadge" class="hidden label label-rouded label-danger pull-right">0</span>
                 </a>
             </li>
             @endif
@@ -119,7 +120,7 @@
         });
 });*/
 
-$('#formAdmin').on('success.form.bv', function(e) {
+/* $('#formAdmin').on('success.form.bv', function(e) {
     e.preventDefault();
     $('#loader').show();
     $('#imageModel').modal('hide');
@@ -147,5 +148,32 @@ $('#formAdmin').on('success.form.bv', function(e) {
             }
         },
     });
-});
+}); */
+/* Badge call*/
+setInterval(function(){
+        $.ajax({
+            url:'{{ url('setnotesbadge') }}',
+            type:'get',
+            dataType:'json',
+            success: function(response)
+            {
+                if(response.key == 1)
+                {
+                    if(response.count == 0)
+                    {
+                        $('#noteBadge').addClass('hidden');
+                    }
+                    else
+                    {
+                        $('#noteBadge').html(response.count);
+                        $('#noteBadge').removeClass('hidden');
+                    }
+                }
+                else
+                {
+                    $('#noteBadge').addClass('hidden');
+                }
+            },
+        });
+    }, 1000*10);
 </script>

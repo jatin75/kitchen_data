@@ -272,6 +272,27 @@ class AdminHomeController extends Controller
 		echo json_encode($response);
 	}
 
+	function setnotesbadge()
+	{
+		$badge = 0;
+		$countBagde = DB::table('job_notes as jn')
+		->join('jobs as j', 'j.job_id', 'jn.job_id')
+		->where('jn.is_deleted', 0)
+		->where('jn.is_seen', 0)
+		->count();
+		if(!empty($countBagde))
+		{
+			$response['count'] = $countBagde;
+			$response['key'] = 1;
+			return $response;
+		}
+		else
+		{
+			$response['key'] = 2;
+			return $response;
+		}
+	}
+
 	function replacePhoneNumber($phone_number)
 	{
 		$replace_phone_number = preg_replace('/\D/', '', $phone_number);

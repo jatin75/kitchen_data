@@ -4,12 +4,12 @@ namespace App\Http\Controllers\API;
 
 date_default_timezone_set('UTC');
 use App\Admin;
+use App\CheckList;
 use App\Http\Controllers\Controller;
 use App\Job;
+use App\JobChecklist;
 use App\JobNote;
 use App\JobType;
-use App\CheckList;
-use App\JobChecklist;
 use DB;
 use FCM;
 use Illuminate\Http\Request;
@@ -95,9 +95,9 @@ class JobsController extends Controller
     /**
      * getJobCheckList
      *
-     * @return Job CheckList Detail
+     * @return User Job CheckList Detail
      */
-    public function getJobCheckList(Request $request)
+    public function getUserJobCheckList(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -108,20 +108,15 @@ class JobsController extends Controller
                 $messages = $validator->errors()->all();
                 $msg = $messages[0];
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
-            }
-            else
-            {
+            } else {
                 $job_id = $request->get('job_id');
                 $login_type_id = $request->get('login_type_id');
-                $getCheckLists = DB::select("SELECT jc.checklist_id,cl.list_title,jc.is_completed FROM jobs_checklists AS jc JOIN check_lists AS cl ON cl.checklist_id = jc.checklist_id WHERE jc.job_id = '{$job_id}' AND cl.login_type_id = '{$login_type_id}'");
+                $getCheckLists = DB::select("SELECT jc.checklist_id,cl.list_title,jc.is_completed AS is_checked FROM jobs_checklists AS jc JOIN check_lists AS cl ON cl.checklist_id = jc.checklist_id WHERE jc.job_id = '{$job_id}' AND cl.login_type_id = '{$login_type_id}'");
 
-                if(sizeof($getCheckLists))
-                {
-                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully', 'response_data' => array('job_checklists' => $getCheckLists)]);
-                }
-                else
-                {
-                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'No detail found.']);
+                if (sizeof($getCheckLists)) {
+                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully', 'response_data' => $getCheckLists]);
+                } else {
+                    return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'No data found.', 'response_data' => $getCheckLists]);
                 }
             }
         } catch (\Exception $e) {}
@@ -186,7 +181,7 @@ class JobsController extends Controller
                 break;
         }
 
-        $serviceWhere = ($job_status_id == 8) ?  "" : "AND jb.job_status_id = 8";
+        $serviceWhere = ($job_status_id == 8) ? "" : "AND jb.job_status_id = 8";
         $getDetails = DB::select("SELECT jb.*,c.name as company_name FROM jobs as jb,companies as c WHERE c.company_id = jb.company_id AND (jb.working_employee_id LIKE '%{$user_id}%' AND jb.job_status_id = '{$job_status_id}' OR  jb.service_employee_id LIKE '%{$user_id}%'  $serviceWhere)  AND jb.is_deleted = 0 AND jb.is_active = 1  ORDER BY '{$orderBy}' DESC");
 
         if (sizeof($getDetails) > 0) {

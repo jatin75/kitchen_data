@@ -24,6 +24,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     /*Dashboard*/
     Route::get('dashboard', 'admin\AdminHomeController@showDashboard')->name('dashboard');
     Route::post('showjobdetailstatus', 'admin\AdminHomeController@showJobDetails')->name('showjobdetailstatus');
+    Route::get('setnotesbadge', 'admin\AdminHomeController@setNotesBadge');
 
     /*My Profile*/
     //Route::get('profile/{email}','admin\AdminHomeController@editMyProfile')->name('adminprofile');
