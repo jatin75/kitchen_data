@@ -113,7 +113,11 @@ class JobsController extends Controller
                 $login_type_id = $request->get('login_type_id');
                 $getCheckLists = DB::select("SELECT jc.checklist_id,cl.list_title,jc.is_completed AS is_checked FROM jobs_checklists AS jc JOIN check_lists AS cl ON cl.checklist_id = jc.checklist_id WHERE jc.job_id = '{$job_id}' AND cl.login_type_id = '{$login_type_id}'");
 
-                if (sizeof($getCheckLists)) {
+                if(!sizeof($getCheckLists) > 0)
+                {
+                    $getCheckLists = DB::select("SELECT checklist_id,list_title FROM check_lists WHERE login_type_id = '{$login_type_id}'");
+                }
+                if (sizeof($getCheckLists) > 0) {
                     return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully', 'response_data' => $getCheckLists]);
                 } else {
                     return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'No data found.', 'response_data' => $getCheckLists]);
