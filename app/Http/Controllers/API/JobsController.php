@@ -755,14 +755,13 @@ class JobsController extends Controller
             }
             /* Change check list status */
             if (sizeof($checked_list) > 0) {
-                JobChecklist::whereIn('checklist_id', $checked_list)->update(['is_completed' => 1]);
-                JobChecklist::whereNotIn('checklist_id', $checked_list)->update(['is_completed' => 0]);
-
+                JobChecklist::where('job_id',$job_id)->whereIn('checklist_id', $checked_list)->update(['is_completed' => 1]);
+                JobChecklist::where('job_id',$job_id)->whereNotIn('checklist_id', $checked_list)->update(['is_completed' => 0]);
                 return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully']);
             } else {
                 return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'No data found.']);
             }
-            
+
         } catch (\Exception $e) {}
     }
 
