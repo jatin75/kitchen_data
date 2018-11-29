@@ -119,9 +119,18 @@ class JobsController extends Controller
 
         $getJobDetails->start_date = date('m/d/Y', strtotime($getJobDetails->start_date));
         $getJobDetails->end_date = date('m/d/Y', strtotime($getJobDetails->end_date));
-        $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
-        $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
-        $getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
+        if (empty($getJobDetails->plumbing_installation_date)) {
+            $getJobDetails->plumbing_installation_date = null;
+        }else {
+            $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
+        }
+        if (empty($getJobDetails->delivery_datetime)) {
+            $getJobDetails->delivery_date = null;
+            $getJobDetails->delivery_time = null;
+        }else {
+            $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
+            $getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
+        }
         if (empty($getJobDetails->installation_datetime)) {
             $getJobDetails->installation_date = null;
             $getJobDetails->installation_time = null;
@@ -231,6 +240,17 @@ class JobsController extends Controller
         }else {
             $service_employee_id = null;
         }
+        if(!empty($request->get('plumbingInstallationDate'))) {
+            $plumbingInstallationDate = date('Y-m-d', strtotime($request->get('plumbingInstallationDate')));
+        }else {
+            $plumbingInstallationDate = null;
+        }
+        if(!empty($request->get('deliveryDate'))) {
+            $deliveryDateTime = date('Y-m-d H:i:s', strtotime($request->get('deliveryDate') . ' ' . $request->get('deliveryTime')));
+        }else {
+            $deliveryDateTime = null;
+        }
+
         $is_installation = $request->get('installationSelect');
         $is_stone_installation = $request->get('stoneInstallationSelect');
         $is_delivery_installation = $request->get('deliveryInstallationSelect');
@@ -262,8 +282,8 @@ class JobsController extends Controller
             $objJob->company_clients_id = $comapny_clients;
             $objJob->sales_employee_id = $sales_employee_id;
 
-            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbingInstallationDate')));
-            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryDate') . ' ' . $request->get('deliveryTime')));
+            $objJob->plumbing_installation_date = $plumbingInstallationDate;
+            $objJob->delivery_datetime = $deliveryDateTime;
 
             $objJob->is_select_installation = $is_installation;
             if ($is_installation == 3) {
@@ -415,8 +435,8 @@ class JobsController extends Controller
             $objJob->company_clients_id = $comapny_clients;
             $objJob->sales_employee_id = $sales_employee_id;
 
-            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbingInstallationDate')));
-            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryDate') . ' ' . $request->get('deliveryTime')));
+            $objJob->plumbing_installation_date = $plumbingInstallationDate;
+            $objJob->delivery_datetime = $deliveryDateTime;
 
             $objJob->job_status_id = $request->get('jobType');
 
