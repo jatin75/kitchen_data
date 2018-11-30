@@ -123,7 +123,7 @@ class ClientsController extends Controller
             $objAdmin->save();
 
             /*send Mail*/
-            Mail::send('emails.AdminPanel_EmployeeCreated', array(
+            Mail::send('emails.AdminPanel_ClientCreated', array(
                 'password' => $new_client_id,
                 'email' => $client_email,
             ), function ($message) use ($client_email) {

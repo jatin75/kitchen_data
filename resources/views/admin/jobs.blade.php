@@ -780,6 +780,9 @@ else {
 
 function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee) {
 	$("#loader").show();
+	//comment
+	//jobStatusId = change job status
+	//activeJobStatus = 0 - All else current status
 	$.ajax({
 		url:'{{ route('changejobstatus') }}',
 		data:{jobStatusId:jobStatusId,jobId:jobId,date:date,time:time,employee:employee},
@@ -788,12 +791,20 @@ function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employe
 		success:function(data){
 			$('#loader').hide();
 			if(activeJobStatus != 0) {
-				if((activeJobStatus != 5 && (jobStatusId == 5 || jobStatusId == 10)) || (activeJobStatus != 6 && (jobStatusId == 6 || jobStatusId == 11)) || (activeJobStatus != 7 && (jobStatusId == 7 || jobStatusId == 12 ))){
+				 if((activeJobStatus == 5 && (jobStatusId == 5 || jobStatusId == 10)) || (activeJobStatus == 6 && (jobStatusId == 6 || jobStatusId == 11)) || (activeJobStatus == 7 && (jobStatusId == 7 || jobStatusId == 12 ))){
+
+				 }else {
 					$('.changestatus_'+jobId).fadeOut(300, function(){
 						var table = $('#jobList').DataTable();
 						table.row('.changestatus_'+jobId).remove().draw(false);
 					});
 				}
+			}
+			else if(jobStatusId == 9){
+				$('.changestatus_'+jobId).fadeOut(300, function(){
+					var table = $('#jobList').DataTable();
+					table.row('.changestatus_'+jobId).remove().draw(false);
+				});
 			}
 			notify('Job Status has been Changed Successfully.','blackgloss');
 		}
@@ -849,55 +860,54 @@ $('#formAddStoneInstallingDateTime').on('success.form.bv', function(e) {
 
 /*set audit*/
 $(document).on('click','.view-audit',function(){
-	//$(".view-audit").click(function(){
-		var jobId = $(this).attr('data-id');
-		$('#loader').show();
-		$.ajax({
-			url:'{{ route('showaudittrail') }}',
-			data:{
-				job_id:jobId,
-			},
-			type:'post',
-			dataType:'json',
-			success: function(data)
+	var jobId = $(this).attr('data-id');
+	$('#loader').show();
+	$.ajax({
+		url:'{{ route('showaudittrail') }}',
+		data:{
+			job_id:jobId,
+		},
+		type:'post',
+		dataType:'json',
+		success: function(data)
+		{
+			if(data.key == 1)
 			{
-				if(data.key == 1)
-				{
-					$('#auditData').html(data.audit_data);
-					var date = $('#formatedDate').val();
-					var value = 'Audit_job_' + date;
-					$('#auditList').DataTable({
-						dom: 'Bfrtip',
-						buttons: [
-						{
-							extend: 'csv',
-							title: value,
-							exportOptions: {columns: [ 0,1,2,3,4 ]},
-						},
-						{
-							extend: 'excel',
-							title: value,
-							exportOptions: {columns: [ 0,1,2,3,4 ]},
-						},
-						{
-							extend: 'pdf',
-							pageSize: 'LEGAL',
-							title: value,
-							exportOptions: {columns: [ 0,1,2,3,4]},
-						},
-						{
-							extend: 'print',
-							title: value,
-							exportOptions: {columns: [ 0,1,2,3,4 ]},
-						},
-						],
-					});
-					$('#loader').hide();
-					$('#Auditmodel').modal('show');
-				}
+				$('#auditData').html(data.audit_data);
+				var date = $('#formatedDate').val();
+				var value = 'Audit_job_' + date;
+				$('#auditList').DataTable({
+					dom: 'Bfrtip',
+					buttons: [
+					{
+						extend: 'csv',
+						title: value,
+						exportOptions: {columns: [ 0,1,2,3,4 ]},
+					},
+					{
+						extend: 'excel',
+						title: value,
+						exportOptions: {columns: [ 0,1,2,3,4 ]},
+					},
+					{
+						extend: 'pdf',
+						pageSize: 'LEGAL',
+						title: value,
+						exportOptions: {columns: [ 0,1,2,3,4]},
+					},
+					{
+						extend: 'print',
+						title: value,
+						exportOptions: {columns: [ 0,1,2,3,4 ]},
+					},
+					],
+				});
+				$('#loader').hide();
+				$('#Auditmodel').modal('show');
 			}
-		});
+		}
 	});
+});
 
 /*view job model*/
 $(document).on('click','.view-job', function(){
