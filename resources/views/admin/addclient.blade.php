@@ -94,6 +94,30 @@
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
+													<label class="control-label"><b>SECONDARY EMAIL ADDRESS</b></label>
+													<input style="text-transform: lowercase;" type="email" name="clientSecondEmail" id="clientSecondEmail" value="{{$clientDetails->secondary_email or ''}}" class="form-control"  placeholder="Enter Your Email">
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>SECONDARY PHONE NUMBER</b></label>
+													<input type="text" placeholder="(xxx) xxx-xxxx" name="clientSecondContactNo" id="clientSecondContactNo" value="{{$clientDetails->secondary_phone_number or ''}}" class="form-control">
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>CONTACT PREFERENCE</b></label>
+													<select id="contactPreference" name="contactPreference" class="form-control">
+														<option value="1" @if(isset($clientDetails->contact_preference) && $clientDetails->contact_preference == 1) {{ "selected='selected'" }} @endif>Email</option>
+														<option value="2" @if(isset($clientDetails->contact_preference) && $clientDetails->contact_preference == 2) {{ "selected='selected'" }} @endif>App</option>
+														<option value="3" @if(isset($accountDetail->contact_preference) && $clientDetails->contact_preference == 3) {{ "selected='selected'" }} @endif>Phone</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
 													<label class="control-label"><b>ADDRESS 1</b></label>
 													<input type="text" name="locationAddress" id="locationAddress" value="{{$clientDetails->address_1 or ''}}" class="form-control" placeholder="Address line 1">
 												</div>
@@ -122,16 +146,6 @@
 												<div class="form-group">
 													<label class="control-label"><b>ZIPCODE</b></label>
 													<input type="text" placeholder="Enter Zipcode" name="zipcode" id="zipcode" value="{{$clientDetails->zipcode or ''}}" class="form-control">
-												</div>
-											</div>
-											<div class="col-md-4">
-												<div class="form-group">
-													<label class="control-label"><b>CONTACT PREFERENCE</b></label>
-													<select id="contactPreference" name="contactPreference" class="form-control">
-														<option value="1" @if(isset($clientDetails->contact_preference) && $clientDetails->contact_preference == 1) {{ "selected='selected'" }} @endif>Email</option>
-														<option value="2" @if(isset($clientDetails->contact_preference) && $clientDetails->contact_preference == 2) {{ "selected='selected'" }} @endif>App</option>
-														<option value="3" @if(isset($accountDetail->contact_preference) && $clientDetails->contact_preference == 3) {{ "selected='selected'" }} @endif>Phone</option>
-													</select>
 												</div>
 											</div>
 										</div>
@@ -246,6 +260,8 @@
 			var state = $('#state').val();
 			var zipcode = $('#zipcode').val();
 			var contact_preference = $('#contactPreference').val();
+			var client_secondEmail = $('#clientSecondEmail').val();
+			var client_secondContact = $('#clientSecondContactNo').val();
 			$.ajax({
 				url:'{{ route('storeclient') }}',
 				data:{
@@ -260,7 +276,9 @@
 					city:city,
 					state:state,
 					zipcode:zipcode,
-					contact_preference:contact_preference
+					contact_preference:contact_preference,
+					client_secondEmail:client_secondEmail,
+					client_secondContact:client_secondContact
 				},
 				type:'post',
 				dataType:'json',
@@ -398,6 +416,7 @@
 	/*Mask phone Number Digits*/
 	/*$("#leagueContactNo").mask("999-999-999-9?999999");*/
 	$("#clientContactNo").mask("(999) 999 - 9999");
+	$("#clientSecondContactNo").mask("(999) 999 - 9999");
 
 	/*Date picker*/
 	/*jQuery('#startDate').datepicker({

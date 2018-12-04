@@ -286,10 +286,10 @@ class JobsController extends Controller
                                     }
 
                                     /*send mail as measurer*/
-                                    $this->sendMailDesign($working_employee_ids, $getDetail->job_title, $job_notes, $image_url);
-                                    /*send mail as admin*/
-                                    $adminMailBody = "Job has been measured and is now in Design stage.";
-                                    $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                                    // $this->sendMailDesign($working_employee_ids, $getDetail->job_title, $job_notes, $image_url);
+                                    // /*send mail as admin*/
+                                    // $adminMailBody = "Job has been measured and is now in Design stage.";
+                                    // $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
                                 }
                             }
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
@@ -368,7 +368,7 @@ class JobsController extends Controller
 
                                 /*send mail as admin*/
                                 $adminMailBody = "Job has been Installed and is now in " . $stage . ".";
-                                $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                                // $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
                                 /*send notification as client */
                                 if (sizeof($company_client_ids) > 0) {
@@ -449,7 +449,7 @@ class JobsController extends Controller
                                 $adminMailBody = "Installation has been changed to INCOMPETE status.";
                             }
                             /*send mail as admin*/
-                            $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                            // $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
                             $this->saveCheckList($job_id,$user_login_type,$checked_list);
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
@@ -519,11 +519,11 @@ class JobsController extends Controller
                                 }
 
                                 /*send mail as contractor*/
-                                $this->sendMailInstallation($getDetail->job_title, $installation_date, $getDetail->contractor_email);
+                                // $this->sendMailInstallation($getDetail->job_title, $installation_date, $getDetail->contractor_email);
 
                                 /*send mail as admin*/
                                 $adminMailBody = "Job has been delivered and is now In " . $stage . ".Please enter INSTALLATION DATE.";
-                                $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                                // $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
                                 /*send notification as client */
                                 if (sizeof($company_client_ids) > 0) {
@@ -600,7 +600,7 @@ class JobsController extends Controller
                                 $adminMailBody = "Delivery has been changed to INCOMPETE status.";
                             }
                             /*send mail as admin*/
-                            $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                            // $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                             break;
@@ -628,7 +628,7 @@ class JobsController extends Controller
 
                             /*send mail as admin*/
                             $adminMailBody = "Job STONE has been installed and is now Stone Installing Awaiting Approval.";
-                            $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                            // $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
 
                             /*send notification as client */
                             if (sizeof($company_client_ids) > 0) {
@@ -700,7 +700,7 @@ class JobsController extends Controller
                                 $adminMailBody = " Stone Installation has been changed to INCOMPETE status.";
                             }
                             /*send mail as admin*/
-                            $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
+                            // $this->sendMailAdmin($working_employee_ids, $getDetail->job_title, $job_notes, $adminMailBody, $image_url);
                             $this->saveCheckList($job_id,$user_login_type,$checked_list);
                             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Job status changed successfully"]);
                             break;

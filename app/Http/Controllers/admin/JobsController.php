@@ -127,25 +127,33 @@ class JobsController extends Controller
         }
         if (empty($getJobDetails->delivery_datetime)) {
             $getJobDetails->delivery_date = null;
-            $getJobDetails->delivery_time = null;
+            //$getJobDetails->delivery_time = null;
         }else {
             $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
-            $getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
+            //$getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
         }
         if (empty($getJobDetails->installation_datetime)) {
             $getJobDetails->installation_date = null;
-            $getJobDetails->installation_time = null;
+            //$getJobDetails->installation_time = null;
         } else {
             $getJobDetails->installation_date = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
-            $getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
+            //$getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
         }
 
         if (empty($getJobDetails->stone_installation_datetime)) {
             $getJobDetails->stone_installation_date = null;
-            $getJobDetails->stone_installation_time = null;
+            //$getJobDetails->stone_installation_time = null;
         } else {
             $getJobDetails->stone_installation_date = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
-            $getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
+            //$getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
+        }
+
+        if (empty($getJobDetails->delivery_installation_datetime)) {
+            $getJobDetails->delivery_installation_date = null;
+            //$getJobDetails->delivery_installation_time = null;
+        } else {
+            $getJobDetails->delivery_installation_date = date('m/d/Y', strtotime($getJobDetails->delivery_installation_datetime));
+            //$getJobDetails->delivery_installation_time = date('h:iA', strtotime($getJobDetails->delivery_installation_datetime));
         }
 
         if (!empty($getJobDetails->company_clients_id)) {
@@ -247,7 +255,7 @@ class JobsController extends Controller
             $plumbingInstallationDate = null;
         }
         if(!empty($request->get('deliveryDate'))) {
-            $deliveryDateTime = date('Y-m-d H:i:s', strtotime($request->get('deliveryDate') . ' ' . $request->get('deliveryTime')));
+            $deliveryDateTime = date('Y-m-d', strtotime($request->get('deliveryDate')));
         }else {
             $deliveryDateTime = null;
         }
@@ -288,7 +296,7 @@ class JobsController extends Controller
 
             $objJob->is_select_installation = $is_installation;
             if ($is_installation == 3) {
-                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installationDate') . ' ' . $request->get('installationTime')));
+                $objJob->installation_datetime = date('Y-m-d', strtotime($request->get('installationDate')));
                 $objJob->installation_employee_id = implode(',', $request->get('installationEmployees'));
             } else {
                 $objJob->installation_datetime = null;
@@ -297,7 +305,7 @@ class JobsController extends Controller
 
             $objJob->is_select_stone_installation = $is_stone_installation;
             if ($is_stone_installation == 2) {
-                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stoneInstallationDate') . ' ' . $request->get('stoneInstallationTime')));
+                $objJob->stone_installation_datetime = date('Y-m-d', strtotime($request->get('stoneInstallationDate')));
                 $objJob->stone_installation_employee_id = implode(',', $request->get('stoneInstallationEmployees'));
             } else {
                 $objJob->stone_installation_datetime = null;
@@ -306,7 +314,7 @@ class JobsController extends Controller
 
             $objJob->is_select_delivery_installation = $is_delivery_installation;
             if ($is_delivery_installation == 4) {
-                $objJob->delivery_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryInstallationDate') . ' ' . $request->get('deliveryInstallationTime')));
+                $objJob->delivery_installation_datetime = date('Y-m-d', strtotime($request->get('deliveryInstallationDate')));
                 $objJob->delivery_installation_employee_id = implode(',', $request->get('deliveryInstallationEmployees'));
             } else {
                 $objJob->delivery_installation_datetime = null;
@@ -443,7 +451,7 @@ class JobsController extends Controller
 
             $objJob->is_select_installation = $is_installation;
             if ($is_installation == 3) {
-                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installationDate') . ' ' . $request->get('installationTime')));
+                $objJob->installation_datetime = date('Y-m-d', strtotime($request->get('installationDate')));
                 $objJob->installation_employee_id = implode(',', $request->get('installationEmployees'));
             } else {
                 $objJob->installation_datetime = null;
@@ -452,7 +460,7 @@ class JobsController extends Controller
 
             $objJob->is_select_stone_installation = $is_stone_installation;
             if ($is_stone_installation == 2) {
-                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stoneInstallationDate') . ' ' . $request->get('stoneInstallationTime')));
+                $objJob->stone_installation_datetime = date('Y-m-d', strtotime($request->get('stoneInstallationDate')));
                 $objJob->stone_installation_employee_id = implode(',', $request->get('stoneInstallationEmployees'));
             } else {
                 $objJob->stone_installation_datetime = null;
@@ -461,7 +469,7 @@ class JobsController extends Controller
 
             $objJob->is_select_delivery_installation = $is_delivery_installation;
             if ($is_delivery_installation == 4) {
-                $objJob->delivery_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('deliveryInstallationDate') . ' ' . $request->get('deliveryInstallationTime')));
+                $objJob->delivery_installation_datetime = date('Y-m-d', strtotime($request->get('deliveryInstallationDate')));
                 $objJob->delivery_installation_employee_id = implode(',', $request->get('deliveryInstallationEmployees'));
             } else {
                 $objJob->delivery_installation_datetime = null;
@@ -620,13 +628,13 @@ class JobsController extends Controller
             $getJobDetails->start_date = date('m/d/Y', strtotime($getJobDetails->start_date));
             $getJobDetails->end_date = date('m/d/Y', strtotime($getJobDetails->end_date));
             $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
-            $getJobDetails->delivery_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->delivery_datetime));
+            $getJobDetails->delivery_datetime = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
 
-            $getJobDetails->delivery_installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->delivery_installation_datetime));
+            $getJobDetails->delivery_installation_datetime = date('m/d/Y', strtotime($getJobDetails->delivery_installation_datetime));
 
-            $getJobDetails->installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->installation_datetime));
+            $getJobDetails->installation_datetime = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
 
-            $getJobDetails->stone_installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->stone_installation_datetime));
+            $getJobDetails->stone_installation_datetime = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
 
             if (!empty($getJobDetails->service_employee_id)) {
                 $getJobDetails->service_employee_name = $this->commonViewJobDetails($getJobDetails->service_employee_id);
@@ -923,7 +931,7 @@ class JobsController extends Controller
         $newValueArray = [];
 
         if ($jobStatusId == 5) {
-            $delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+            $delivery_datetime = date('Y-m-d', strtotime($request->get('date')));
 
             /*Audit Trail start*/
             $jobDetail = DB::select("SELECT job_status_id,is_active,delivery_datetime FROM jobs WHERE job_id = '{$jobId}'");
@@ -955,7 +963,7 @@ class JobsController extends Controller
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active, 'delivery_datetime' => $delivery_datetime]);
 
         } elseif ($jobStatusId == 6) {
-            $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+            $installation_datetime = date('Y-m-d', strtotime($request->get('date')));
             $installation_employee_id = implode(',', $request->get('employee'));
 
             /*Audit Trail start*/
@@ -989,7 +997,7 @@ class JobsController extends Controller
             $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active, 'installation_datetime' => $installation_datetime, 'installation_employee_id' => $installation_employee_id, 'is_select_installation' => 1]);
 
         } elseif ($jobStatusId == 7) {
-            $stoneInstallation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+            $stoneInstallation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date')));
             $stoneInstallation_employee_id = implode(',', $request->get('employee'));
 
             /*Audit Trail start*/

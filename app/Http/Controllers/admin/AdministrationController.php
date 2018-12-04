@@ -19,7 +19,7 @@ use App\Client;
 class AdministrationController extends Controller
 {
 	public function index() {
-		$client_company = Company::selectRaw('name,phone_number,address_1,email,created_at,id,company_id')->where('is_deleted',0)->orderBy('created_at', 'DESC')->get();
+		$client_company = Company::selectRaw('name,phone_number,address_1,email,created_at,id,company_id,secondary_phone_number,secondary_email')->where('is_deleted',0)->orderBy('created_at', 'DESC')->get();
 		return view('admin.clientcompany')->with('clientCompanyList',$client_company);
 	}
 
@@ -37,6 +37,8 @@ class AdministrationController extends Controller
 		$city = $request->get('city');
 		$state = $request->get('state');
 		$zipcode = $request->get('zipcode');
+		$company_secondaryPhone = $request->get('company_secondaryPhone');
+		$company_secondEmail = $request->get('company_secondaryEmail');
 
 		if(!empty($hidden_companyId))
 		{
@@ -44,6 +46,12 @@ class AdministrationController extends Controller
 			$getDetail->name = $company_name;
 			$getDetail->phone_number = (new AdminHomeController)->replacePhoneNumber($company_contactNo);
 			$getDetail->email = $company_email;
+			if(empty($company_secondaryPhone) || $company_secondaryPhone == '') {
+				$getDetail->secondary_phone_number = '';
+			}else {
+				$getDetail->secondary_phone_number =  (new AdminHomeController)->replacePhoneNumber($company_secondaryPhone);
+			}
+			$getDetail->secondary_email = $company_secondEmail;
 			$getDetail->address_1 = $company_address_1;
 			$getDetail->address_2 = $company_address_2;
 			$getDetail->city = $city;
@@ -62,6 +70,13 @@ class AdministrationController extends Controller
 			$objCompany->name = $company_name;
 			$objCompany->phone_number = (new AdminHomeController)->replacePhoneNumber($company_contactNo);
 			$objCompany->email = $company_email;
+			if(empty($company_secondaryPhone) || $company_secondaryPhone == '') {
+				$objCompany->secondary_phone_number = '';
+			}else {
+				$objCompany->secondary_phone_number = (new AdminHomeController)->replacePhoneNumber($company_secondaryPhone);
+			}
+			$objCompany->secondary_phone_number = $company_secondaryPhone;
+			$objCompany->secondary_email = $company_secondEmail;
 			$objCompany->address_1 = $company_address_1;
 			$objCompany->address_2 = $company_address_2;
 			$objCompany->city = $city;
@@ -95,7 +110,7 @@ class AdministrationController extends Controller
 	}
 
 	public function edit($company_id) {
-		$getCompanyDetail = Company::selectRaw('name,phone_number,address_1,address_2,city,state,zipcode,email,created_at,company_id,id')->where('company_id',$company_id)->get();
+		$getCompanyDetail = Company::selectRaw('name,phone_number,address_1,address_2,city,state,zipcode,email,created_at,company_id,id,secondary_phone_number,secondary_email')->where('company_id',$company_id)->get();
 		if(sizeof($getCompanyDetail) > 0)
 		{
 			$getCompanyDetail = $getCompanyDetail[0];

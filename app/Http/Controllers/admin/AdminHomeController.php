@@ -72,17 +72,17 @@ class AdminHomeController extends Controller
 			$temporaryPwd = str_random(8);
 			Admin::where('email',$email)->update(['password'=>Hash::make($temporaryPwd)]);
 
-			try{
-				Mail::send('emails.AdminPanel_ForgotPassword',array(
-					'temp_password' => $temporaryPwd
-					), function($message)use($email){
-					$message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-					$message->to($email)->subject('A&S KITCHEN | Forgot Password');
-				});
-			} catch (\Exception $e){
-				Session::flash('invalidMail', 'Something went wrong. Please try again.');
-				return back();
-			}
+			// try{
+			// 	Mail::send('emails.AdminPanel_ForgotPassword',array(
+			// 		'temp_password' => $temporaryPwd
+			// 		), function($message)use($email){
+			// 		$message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+			// 		$message->to($email)->subject('A&S KITCHEN | Forgot Password');
+			// 	});
+			// } catch (\Exception $e){
+			// 	Session::flash('invalidMail', 'Something went wrong. Please try again.');
+			// 	return back();
+			// }
 			Session::flash('validMail', 'An email containing your temporary login password has been sent to your verified email address. You can change your password from your profile.');
 			return back();
 		}
@@ -162,7 +162,7 @@ class AdminHomeController extends Controller
 		if(Session::get('login_type_id') == 10 ){
 			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.sales_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name,jt.job_status_name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN admin_users AS au ON au.login_type_id = 10 AND au.id = jb.sales_employee_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 		}else{
-			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+			$getJobDetails = DB::select("SELECT jb.job_title,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name, jt.job_status_name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id JOIN job_types AS jt ON jt.job_status_id = jb.job_status_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 		}
 
 		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->orderBy('display_order')->get();
@@ -201,19 +201,12 @@ class AdminHomeController extends Controller
 						</td>
 						<td>'.$jobDetail->job_title.'</td>
 						<td>'.$jobDetail->name.'</td>
-						<td>
-							<select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'" >';
-								foreach($getJobTypeDetails as $jobType) {
-									$selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
-									$html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
-								}
-								$html .='</select>
-							</td>
-							<td><div class="word-wrap">'.$employee_name.'</div></td>
-							<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
-							<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
-							<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
-						</tr>';
+						<td>'.$jobDetail->job_status_name.'</td>
+						<td><div class="word-wrap">'.$employee_name.'</div></td>
+						<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
+						<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
+						<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
+					</tr>';
 					}
 				}
 			}else {

@@ -75,6 +75,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('clients/deleteclient/{client_id}', 'admin\ClientsController@destroy')->name('deleteclient');
     Route::get('myprofile/{id}', 'admin\ClientsController@editMyProfile')->name('clientprofile');
     Route::post('clients/getcompanyclients', 'admin\ClientsController@getCompanyClients')->name('getcompanyclients');
+    Route::post('clients/changeclientnotestatus', 'admin\ClientsController@change_client_noteStatus')->name('changeclientnotestatus');
 
     /*Reports*/
     Route::get('reports/showreports', 'admin\ReportsController@index')->name('showreports');

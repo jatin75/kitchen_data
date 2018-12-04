@@ -17,7 +17,7 @@ class ClientsController extends Controller
 {
     public function index()
     {
-        $getClientDetails = DB::select("SELECT cl.client_id,cl.company_id,cl.address_1,cl.city,cl.state,cl.zipcode,cl.contact_preference,cmp.name AS comapny_name,au.email,au.first_name,au.last_name,au.phone_number
+        $getClientDetails = DB::select("SELECT cl.client_id,cl.company_id,cl.address_1,cl.city,cl.state,cl.zipcode,cl.contact_preference,cmp.name AS comapny_name,au.email,au.first_name,au.last_name,au.phone_number,au.secondary_email,au.secondary_phone_number, cl.note_status
 			FROM clients AS cl
 			JOIN companies AS cmp ON cmp.company_id = cl.company_id
 			JOIN admin_users AS au ON au.id = cl.client_id
@@ -33,7 +33,7 @@ class ClientsController extends Controller
 
     public function edit($client_id)
     {
-        $getClientDetails = DB::select("SELECT cl.client_id,cl.company_id,cl.address_1,cl.address_2,cl.city,cl.state,cl.zipcode,cl.contact_preference,au.email,au.first_name,au.last_name,au.phone_number
+        $getClientDetails = DB::select("SELECT cl.client_id,cl.company_id,cl.address_1,cl.address_2,cl.city,cl.state,cl.zipcode,cl.contact_preference,au.email,au.first_name,au.last_name,au.phone_number,au.secondary_phone_number, au.secondary_email
 			FROM clients AS cl
 			JOIN admin_users AS au ON au.id = cl.client_id
 			WHERE cl.is_deleted = 0 AND au.is_deleted = 0 AND cl.client_id = '{$client_id}'");
@@ -83,6 +83,12 @@ class ClientsController extends Controller
             $objAdmin->last_name = $request->get('client_last_name');
             $objAdmin->email = $client_email;
             $objAdmin->phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('client_contactNo'));
+            if(empty($request->get('client_secondContact')) || $request->get('client_secondContact') == ''){
+                $objAdmin->secondary_phone_number = '';
+            }else {
+                $objAdmin->secondary_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('client_secondContact'));
+            }
+            $objAdmin->secondary_email = $request->get('client_secondEmail');
             $objAdmin->save();
             $response['key'] = 2;
             return json_encode($response);
@@ -117,19 +123,25 @@ class ClientsController extends Controller
             $objAdmin->email = $client_email;
             $objAdmin->password = Hash::make($new_client_id);
             $objAdmin->phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('client_contactNo'));
+            if(empty($request->get('client_secondContact')) || $request->get('client_secondContact') == ''){
+                $objAdmin->secondary_phone_number = '';
+            }else {
+                $objAdmin->secondary_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('client_secondContact'));
+            }
+            $objAdmin->secondary_email = $request->get('client_secondEmail');
             $objAdmin->login_type_id = 9;
             $objAdmin->is_deleted = 0;
             $objAdmin->created_at = date('Y-m-d H:i:s');
             $objAdmin->save();
 
             /*send Mail*/
-            Mail::send('emails.AdminPanel_ClientCreated', array(
-                'password' => $new_client_id,
-                'email' => $client_email,
-            ), function ($message) use ($client_email) {
-                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
-                $message->to($client_email)->subject('A&S KITCHEN | Client Account Created');
-            });
+            // Mail::send('emails.AdminPanel_ClientCreated', array(
+            //     'password' => $new_client_id,
+            //     'email' => $client_email,
+            // ), function ($message) use ($client_email) {
+            //     $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+            //     $message->to($client_email)->subject('A&S KITCHEN | Client Account Created');
+            // });
 
             $response['key'] = 1;
             Session::put('successMessage', 'Client detail has been added successfully.');
@@ -169,5 +181,13 @@ class ClientsController extends Controller
         }
         $companyList = Company::selectRaw('company_id,name')->where('is_deleted', 0)->get();
         return view('admin.addclient')->with('clientDetails', $getClientDetails)->with('companyList', $companyList)->with('accountSetting', 1);
+    }
+
+    public function change_client_noteStatus(Request $request) {
+        $client_id = $request->get('client_id');
+        $note_status = $request->get('note_status');
+        Client::where('client_id', $client_id)->update(['note_status' => $note_status]);
+        $response['key'] = 1;
+        return json_encode($response);
     }
 }

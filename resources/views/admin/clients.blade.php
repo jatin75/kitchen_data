@@ -23,6 +23,7 @@
                 <table id="jobList" class="display nowrap" cellspacing="0" width="100%">
                     <thead>
                         <tr>
+                            {{-- <th></th> --}}
                             <th class="text-center">Actions</th>
                             <th>First Name</th>
                             <th>Last Name</th>
@@ -30,6 +31,8 @@
                             <th>Company Name</th>
                             <th>Email Address</th>
                             <th>Phone Number</th>
+                            <th>Secondary Email Address</th>
+                            <th>Secondary Phone Number</th>
                             <th>Contact Preference</th>
                             <th>Street Address</th>
                             <th>City</th>
@@ -40,6 +43,7 @@
                     <tbody>
                         @foreach($clientDetails as $client)
                         <tr>
+                            {{-- <td> <div class="checkbox checkbox-info"> <input type="checkbox" class="client_notes_allow" name="client_notes_allow[]" value="{{ $client->note_status }}" data-id="{{ $client->client_id }}" @if(isset($client->note_status) && $client->note_status == 1) {{ 'checked' }} @endif> <label for="checkbox4"></label> </div> </td> --}}
                             <td class="text-center">
                                 <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editclient',['client_id' => $client->client_id])}}">
                                     <i class="ti-pencil-alt"></i>
@@ -55,6 +59,16 @@
                             <td>{{'--'}}</td>
                             @else
                             <td>{{substr_replace(substr_replace(substr_replace($client->phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0) }}</td>
+                            @endif
+                            @if(empty($client->secondary_email) || $client->secondary_email == "")
+                            <td>{{'--'}}</td>
+                            @else
+                            <td>{{$client->secondary_email}}</td>
+                            @endif
+                            @if(empty($client->secondary_phone_number) || $client->secondary_phone_number == "")
+                            <td>{{'--'}}</td>
+                            @else
+                            <td>{{substr_replace(substr_replace(substr_replace($client->secondary_phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0) }}</td>
                             @endif
                             @if($client->contact_preference == 1)
                             <td><span class="label label-info">{{'Email'}}</span></td>
@@ -99,27 +113,52 @@
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]},
             },
             {
                 extend: 'pdf',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]},
             },
             ],
         });
+    });
+
+    $(document).on('change', '.client_notes_allow',function(){
+        if ($(this).prop('checked') == true){
+            var note_status = 1;
+        }else {
+            var note_status = 0;
+        }
+        var client_id = $(this).attr('data-id');
+        $(this).val(note_status);
+        $('#loader').show();
+        $.ajax({
+			url:'{{ route('changeclientnotestatus') }}',
+			data:{ note_status:note_status,client_id:client_id},
+			type:'post',
+			dataType:'json',
+			success: function(data)
+			{
+				if(data.key == 1)
+				{
+					$('#loader').hide();
+					notify('Client Details has been updated successfully.','blackgloss');
+				}
+			}
+		});
     });
 
     @if(Session::has('successMessage'))

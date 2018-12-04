@@ -17,7 +17,7 @@ class EmployeesController extends Controller
 {
     public function index()
     {
-        $employee = DB::select("SELECT au.first_name,au.last_name,au.phone_number,au.email,au.login_type_id,au.created_at,au.id,lt.type_name
+        $employee = DB::select("SELECT au.first_name,au.last_name,au.phone_number,au.email,au.login_type_id,au.created_at,au.id,lt.type_name,au.secondary_phone_number,au.secondary_email
 			FROM admin_users AS au
 			JOIN login_types AS lt ON lt.login_type_id = au.login_type_id WHERE au.is_deleted = 0 AND au.login_type_id <> 9 ORDER BY au.created_at DESC");
         return view('admin.employee')->with('employeeList', $employee);
@@ -39,6 +39,9 @@ class EmployeesController extends Controller
         $employee_email = $request->get('employee_email');
         $employee_type = $request->get('employee_type');
         $employee_password = $request->get('employee_password');
+        $employee_secondPhone = $request->get('employee_secondPhone');
+        $employee_secondEmail = $request->get('employee_secondEmail');
+
         if (!empty($hidden_employeeID)) {
             /* Edit */
             $checkEmailExist = Admin::selectRaw('email')->where('email', $employee_email)->where('id', '<>', $hidden_employeeID)->first();
@@ -64,6 +67,12 @@ class EmployeesController extends Controller
                 $getDetail->last_name = $employee_lastName;
                 $getDetail->phone_number = $adminHomeController->replacePhoneNumber($employee_contactNo);
                 $getDetail->email = $employee_email;
+                if(empty($employee_secondPhone) || $employee_secondPhone == '') {
+                    $getDetail->secondary_phone_number = '';
+                }else {
+                    $getDetail->secondary_phone_number = $adminHomeController->replacePhoneNumber($employee_secondPhone);
+                }
+                $getDetail->secondary_email = $employee_secondEmail;
                 $getDetail->save();
 
                 $response['key'] = 2;
@@ -84,18 +93,24 @@ class EmployeesController extends Controller
                 $objEmployee->email = $employee_email;
                 $objEmployee->password = Hash::make($employee_password);
                 $objEmployee->phone_number = $adminHomeController->replacePhoneNumber($employee_contactNo);
+                if(empty($employee_secondPhone) || $employee_secondPhone == '') {
+                    $objEmployee->secondary_phone_number = '';
+                }else {
+                    $objEmployee->secondary_phone_number = $adminHomeController->replacePhoneNumber($employee_secondPhone);
+                }
+                $objEmployee->secondary_email = $employee_secondEmail;
                 $objEmployee->login_type_id = $employee_type;
                 $objEmployee->created_at = date('Y-m-d H:i:s');
                 $objEmployee->save();
 
                 /*send Mail*/
-                 Mail::send('emails.AdminPanel_EmployeeCreated',array(
-                'password' => $employee_password,
-                'email' => $employee_email,
-                ), function($message)use($employee_email){
-                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->to($employee_email)->subject('A&S KITCHEN | Employee Account Created');
-                });
+                //  Mail::send('emails.AdminPanel_EmployeeCreated',array(
+                // 'password' => $employee_password,
+                // 'email' => $employee_email,
+                // ), function($message)use($employee_email){
+                // $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                // $message->to($employee_email)->subject('A&S KITCHEN | Employee Account Created');
+                // });
 
                 $response['key'] = 1;
                 Session::put('successMessage', 'Employee detail has been added successfully.');
@@ -106,7 +121,7 @@ class EmployeesController extends Controller
 
     public function edit($employee_id)
     {
-        $getEmployeeDetail = Admin::selectRaw('first_name,last_name,phone_number,email,login_type_id,id')->where('id', $employee_id)->get();
+        $getEmployeeDetail = Admin::selectRaw('first_name,last_name,phone_number,email,login_type_id,id,secondary_phone_number,secondary_email')->where('id', $employee_id)->get();
         if (sizeof($getEmployeeDetail) > 0) {
             $getEmployeeDetail = $getEmployeeDetail[0];
         }

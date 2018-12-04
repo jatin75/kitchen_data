@@ -198,7 +198,7 @@
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">DELIVERY DATE AND TIME</label>
+						<label class="control-label">DELIVERY DATE</label>
 						<br><span id="deliveryDateTime"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
@@ -240,15 +240,15 @@
 				</div>
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">DELIVERY INSTALLATION DATE & TIME</label>
+						<label class="control-label">DELIVERY INSTALLATION DATE</label>
 						<br><span id="deliveryInstallationDateTime"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">INSTALLATION DATE AND TIME</label>
+						<label class="control-label">INSTALLATION DATE</label>
 						<br><span id="installationDateTime"></span>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 p-b-20">
-						<label class="control-label">STONE INSTALLATION DATE AND TIME</label>
+						<label class="control-label">STONE INSTALLATION DATE</label>
 						<br><span id="stoneInstallationDateTime"></span>
 					</div>
 				</div>
@@ -320,17 +320,17 @@
 							<div class="row col-md-12">
 								<div class="col-md-12">
 									<div class="form-group">
-										<label class="col-md-12">DELIVERY DATE AND TIME </label>
+										<label class="col-md-12">DELIVERY DATE </label>
 										<div class="">
-											<div class="col-md-4">
+											<div class="col-md-8">
 												<input type="text" name="deliveryDate" id="deliveryDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 												maxlength="10" value="">
 											</div>
-											<div class="col-md-4">
+											{{-- <div class="col-md-4">
 												<div class="input-group clockpicker " data-placement="top">
 													<input type="text" id="deliveryTime" name="deliveryTime" class="form-control" placeholder="hh:mm" value="">
 												</div>
-											</div>
+											</div> --}}
 										</div>
 									</div>
 								</div>
@@ -347,17 +347,17 @@
 							<div class="row col-md-12">
 								<div class="col-md-12">
 									<div class="form-group">
-										<label class="control-label">INSTALLATION DATE AND TIME </label>
+										<label class="control-label">INSTALLATION DATE </label>
 										<div class="">
-											<div class="col-md-4">
+											<div class="col-md-8">
 												<input type="text" name="installationDate" id="installationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 												maxlength="10" value="">
 											</div>
-											<div class="col-md-4">
+											{{-- <div class="col-md-4">
 												<div class="input-group clockpicker " data-placement="top">
 													<input type="text" id="installationTime" name="installationTime" class="form-control" placeholder="hh:mm" value="">
 												</div>
-											</div>
+											</div> --}}
 										</div>
 									</div>
 								</div>
@@ -387,17 +387,17 @@
 							<div class="row col-md-12">
 								<div class="col-md-12">
 									<div class="form-group">
-										<label class="control-label">STONE INSTALLATION DATE AND TIME </label>
+										<label class="control-label">STONE INSTALLATION DATE </label>
 										<div class="">
-											<div class="col-md-4">
+											<div class="col-md-8">
 												<input type="text" name="stoneInstallationDate" id="stoneInstallationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 												maxlength="10" value="">
 											</div>
-											<div class="col-md-4">
+											{{-- <div class="col-md-4">
 												<div class="input-group clockpicker " data-placement="top">
 													<input type="text" id="stoneInstallationTime" name="stoneInstallationTime" class="form-control" placeholder="hh:mm" value="">
 												</div>
-											</div>
+											</div> --}}
 										</div>
 									</div>
 								</div>
@@ -904,11 +904,11 @@ else {
 }
 });
 
-function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee) {
+function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,employee) {
 	$("#loader").show();
 	$.ajax({
 		url:'{{ route('changejobstatus') }}',
-		data:{jobStatusId:jobStatusId,jobId:jobId,date:date,time:time,employee:employee},
+		data:{jobStatusId:jobStatusId,jobId:jobId,date:date,employee:employee},
 		type: 'post',
 		dataType: 'json',
 		success:function(data){
@@ -934,11 +934,11 @@ $('#formAddDeliveryDateTime').on('success.form.bv', function(e) {
 	var jobStatusId = $("#hiddenChangeJobStatus").val();
 	var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
 	var date = $("#deliveryDate").val();
-	var time = $("#deliveryTime").val();
+	//var time = $("#deliveryTime").val();
 	$("#jobType_"+jobId).select2("val", jobStatusId);
 	var employee = '';
-	if(jobStatusId == 5 && date != '' && time != '') {
-		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+	if(jobStatusId == 5 && date != '') {
+		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,employee);
 	}
 });
 
@@ -949,11 +949,11 @@ $('#formAddInstallingDateTime').on('success.form.bv', function(e) {
 	var jobStatusId = $("#hiddenChangeJobStatus").val();
 	var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
 	var date = $("#installationDate").val();
-	var time = $("#installationTime").val();
+	//var time = $("#installationTime").val();
 	var employee = $("#selectInstallationEmployees").val();
 	$("#jobType_"+jobId).select2("val", jobStatusId);
-	if(jobStatusId == 6 && date != '' && time != '' && employee != '') {
-		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+	if(jobStatusId == 6 && date != '' && employee != '') {
+		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,employee);
 	}
 });
 
@@ -964,11 +964,11 @@ $('#formAddStoneInstallingDateTime').on('success.form.bv', function(e) {
 	var jobStatusId = $("#hiddenChangeJobStatus").val();
 	var activeJobStatus = $("#hiddenChangeJobActiveStatus").val();
 	var date = $("#stoneInstallationDate").val();
-	var time = $("#stoneInstallationTime").val();
+	//var time = $("#stoneInstallationTime").val();
 	var employee = $("#selectStoneInstallationEmployees").val();
 	$("#jobType_"+jobId).select2("val", jobStatusId);
-	if(jobStatusId == 7 && date != '' && time != '' && employee != '') {
-		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+	if(jobStatusId == 7 && date != '' && employee != '') {
+		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,employee);
 	}
 });
 

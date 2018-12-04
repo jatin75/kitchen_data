@@ -243,19 +243,19 @@
 												<div class="col-md-4">
 													<div class="form-group">
 														<label class="control-label">
-															<b>DELIVERY DATE AND TIME</b>
+															<b>DELIVERY DATE</b>
 														</label>
-														<div class="row">
-															<div class="col-md-4">
+														{{-- <div class="row">
+															<div class="col-md-4"> --}}
 																<input type="text" name="deliveryDate" id="deliveryDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 																maxlength="10" value="{{ $jobDetails->delivery_date or '' }}">
-															</div>
-															<div class="col-md-8">
+															{{-- </div> --}}
+															{{-- <div class="col-md-8">
 																<div class="input-group clockpicker " data-placement="top">
 																	<input type="text" id="deliveryTime" name="deliveryTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->delivery_time or '' }}">
 																</div>
-															</div>
-														</div>
+															</div> --}}
+														{{-- </div> --}}
 													</div>
 												</div>
 												<div class="col-md-4">
@@ -355,19 +355,19 @@
 													<div class="hidden" id="deliveryDateDiv">
 														<div class="form-group">
 															<label class="control-label">
-																<b>DELIVERY INSTALLATION DATE AND TIME *</b>
+																<b>DELIVERY INSTALLATION DATE *</b>
 															</label>
-															<div class="row">
-																<div class="col-md-4">
+															{{-- <div class="row">
+																<div class="col-md-4"> --}}
 																	<input type="text" name="deliveryInstallationDate" id="deliveryInstallationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 																	maxlength="10" value="{{ $jobDetails->delivery_installation_date or '' }}">
-																</div>
+																{{-- </div>
 																<div class="col-md-8">
 																	<div class="input-group clockpicker " data-placement="top">
 																		<input type="text" id="deliveryInstallationTime" name="deliveryInstallationTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->delivery_installation_time or '' }}">
 																	</div>
 																</div>
-															</div>
+															</div> --}}
 														</div>
 													</div>
 												</div>
@@ -376,19 +376,19 @@
 													<div class="hidden" id="installationDateDiv">
 														<div class="form-group">
 															<label class="control-label">
-																<b>INSTALLATION DATE AND TIME *</b>
+																<b>INSTALLATION DATE *</b>
 															</label>
-															<div class="row">
-																<div class="col-md-4">
+															{{-- <div class="row">
+																<div class="col-md-4"> --}}
 																	<input type="text" name="installationDate" id="installationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 																	maxlength="10" value="{{ $jobDetails->installation_date or '' }}">
-																</div>
+																{{-- </div>
 																<div class="col-md-8">
 																	<div class="input-group clockpicker " data-placement="top">
 																		<input type="text" id="installationTime" name="installationTime" class="form-control" placeholder="hh:mm" value="{{$jobDetails->installation_time or ''}}">
 																	</div>
 																</div>
-															</div>
+															</div> --}}
 														</div>
 													</div>
 												</div>
@@ -397,19 +397,19 @@
 													<div class="hidden" id="stoneDateDiv">
 														<div class="form-group">
 															<label class="control-label">
-																<b>STONE INSTALLATION DATE AND TIME</b>
+																<b>STONE INSTALLATION DATE</b>
 															</label>
-															<div class="row">
-																<div class="col-md-4">
+															{{-- <div class="row">
+																<div class="col-md-4"> --}}
 																	<input type="text" name="stoneInstallationDate" id="stoneInstallationDate" class="form-control complex-colorpicker" placeholder="mm/dd/yyyy"
 																	maxlength="10" value="{{ $jobDetails->stone_installation_date or '' }}">
-																</div>
+																{{-- </div>
 																<div class="col-md-8">
 																	<div class="input-group clockpicker " data-placement="top">
 																		<input type="text" id="stoneInstallationTime" name="stoneInstallationTime" class="form-control" placeholder="hh:mm" value="{{ $jobDetails->stone_installation_time or '' }}">
 																	</div>
 																</div>
-															</div>
+															</div> --}}
 														</div>
 													</div>
 												</div>

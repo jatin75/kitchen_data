@@ -29,6 +29,8 @@
                             <th>Employee Id</th>
                             <th>Phone Number</th>
                             <th>Email Address</th>
+                            <th>Secondary Phone Number</th>
+                            <th>Secondary Email Address</th>
                             <th>Employee Type</th>
                             <th>Created Date</th>
                         </tr>
@@ -51,6 +53,16 @@
                             <td>{{substr_replace(substr_replace(substr_replace($employee_member->phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0) }}</td>
                             @endif
                             <td>{{$employee_member->email}}</td>
+                            @if(empty($employee_member->secondary_phone_number) || $employee_member->secondary_phone_number == "")
+                            <td>{{'--'}}</td>
+                            @else
+                            <td>{{substr_replace(substr_replace(substr_replace($employee_member->secondary_phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0) }}</td>
+                            @endif
+                            @if(empty($employee_member->secondary_email) || $employee_member->secondary_email == "")
+                            <td>{{'--'}}</td>
+                            @else
+                            <td>{{$employee_member->secondary_email}}</td>
+                            @endif
                             <td>{{$employee_member->type_name}}</td>
                             <td>{{ date('m/d/Y',strtotime($employee_member->created_at))}}</td>
                         </tr>
@@ -83,24 +95,24 @@
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 /* orientation: 'landscape', */
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9 ]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9 ]},
             },
             ],
         });

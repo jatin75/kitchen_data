@@ -23,7 +23,6 @@
                     <thead>
                         <tr>
                             <th>Job Note</th>
-                            <th>Job Id</th>
                             <th>Job Name</th>
                             <th>Updated By</th>
                             <th>Created Date</th>
@@ -33,7 +32,6 @@
                         @foreach($jobNotesList as $jobNotes)
                             <tr>
                                 <td><div class="word-wrap"> {{ $jobNotes->job_note }} </div></td>
-                                <td> {{ $jobNotes->job_id }}</td>
                                 <td> {{ $jobNotes->job_title }}</td>
                                 <td> {{ $jobNotes->name }}</td>
                                 <td>{{ date('m/d/Y',strtotime($jobNotes->created_at))}}</td>
@@ -63,29 +61,29 @@
         var value = 'Kitchen_jobnotes_' + date;
         $('#jobNoteList').DataTable({
             dom: 'Bfrtip',
-            order: [[ 4, "asc" ]],
+            order: [[ 3, "asc" ]],
             buttons: [
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 0,1,2,3,4 ]},
+                exportOptions: {columns: [ 0,1,2,3]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 0,1,2,3,4 ]},
+                exportOptions: {columns: [ 0,1,2,3 ]},
             },
             {
                 extend: 'pdf',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 0,1,2,3,4 ]},
+                exportOptions: {columns: [ 0,1,2,3 ]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 0,1,2,3,4 ]},
+                exportOptions: {columns: [ 0,1,2,3 ]},
             },
             ],
         });

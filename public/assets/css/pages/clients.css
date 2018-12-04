@@ -5,3 +5,6 @@
 tr th{
   padding-left: 10px !important;
 }
+#jobList .checkbox label::before{
+  border: 1px solid #03a9f3 !important;
+}
