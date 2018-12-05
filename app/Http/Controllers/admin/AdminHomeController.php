@@ -13,6 +13,7 @@ use Validator;
 use App\Admin;
 use App\JobType;
 use App\Job;
+use App\Client;
 
 class AdminHomeController extends Controller
 {
@@ -33,6 +34,10 @@ class AdminHomeController extends Controller
 				Session::put('name',$checkLogin->first_name.' '.$checkLogin->last_name);
 				Session::put('email',$checkLogin->email);
 				Session::put('login_type_id',$checkLogin->login_type_id);
+				if($checkLogin->login_type_id == 9){
+					$clientDetail = Client::selectRaw('note_status')->where('client_id', $checkLogin->id)->first();
+					Session::put('job_notes_status', $clientDetail->note_status);
+				}
 				return redirect()->route('dashboard');
 			}else {
 				Session::flash('invalid', 'Invalid email or password combination. Please try again.');
@@ -271,11 +276,24 @@ class AdminHomeController extends Controller
 	function setnotesbadge()
 	{
 		$badge = 0;
-		$countBagde = DB::table('job_notes as jn')
-		->join('jobs as j', 'j.job_id', 'jn.job_id')
-		->where('jn.is_deleted', 0)
-		->where('jn.is_seen', 0)
-		->count();
+		if(Session::get('login_type_id') == 9) {
+            $client_id = Session::get('employee_id');
+			$getJobId = Job::selectRaw('job_id')->where('company_clients_id', 'like', '%'.$client_id.'%')->pluck('job_id')->toArray();
+
+			$countBagde = DB::table('job_notes as jn')
+			->join('jobs as j', 'j.job_id', 'jn.job_id')
+			->where('jn.is_deleted', 0)
+			->where('jn.is_seen', 0)
+			->whereIn('jn.job_id', $getJobId)
+			->count();
+		}else {
+			$countBagde = DB::table('job_notes as jn')
+			->join('jobs as j', 'j.job_id', 'jn.job_id')
+			->where('jn.is_deleted', 0)
+			->where('jn.is_seen', 0)
+			->count();
+		}
+
 		if(!empty($countBagde))
 		{
 			$response['count'] = $countBagde;

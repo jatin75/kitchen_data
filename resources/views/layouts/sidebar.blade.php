@@ -39,6 +39,15 @@
                     <span class="hide-menu"> Dashboard </span>
                 </a>
             </li>
+            @if(Session::get('login_type_id') == 9 && Session::has('job_notes_status') && Session::get('job_notes_status') == 1)
+            <li>
+                <a id="invoices" href="{{ route('shownotes') }}" class="waves-effect {!! (Request::is('notes/*')? 'active' : '') !!}">
+                    <i class="ti-book fa-fw" data-icon="l"></i>
+                    <span class="hide-menu">Notes</span>
+                    <span id="noteBadge" class="hidden label label-rouded label-danger pull-right">0</span>
+                </a>
+            </li>
+            @endif
             @if(Session::get('login_type_id') != 9  && Session::get('login_type_id') != 10 )
             <li>
                 <a id="staff" href="javascript:void(0);" class="waves-effect {!! (Request::is('jobs/*') ? 'active' : '') !!}"><i data-icon=")" class="ti-clipboard fa-fw"></i>

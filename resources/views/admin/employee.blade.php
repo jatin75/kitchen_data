@@ -115,8 +115,12 @@
                 exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9 ]},
             },
             ],
+            "fnDrawCallback": function () {
+				$('[data-toggle="tooltip"]').tooltip();
+			}
         });
     });
+
     @if(Session::has('successMessage'))
     notify('{{  Session::get('successMessage') }}','blackgloss');
     {{ Session::forget('successMessage') }}

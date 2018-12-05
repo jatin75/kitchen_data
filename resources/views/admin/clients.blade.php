@@ -23,7 +23,7 @@
                 <table id="jobList" class="display nowrap" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            {{-- <th></th> --}}
+                            <th></th>
                             <th class="text-center">Actions</th>
                             <th>First Name</th>
                             <th>Last Name</th>
@@ -43,9 +43,9 @@
                     <tbody>
                         @foreach($clientDetails as $client)
                         <tr>
-                            {{-- <td> <div class="checkbox checkbox-info"> <input type="checkbox" class="client_notes_allow" name="client_notes_allow[]" value="{{ $client->note_status }}" data-id="{{ $client->client_id }}" @if(isset($client->note_status) && $client->note_status == 1) {{ 'checked' }} @endif> <label for="checkbox4"></label> </div> </td> --}}
+                            <td> <div class="checkbox checkbox-info"> <input type="checkbox" class="client_notes_allow" name="client_notes_allow[]" value="{{ $client->note_status }}" data-id="{{ $client->client_id }}" @if(isset($client->note_status) && $client->note_status == 1) {{ 'checked' }} @endif> <label for="checkbox4"></label> </div> </td>
                             <td class="text-center">
-                                <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="{{route('editclient',['client_id' => $client->client_id])}}">
+                                <a data-toggle="tooltip" data-placement="top" title="Edit Client" class="btn btn-info btn-circle" href="{{route('editclient',['client_id' => $client->client_id])}}">
                                     <i class="ti-pencil-alt"></i>
                                 </a>
                                 {{-- <a class="btn btn-danger btn-circle" onclick="return confirm('You can\'t reactivate client. Are you sure you want to remove this client?');" href="{{route('deleteclient',['client_id' => $client->client_id])}}" data-toggle="tooltip" data-placement="top" title="Remove Client"><i class="ti-trash"></i> </a> --}}
@@ -113,26 +113,29 @@
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]},
+                exportOptions: {columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]},
+                exportOptions: {columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14 ]},
             },
             {
                 extend: 'pdf',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]},
+                exportOptions: {columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14 ]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]},
+                exportOptions: {columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14 ]},
             },
             ],
+            "fnDrawCallback": function () {
+				$('[data-toggle="tooltip"]').tooltip();
+			}
         });
     });
 
@@ -144,7 +147,6 @@
         }
         var client_id = $(this).attr('data-id');
         $(this).val(note_status);
-        $('#loader').show();
         $.ajax({
 			url:'{{ route('changeclientnotestatus') }}',
 			data:{ note_status:note_status,client_id:client_id},
@@ -154,8 +156,7 @@
 			{
 				if(data.key == 1)
 				{
-					$('#loader').hide();
-					notify('Client Details has been updated successfully.','blackgloss');
+					notify('Client notes permission has been updated.','blackgloss');
 				}
 			}
 		});

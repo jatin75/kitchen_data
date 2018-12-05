@@ -53,7 +53,11 @@ class JobsController extends Controller
         $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
 
         $getJobType = JobType::selectRaw('job_status_name,job_status_id')->whereNotIn('job_status_id', [10, 11, 12])->get();
-        return view('admin.jobs')->with('jobStatusDetails', $getJobTypeDetail)->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
+        if(Session::get('login_type_id') == 1  || Session::get('login_type_id') == 2 ) {
+            return view('admin.jobs')->with('jobStatusDetails', $getJobTypeDetail)->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
+        }else {
+            return redirect(route('dashboard'));
+        }
     }
 
     public function showDeactivated()
@@ -84,7 +88,11 @@ class JobsController extends Controller
         $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
 
         $getJobType = JobType::selectRaw('job_status_name,job_status_id')->orderBy('display_order')->get();
-        return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
+        if(Session::get('login_type_id') == 1  || Session::get('login_type_id') == 2 ) {
+            return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
+        }else {
+            return redirect(route('dashboard'));
+        }
     }
 
     public function create()
@@ -219,6 +227,9 @@ class JobsController extends Controller
         if (!empty($getJobDetails->working_employee_id)) {
             $getJobDetails->working_employee_id = explode(",", $getJobDetails->working_employee_id);
         }
+
+        $getJobDetails->service_employee_id = !empty($getJobDetails->service_employee_id) ? explode(",", $getJobDetails->service_employee_id) : [];
+
         $getJobDetails->sales_employee_id = !empty($getJobDetails->sales_employee_id) ? explode(",", $getJobDetails->sales_employee_id) : [];
 
         if (!empty($getJobDetails->installation_employee_id)) {

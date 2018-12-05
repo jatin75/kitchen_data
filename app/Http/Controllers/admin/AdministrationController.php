@@ -20,7 +20,11 @@ class AdministrationController extends Controller
 {
 	public function index() {
 		$client_company = Company::selectRaw('name,phone_number,address_1,email,created_at,id,company_id,secondary_phone_number,secondary_email')->where('is_deleted',0)->orderBy('created_at', 'DESC')->get();
-		return view('admin.clientcompany')->with('clientCompanyList',$client_company);
+		if(Session::get('login_type_id') == 1  || Session::get('login_type_id') == 2 ) {
+			return view('admin.clientcompany')->with('clientCompanyList',$client_company);
+		}else {
+			return redirect(route('dashboard'));
+		}
 	}
 
 	public function create() {

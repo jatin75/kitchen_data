@@ -595,6 +595,9 @@
 				},
 			},
 			],
+			"fnDrawCallback": function () {
+				$('[data-toggle="tooltip"]').tooltip();
+			}
 		});
 	});
 
@@ -667,11 +670,11 @@ function getJobDetailsList(jobStatusId){
 					},
 				}
 				],
+				"fnDrawCallback": function () {
+					$('[data-toggle="tooltip"]').tooltip();
+					$(".select2").select2();
+				}
 			});
-			/* For select 2*/
-			$(".select2").select2();
-			/*tooltip*/
-			$('[data-toggle="tooltip"]').tooltip();
 		}
 	});
 }
