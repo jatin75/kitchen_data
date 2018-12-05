@@ -953,7 +953,7 @@ $(document).on('click','.view-job', function(){
 				$('#serviceEmployee').html(data.employee_detail.service_employee_name);
 				$('#workingEmployee').html(data.employee_detail.working_employee_name);
 
-				if(data.employee_detail.is_select_delivery_installation == 4)
+				if(data.employee_detail.is_select_delivery_installation == '4')
 				{
 					$('#deliveryInstallationSelect').html('Scheduled');
 					$('#deliveryInstallationDateTime').html(data.employee_detail.delivery_installation_datetime);
@@ -962,20 +962,20 @@ $(document).on('click','.view-job', function(){
 				else
 				{
 					switch (data.employee_detail.is_select_delivery_installation) {
-						case 3:
+						case '3':
 						$('#deliveryInstallationSelect').html('Received');
 						break;
-						case 2:
+						case '2':
 						$('#deliveryInstallationSelect').html('Awaiting Approval');
 						break;
-						case 1:
+						case '1':
 						$('#deliveryInstallationSelect').html('Awaiting Material');
 						break;
 					}
 					$('#deliveryInstallationDateTime').html('--');
 					$('#deliveryInstallationEmployees').html('--');
 				}
-				if(data.employee_detail.is_select_installation == 3)
+				if(data.employee_detail.is_select_installation == '3')
 				{
 					$('#installationSelect').html('Scheduled');
 					$('#installationDateTime').html(data.employee_detail.installation_datetime);
@@ -984,19 +984,19 @@ $(document).on('click','.view-job', function(){
 				else
 				{
 					switch (data.employee_detail.is_select_installation) {
-						case 2:
+						case '2':
 						$('#installationSelect').html('Awaiting Approval');
 						$('#installationDateTime').html('--');
 						$('#installationEmployees').html('--');
 						break;
-						case 1:
+						case '1':
 						$('#installationSelect').html('Awaiting Install');
 						$('#installationDateTime').html('--');
 						$('#installationEmployees').html('--');
 						break;
 					}
 				}
-				if(data.employee_detail.is_select_stone_installation == 2)
+				if(data.employee_detail.is_select_stone_installation == '2')
 				{
 					$('#stoneInstallationSelect').html('Scheduled');
 					$('#stoneInstallationDateTime').html(data.employee_detail.stone_installation_datetime);
