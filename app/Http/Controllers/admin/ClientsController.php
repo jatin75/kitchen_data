@@ -139,13 +139,13 @@ class ClientsController extends Controller
             $objAdmin->save();
 
             /*send Mail*/
-            // Mail::send('emails.AdminPanel_ClientCreated', array(
-            //     'password' => $new_client_id,
-            //     'email' => $client_email,
-            // ), function ($message) use ($client_email) {
-            //     $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
-            //     $message->to($client_email)->subject('A&S KITCHEN | Client Account Created');
-            // });
+            Mail::send('emails.AdminPanel_ClientCreated', array(
+                'password' => $new_client_id,
+                'email' => $client_email,
+            ), function ($message) use ($client_email) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                $message->to($client_email)->subject('A&S KITCHEN | Client Account Created');
+            });
 
             $response['key'] = 1;
             Session::put('successMessage', 'Client detail has been added successfully.');

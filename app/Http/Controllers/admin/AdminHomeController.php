@@ -77,19 +77,43 @@ class AdminHomeController extends Controller
 			$temporaryPwd = str_random(8);
 			Admin::where('email',$email)->update(['password'=>Hash::make($temporaryPwd)]);
 
-			// try{
-			// 	Mail::send('emails.AdminPanel_ForgotPassword',array(
-			// 		'temp_password' => $temporaryPwd
-			// 		), function($message)use($email){
-			// 		$message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-			// 		$message->to($email)->subject('A&S KITCHEN | Forgot Password');
-			// 	});
-			// } catch (\Exception $e){
-			// 	Session::flash('invalidMail', 'Something went wrong. Please try again.');
-			// 	return back();
-			// }
+			try{
+				Mail::send('emails.AdminPanel_ForgotPassword',array(
+					'temp_password' => $temporaryPwd
+					), function($message)use($email){
+					$message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+					$message->to($email)->subject('A&S KITCHEN | Forgot Password');
+				});
+			} catch (\Exception $e){
+				Session::flash('invalidMail', 'Something went wrong. Please try again.');
+				return back();
+			}
 			Session::flash('validMail', 'An email containing your temporary login password has been sent to your verified email address. You can change your password from your profile.');
 			return back();
+		}
+	}
+
+	public function sendTemporaryPasswordEmail(Request $request){
+		$getUserEmail = Admin::selectRaw('email')->where('is_deleted',0)->get();
+
+		if(sizeof($getUserEmail) > 0){
+			foreach($getUserEmail as $userEmail ) {
+				$email = $userEmail->email;
+				$temporaryPwd = str_random(8);
+				Admin::where('email',$email)->update(['password'=>Hash::make($temporaryPwd)]);
+
+				try{
+					Mail::send('emails.AdminPanel_TempPassword',array(
+						'temp_password' => $temporaryPwd
+						), function($message)use($email){
+						$message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+						$message->to($email)->subject('A&S KITCHEN | Temporary New Password');
+					});
+				} catch (\Exception $e){
+					Session::flash('invalidMail', 'Something went wrong. Please try again.');
+					return back();
+				}
+			}
 		}
 	}
 

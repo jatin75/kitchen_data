@@ -102,16 +102,16 @@ class AdminHomeController extends Controller
                 $temporaryPwd = str_random(8);
                 ApiAdmin::where('email', $email)->update(['password' => Hash::make($temporaryPwd)]);
 
-                // try {
-                //     Mail::send('emails.AdminPanel_ForgotPassword', array(
-                //         'temp_password' => $temporaryPwd,
-                //     ), function ($message) use ($email) {
-                //         $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
-                //         $message->to($email)->subject('A&S KITCHEN | Forgot Password');
-                //     });
-                // } catch (\Exception $e) {
-                //     return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Something went wrong. Please try again."]);
-                // }
+                try {
+                    Mail::send('emails.AdminPanel_ForgotPassword', array(
+                        'temp_password' => $temporaryPwd,
+                    ), function ($message) use ($email) {
+                        $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                        $message->to($email)->subject('A&S KITCHEN | Forgot Password');
+                    });
+                } catch (\Exception $e) {
+                    return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Something went wrong. Please try again."]);
+                }
                 return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "An email containing your temporary login password has been sent to your verified email address. You can change your password from your profile."]);
             } else {
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Email is incorrect. Please try again."]);

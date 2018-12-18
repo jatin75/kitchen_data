@@ -577,7 +577,7 @@ class JobsController extends Controller
             $response['key'] = 1;
 
             /*send Mail*/
-            //$this->sendMailNew($working_employee_ids, $request->get('jobTitle'));
+            $this->sendMailNew($working_employee_ids, $request->get('jobTitle'));
             return json_encode($response);
         }
     }
@@ -1081,7 +1081,7 @@ class JobsController extends Controller
         $company_client_ids = explode(',', $getDetail->company_clients_id);
         switch ($jobStatusId) {
             case 1:
-                //$this->sendMailNew($working_employee_ids, $getDetail->job_title);
+                $this->sendMailNew($working_employee_ids, $getDetail->job_title);
                 /*send notification as client */
                 if (sizeof($company_client_ids) > 0) {
                     $title = 'Change Job Status';
@@ -1100,7 +1100,7 @@ class JobsController extends Controller
                 }
                 break;
             case 2:
-                //$this->sendMailMeasuring($getDetail);
+                $this->sendMailMeasuring($getDetail);
                 /*send notification as measurer */
                 if (sizeof($working_employee_ids) > 0) {
                     $title = 'Change Job Status';
@@ -1119,10 +1119,10 @@ class JobsController extends Controller
                 }
                 break;
             case 3:
-                //$this->sendMailDesign($working_employee_ids, $getDetail->job_title);
+                $this->sendMailDesign($working_employee_ids, $getDetail->job_title);
                 break;
             case 5:
-                //$this->sendMailDelivery($getDetail);
+                $this->sendMailDelivery($getDetail);
                 $delivery_date = date('m/d/Y', strtotime($getDetail->delivery_datetime));
                 /*send notification as delivery */
                 if (sizeof($working_employee_ids) > 0) {
@@ -1157,7 +1157,7 @@ class JobsController extends Controller
                 }
                 break;
             case 6:
-                //$this->sendMailInstallation($getDetail->job_title, $getDetail->delivery_datetime, $getDetail->contractor_email);
+                $this->sendMailInstallation($getDetail->job_title, $getDetail->delivery_datetime, $getDetail->contractor_email);
                 $installation_date = date('m/d/Y', strtotime($getDetail->installation_datetime));
                 /*send notification as installer */
                 if (sizeof($working_employee_ids) > 0) {
@@ -1192,7 +1192,7 @@ class JobsController extends Controller
                 }
                 break;
             case 7:
-                //$this->sendMailStoneInstallation($getDetail->job_title, $getDetail->delivery_datetime, $getDetail->contractor_email);
+                $this->sendMailStoneInstallation($getDetail->job_title, $getDetail->delivery_datetime, $getDetail->contractor_email);
                 $stone_installation_date = date('m/d/Y', strtotime($getDetail->stone_installation_datetime));
                 /*send notification as stone installer */
                 if (sizeof($working_employee_ids) > 0) {

@@ -19,6 +19,8 @@ Route::post('sendemail', 'admin\AdminHomeController@sendForgotPasswordEmail')->n
 Route::get('resetpassword/{token}', 'admin\AdminHomeController@showResetPassword');
 Route::post('doresetpassword', 'admin\AdminHomeController@doResetPassword');
 Route::get('logout', 'admin\AdminHomeController@logout')->name('logout');
+/* Send Temp password*/
+Route::get('sendtemppassword', 'admin\AdminHomeController@sendTemporaryPasswordEmail')->name('sendtemppassword');
 
 Route::group(array('middleware' => 'CheckUser'), function () {
     /*Dashboard*/

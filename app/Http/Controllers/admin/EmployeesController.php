@@ -108,13 +108,13 @@ class EmployeesController extends Controller
                 $objEmployee->save();
 
                 /*send Mail*/
-                //  Mail::send('emails.AdminPanel_EmployeeCreated',array(
-                // 'password' => $employee_password,
-                // 'email' => $employee_email,
-                // ), function($message)use($employee_email){
-                // $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                // $message->to($employee_email)->subject('A&S KITCHEN | Employee Account Created');
-                // });
+                 Mail::send('emails.AdminPanel_EmployeeCreated',array(
+                'password' => $employee_password,
+                'email' => $employee_email,
+                ), function($message)use($employee_email){
+                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                $message->to($employee_email)->subject('A&S KITCHEN | Employee Account Created');
+                });
 
                 $response['key'] = 1;
                 Session::put('successMessage', 'Employee detail has been added successfully.');
