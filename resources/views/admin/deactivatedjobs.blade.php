@@ -26,8 +26,9 @@
                         <tr>
                             <th class="text-center">Actions</th>
                             <th>Job Name</th>
-                            <th>Job Status</th>
+                            <th>Company Name</th>
                             <th>Employee</th>
+                            <th>Job Status</th>
                             <th>Address</th>
                             <th>Start Date</th>
                             <th>Expected Completion Date</th>
@@ -47,7 +48,9 @@
 
                                 <a class="btn btn-danger btn-circle" onclick="return confirm(' Are you sure you want to remove this job?');" href="{{route('deletejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Remove Job"><i class="ti-trash"></i> </a>
                             </td>
-                            <td>{{$job->job_title}}</td>
+                            <td>{{ $job->job_title }}</td>
+                            <td>{{ $job->name }}</td>
+                            <td><div class="word-wrap">{{$job->employee_name}}</div></td>
                             <td><div style="width:300px;">
                                 <select class="form-control select2 jobType" name="jobType" id="jobType_{{$job->job_id}}" placeholder="Select your job type" data-id="{{$job->job_id}}">
                                     @foreach($jobTypeDetails as $jobType)
@@ -55,7 +58,6 @@
                                     @endforeach
                                 </select></div>
                             </td>
-                            <td><div class="word-wrap">{{$job->employee_name}}</div></td>
                             <td><div class="word-wrap">{{$job->address}}</div></td>
                             <td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
                             <td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
@@ -221,7 +223,7 @@
                 extend: 'csv',
                 title: value,
                 exportOptions: {
-                    columns: [ 1,2,3,4,5,6 ],
+                    columns: [ 1,2,3,4,5,6,7 ],
                     format: {
                         body: function( data, row, col, node ) {
                             return data;
@@ -233,7 +235,7 @@
                 extend: 'excel',
                 title: value,
                 exportOptions: {
-                    columns: [ 1,2,3,4,5,6 ],
+                    columns: [ 1,2,3,4,5,6,7 ],
                     format: {
                         body: function( data, row, col, node ) {
                             return data;
@@ -246,7 +248,7 @@
                 pageSize: 'LEGAL',
                 title: value,
                 exportOptions: {
-                    columns: [ 1,2,3,4,5,6],
+                    columns: [ 1,2,3,4,5,6,7],
                     format: {
                         body: function( data, row, col, node ) {
                             return data;
@@ -258,7 +260,7 @@
                 extend: 'print',
                 title: value,
                 exportOptions: {
-                    columns: [ 1,2,3,4,5,6 ],
+                    columns: [ 1,2,3,4,5,6,7 ],
                     format: {
                         body: function( data, row, col, node ) {
                             return data;

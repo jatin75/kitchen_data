@@ -28,7 +28,12 @@ class JobsController extends Controller
     public function index()
     {
         $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->orderBy('display_order')->get();
-        $getJobDetails = Job::selectRaw('job_id,job_title,address_1,address_2,apartment_number,city,state,zipcode,job_status_id,working_employee_id,job_status_id,start_date,end_date')->where('is_active', 1)->where('is_deleted', 0)->orderBy('created_at', 'DESC')->get();
+        $getJobDetails = DB::table('jobs as jb')
+                    ->selectRaw('jb.job_id, jb.job_title, jb.address_1, jb.address_2, jb.apartment_number, jb.city, jb.state, jb.zipcode, jb.job_status_id,jb.working_employee_id, jb.job_status_id, jb.start_date,jb.end_date, cmp.name')
+                    ->join('companies as cmp', 'cmp.company_id', 'jb.company_id')
+                    ->where('jb.is_active', 1)->where('jb.is_deleted', 0)->orderBy('jb.created_at', 'DESC')
+                    ->get();
+
         if (sizeof($getJobDetails) > 0) {
             foreach ($getJobDetails as $jobValue) {
                 $employeeNames = "";
@@ -62,7 +67,11 @@ class JobsController extends Controller
 
     public function showDeactivated()
     {
-        $getJobDetails = Job::selectRaw('job_id,job_title,address_1,address_2,apartment_number,city,state,zipcode,job_status_id,working_employee_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->orderBy('updated_at', 'DESC')->get();
+        $getJobDetails = DB::table('jobs as jb')
+                    ->selectRaw('jb.job_id, jb.job_title, jb.address_1, jb.address_2, jb.apartment_number, jb.city, jb.state, jb.zipcode, jb.job_status_id,jb.working_employee_id, jb.job_status_id, jb.start_date,jb.end_date, cmp.name')
+                    ->join('companies as cmp', 'cmp.company_id', 'jb.company_id')
+                    ->where('jb.is_active', 0)->where('jb.is_deleted', 0)->orderBy('jb.updated_at', 'DESC')
+                    ->get();
 
         if (sizeof($getJobDetails) > 0) {
             foreach ($getJobDetails as $jobValue) {
@@ -98,7 +107,7 @@ class JobsController extends Controller
     public function create()
     {
         $getJobDetails = Job::all();
-        $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id != 9");
+        $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id != 9 AND id != 'ZIY30547'");
 
         $comapnyList = Company::selectRaw('company_id,name')->where('is_deleted', 0)->get();
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
@@ -117,7 +126,7 @@ class JobsController extends Controller
     {
         $getJobDetails = Job::where('job_id', $job_id)->first();
         $comapnyList = Company::selectRaw('company_id,name')->where('is_deleted', 0)->get();
-        $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0");
+        $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND id != 'ZIY30547'");
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
         $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
@@ -908,6 +917,8 @@ class JobsController extends Controller
                         <a class="btn btn-danger btn-circle" onclick="return confirm(\'Are you sure you want to deactivate this job?\');" href="' . route("deactivatejob", ["job_id" => $jobDetail->job_id]) . '" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
                     </td>
                     <td>' . $jobDetail->job_title . '</td>
+                    <td>' . $jobDetail->name . '</td>
+                    <td><div class="word-wrap">'.$jobDetail->employee_name.'</div></td>
                     <td>
                     <div style="width:300px;">
                         <select class="form-control select2 jobType" name="jobType" id="jobType_' . $jobDetail->job_id . '" placeholder="Select your job type" data-id="' . $jobDetail->job_id . '">';
@@ -919,7 +930,6 @@ class JobsController extends Controller
 
                         $html .= '</select>
                         </td>
-                        <td><div class="word-wrap">'.$jobDetail->employee_name.'</div></td>
                         <td><div class="word-wrap">'.$jobDetail->address.'</div></td>
                         <td>' . date('m/d/Y', strtotime($jobDetail->start_date)) . '</td>
                         <td>' . date('m/d/Y', strtotime($jobDetail->end_date)) . '</td>

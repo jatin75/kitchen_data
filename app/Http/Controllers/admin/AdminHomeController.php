@@ -230,8 +230,8 @@ class AdminHomeController extends Controller
 						</td>
 						<td>'.$jobDetail->job_title.'</td>
 						<td>'.$jobDetail->name.'</td>
-						<td>'.$jobDetail->job_status_name.'</td>
 						<td><div class="word-wrap">'.$employee_name.'</div></td>
+						<td>'.$jobDetail->job_status_name.'</td>
 						<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
 						<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 						<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
@@ -269,7 +269,8 @@ class AdminHomeController extends Controller
 						</span>
 					</td>
 					<td>'.$jobDetail->job_title.'</td>
-					<td>'.$jobDetail->name.'</td>';
+					<td>'.$jobDetail->name.'</td>
+					<td><div class="word-wrap">'.$employee_name.'</div></td>';
 					if(Session::get('login_type_id') == 10){
 						$html .='<td>'.$jobDetail->job_status_name.'</td>';
 					}else {
@@ -284,7 +285,7 @@ class AdminHomeController extends Controller
 								$html .='</select>
 						</div></td>';
 					}
-					$html .='<td><div class="word-wrap">'.$employee_name.'</div></td>
+					$html .='
 					<td><div class="word-wrap">'.$jobDetail->address.'</div></td>
 					<td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
 					<td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>

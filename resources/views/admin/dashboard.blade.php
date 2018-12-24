@@ -49,8 +49,8 @@
 										<th class="text-center">Actions</th>
 										<th>Job Name</th>
 										<th>Company Name</th>
-										<th>Job Status</th>
 										<th>Employee</th>
+										<th>Job Status</th>
 										<th>Address</th>
 										<th>Start Date</th>
 										<th>Expected Completion Date</th>
