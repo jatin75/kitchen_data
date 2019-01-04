@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Mail;
 use DB;
 use Validator;
+use App\Client;
 
 class AdminHomeController extends Controller
 {
@@ -47,6 +48,14 @@ class AdminHomeController extends Controller
                     $success['email'] = $user->email;
                     $success['phone_number'] = (!empty($user->phone_number)) ? $this->formatPhoneNumber($user->phone_number) : null;
                     $success['login_type_id'] = $user->login_type_id;
+                    if($user->login_type_id == 9){
+                        $clientDetail = Client::selectRaw('note_status')->where('client_id', $user->id)->first();
+                        $success['job_notes_status'] =  $clientDetail->note_status;
+                    }elseif($user->login_type_id == 1) {
+                        $success['job_notes_status'] =  1;
+                    }else {
+                        $success['job_notes_status'] =  0;
+                    }
                     $user->device_token = $device_token;
                     $user->device_type = $device_type;
                     $user->save();

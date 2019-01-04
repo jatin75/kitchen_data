@@ -29,4 +29,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('getChatUser', 'API\AdminHomeController@getChatUser');
     Route::post('getChatHistory', 'API\AdminHomeController@getChatHistory');
 
+    //---------------- Notes --------------
+    Route::post('shownotes', 'API\NotesController@index');
 });

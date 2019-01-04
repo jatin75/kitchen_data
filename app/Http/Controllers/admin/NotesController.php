@@ -16,7 +16,7 @@ class NotesController extends Controller
     public function index() {
         if(Session::get('login_type_id') == 9) {
             $client_id = Session::get('employee_id');
-            $getJobId = Job::selectRaw('job_id')->where('company_clients_id', 'like', '%'.$client_id.'%')->pluck('job_id')->toArray();
+            $getJobId = Job::selectRaw('job_id')->where('company_clients_id', 'like', '%'.$client_id.'%')->where('is_deleted',0)->pluck('job_id')->toArray();
 
             $jobNotesList = DB::table('job_notes as jn')
                 ->selectRaw('jn.id as notes_id, jn.job_note, jn.name, jn.created_at, j.job_id, j.job_title')
