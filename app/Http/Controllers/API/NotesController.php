@@ -42,53 +42,53 @@ class NotesController extends Controller
                         $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
                         break;
                     /* Measurer */
-                    // case '3':
-                    //     $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND job_status_id = 2) OR (service_employee_id LIKE '%{$user_id}%' AND job_status_id = 8))  AND is_deleted = 0 AND is_active = 1 ");
-                    //     foreach($getJobId as $id) {
-                    //         $jobId[] = $id->job_id;
-                    //     }
-                    //     $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
-                    //     break;
-                    // /* Delivery */
-                    // case '4':
-                    //     $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND (job_status_id = 5 OR job_status_id = 10)) OR (service_employee_id LIKE '%{$user_id}%' AND job_status_id = 8))  AND is_deleted = 0 AND is_active = 1 ");
-                    //     foreach($getJobId as $id) {
-                    //         $jobId[] = $id->job_id;
-                    //     }
-                    //     $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
-                    //     break;
-                    // /* Installer */
-                    // case '5':
-                    //     $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND (job_status_id = 6 OR job_status_id = 11)) OR (service_employee_id LIKE '%{$user_id}%' AND job_status_id = 8))  AND is_deleted = 0 AND is_active = 1 ");
-                    //     foreach($getJobId as $id) {
-                    //         $jobId[] = $id->job_id;
-                    //     }
-                    //     $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
-                    //     break;
-                    // /* Stone */
-                    // case '6':
-                    //     $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND (job_status_id = 7 OR job_status_id = 12)) OR (service_employee_id LIKE '%{$user_id}%' AND job_status_id = 8))  AND is_deleted = 0 AND is_active = 1 ");
-                    //     foreach($getJobId as $id) {
-                    //         $jobId[] = $id->job_id;
-                    //     }
-                    //     $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
-                    //     break;
-                    // /* Service */
-                    // case '7':
-                    //     $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND job_status_id = 8) OR service_employee_id LIKE '%{$user_id}%')  AND is_deleted = 0 AND is_active = 1 ");
-                    //     foreach($getJobId as $id) {
-                    //         $jobId[] = $id->job_id;
-                    //     }
-                    //     $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
-                    //     break;
-                    // /* Inspector */
-                    // case '8':
-                    //     $getJobId = DB::select("SELECT job_id FROM jobs WHERE (working_employee_id LIKE '%{$user_id}%' OR service_employee_id LIKE '%{$user_id}%')  AND is_deleted = 0 AND is_active = 1 ");
-                    //     foreach($getJobId as $id) {
-                    //         $jobId[] = $id->job_id;
-                    //     }
-                    //     $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
-                    //     break;
+                    case '3':
+                        $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND job_status_id = 2) OR (service_employee_id LIKE '%{$user_id}%' AND job_status_id = 8))  AND is_deleted = 0 AND is_active = 1 ");
+                        foreach($getJobId as $id) {
+                            $jobId[] = $id->job_id;
+                        }
+                        $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
+                        break;
+                    /* Delivery */
+                    case '4':
+                        $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND (job_status_id = 5 OR job_status_id = 10)) OR (service_employee_id LIKE '%{$user_id}%' AND job_status_id = 8))  AND is_deleted = 0 AND is_active = 1 ");
+                        foreach($getJobId as $id) {
+                            $jobId[] = $id->job_id;
+                        }
+                        $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
+                        break;
+                    /* Installer */
+                    case '5':
+                        $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND (job_status_id = 6 OR job_status_id = 11)) OR (service_employee_id LIKE '%{$user_id}%' AND job_status_id = 8))  AND is_deleted = 0 AND is_active = 1 ");
+                        foreach($getJobId as $id) {
+                            $jobId[] = $id->job_id;
+                        }
+                        $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
+                        break;
+                    /* Stone */
+                    case '6':
+                        $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND (job_status_id = 7 OR job_status_id = 12)) OR (service_employee_id LIKE '%{$user_id}%' AND job_status_id = 8))  AND is_deleted = 0 AND is_active = 1 ");
+                        foreach($getJobId as $id) {
+                            $jobId[] = $id->job_id;
+                        }
+                        $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
+                        break;
+                    /* Service */
+                    case '7':
+                        $getJobId = DB::select("SELECT job_id FROM jobs WHERE ((working_employee_id LIKE '%{$user_id}%' AND job_status_id = 8) OR service_employee_id LIKE '%{$user_id}%')  AND is_deleted = 0 AND is_active = 1 ");
+                        foreach($getJobId as $id) {
+                            $jobId[] = $id->job_id;
+                        }
+                        $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
+                        break;
+                    /* Inspector */
+                    case '8':
+                        $getJobId = DB::select("SELECT job_id FROM jobs WHERE (working_employee_id LIKE '%{$user_id}%' OR service_employee_id LIKE '%{$user_id}%')  AND is_deleted = 0 AND is_active = 1 ");
+                        foreach($getJobId as $id) {
+                            $jobId[] = $id->job_id;
+                        }
+                        $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
+                        break;
                     /* Client */
                     case '9':
                         $getJobId = DB::select("SELECT job_id FROM jobs WHERE company_clients_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 ");
@@ -98,12 +98,12 @@ class NotesController extends Controller
                         $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
                         break;
                     /* Sales */
-                    // case '10':
-                    //     $getJobId = DB::select("SELECT job_id FROM jobs WHERE (working_employee_id LIKE '%{$user_id}%' OR service_employee_id LIKE '%{$user_id}%')  AND is_deleted = 0 AND is_active = 1 ");
-                    //     foreach($getJobId as $id) {
-                    //         $jobId[] = $id->job_id;
-                    //     }
-                    //     break;
+                    case '10':
+                        $getJobId = DB::select("SELECT job_id FROM jobs WHERE (working_employee_id LIKE '%{$user_id}%' OR service_employee_id LIKE '%{$user_id}%')  AND is_deleted = 0 AND is_active = 1 ");
+                        foreach($getJobId as $id) {
+                            $jobId[] = $id->job_id;
+                        }
+                        break;
                 }
                 return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully', 'response_data' => $getJobsNotesDetail]);
             }

@@ -51,10 +51,8 @@ class AdminHomeController extends Controller
                     if($user->login_type_id == 9){
                         $clientDetail = Client::selectRaw('note_status')->where('client_id', $user->id)->first();
                         $success['job_notes_status'] =  $clientDetail->note_status;
-                    }elseif($user->login_type_id == 1) {
+                    }else{
                         $success['job_notes_status'] =  1;
-                    }else {
-                        $success['job_notes_status'] =  0;
                     }
                     $user->device_token = $device_token;
                     $user->device_type = $device_type;
