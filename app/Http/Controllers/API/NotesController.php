@@ -31,7 +31,11 @@ class NotesController extends Controller
                 switch ($login_type) {
                     /* Admin */
                     case '1':
-                        $getJobsNotesDetail = $this->getAllJobNotesDetails();
+                        $getJobId = DB::select("SELECT job_id FROM jobs WHERE working_employee_id LIKE '%{$user_id}%' AND is_deleted = 0 AND is_active = 1 ");
+                        foreach($getJobId as $id) {
+                            $jobId[] = $id->job_id;
+                        }
+                        $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
                         break;
                     /* Designer */
                     case '2':
@@ -103,6 +107,7 @@ class NotesController extends Controller
                         foreach($getJobId as $id) {
                             $jobId[] = $id->job_id;
                         }
+                        $getJobsNotesDetail = $this->getAllJobNotesDetails($jobId);
                         break;
                 }
                 return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => 'Get detail successfully', 'response_data' => $getJobsNotesDetail]);
@@ -112,20 +117,12 @@ class NotesController extends Controller
     }
 
     public function getAllJobNotesDetails($job_id = '') {
-        if($job_id == '') {
-            $jobNotesList = DB::table('job_notes as jn')
-                ->selectRaw('jn.id as notes_id, jn.job_note, jn.name, DATE_FORMAT(jn.created_at, "%m/%d/%Y") as created_at, j.job_id, j.job_title')
-                ->join('jobs as j', 'j.job_id', 'jn.job_id')
-                ->where('jn.is_deleted', 0)
-                ->orderBy('jn.created_at', 'asc')->get();
-        }else {
-            $jobNotesList = DB::table('job_notes as jn')
-                ->selectRaw('jn.id as notes_id, jn.job_note, jn.name, DATE_FORMAT(jn.created_at, "%m/%d/%Y") as created_at, j.job_id, j.job_title')
-                ->join('jobs as j', 'j.job_id', 'jn.job_id')
-                ->where('jn.is_deleted', 0)
-                ->whereIn('jn.job_id', $job_id)
-                ->orderBy('jn.created_at', 'asc')->get();
-        }
+        $jobNotesList = DB::table('job_notes as jn')
+            ->selectRaw('jn.id as notes_id, jn.job_note, jn.name, DATE_FORMAT(jn.created_at, "%m/%d/%Y") as created_at, j.job_id, j.job_title')
+            ->join('jobs as j', 'j.job_id', 'jn.job_id')
+            ->where('jn.is_deleted', 0)
+            ->whereIn('jn.job_id', $job_id)
+            ->orderBy('jn.created_at', 'asc')->get();
         return $jobNotesList;
     }
 }
