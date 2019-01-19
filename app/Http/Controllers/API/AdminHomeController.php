@@ -210,7 +210,13 @@ class AdminHomeController extends Controller
             $success['email'] = $email;
             $success['phone_number'] = (!empty($contactNo)) ? $this->formatPhoneNumber($contactNo) : null;
             $success['login_type_id'] = $login_type_id;
-
+            if($login_type_id == 9){
+                $clientDetail = Client::selectRaw('note_status')->where('client_id', $user_id)->first();
+                $success['job_notes_status'] =  $clientDetail->note_status;
+            }else{
+                $success['job_notes_status'] =  1;
+            }
+            
             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Profile has been updated successfully.", 'response_data' => $success]);
         } catch (\Exception $e) {}
     }
