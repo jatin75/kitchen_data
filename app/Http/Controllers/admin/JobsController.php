@@ -1,91 +1,231 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
 date_default_timezone_set('UTC');
-use App\Http\Controllers\Controller;
+use App\Admin;
+use App\AuditTrail;
+use App\Company;
 use App\Http\Controllers\admin\AdminHomeController;
+use App\Http\Controllers\Controller;
+use App\Job;
+use App\JobNote;
+use App\JobType;
+use DB;
+use FCM;
 use Illuminate\Http\Request;
 use LaravelFCM\Message\OptionsBuilder;
 use LaravelFCM\Message\PayloadDataBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
-use PushNotification;
-use FCM;
-use App\Job;
-use App\JobNote;
-use App\JobType;
-use App\Admin;
-use App\AuditTrail;
-use App\Company;
-use DB;
-use Session;
 use Mail;
+use PushNotification;
+use Session;
+use Image;
+use Storage;
 
 class JobsController extends Controller
 {
     public function index()
     {
-        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
-        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 1)->where('is_deleted', 0)->orderBy('created_at','DESC')->get();
+        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->orderBy('display_order')->get();
+        $getJobDetails = DB::table('jobs as jb')
+                    ->selectRaw('jb.job_id, jb.job_title, jb.address_1, jb.address_2, jb.apartment_number, jb.city, jb.state, jb.zipcode, jb.job_status_id,jb.working_employee_id, jb.job_status_id, jb.start_date,jb.end_date, cmp.name')
+                    ->join('companies as cmp', 'cmp.company_id', 'jb.company_id')
+                    ->where('jb.is_active', 1)->where('jb.is_deleted', 0)->orderBy('jb.created_at', 'DESC')
+                    ->get();
+
+        if (sizeof($getJobDetails) > 0) {
+            foreach ($getJobDetails as $jobValue) {
+                $employeeNames = "";
+                $employeeIds = explode(',', $jobValue->working_employee_id);
+                $getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
+                $jobValue->employee_name = $getEmployeeName->employee_name;
+
+                /* Address */
+                $delimiter = ',' . ' ';
+                $job_address = $jobValue->address_1 . $delimiter;
+                $job_address .= (!empty($jobValue->apartment_number)) ? 'Apartment no: ' . $jobValue->apartment_number . $delimiter : '';
+                $job_address .= (!empty($jobValue->address_2)) ? $jobValue->address_2 . $delimiter : '';
+                $job_address .= (!empty($jobValue->city)) ? $jobValue->city . $delimiter : '';
+                $job_address .= (!empty($jobValue->state)) ? $jobValue->state . $delimiter : '';
+                $job_address .= (!empty($jobValue->zipcode)) ? $jobValue->zipcode : '';
+                $jobValue->address = $job_address;
+            }
+        }
+
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+        $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
 
-        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
-        return view('admin.jobs')->with('jobTypeDetails',$getJobTypeDetail)->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
+        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->whereNotIn('job_status_id', [10, 11, 12])->get();
+        if(Session::get('login_type_id') == 1  || Session::get('login_type_id') == 2 ) {
+            return view('admin.jobs')->with('jobStatusDetails', $getJobTypeDetail)->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
+        }else {
+            return redirect(route('dashboard'));
+        }
     }
 
     public function showDeactivated()
     {
-        $getJobDetails = Job::selectRaw('job_id,job_title,job_status_id,start_date,end_date')->where('is_active', 0)->where('is_deleted', 0)->orderBy('updated_at','DESC')->get();
+        $getJobDetails = DB::table('jobs as jb')
+                    ->selectRaw('jb.job_id, jb.job_title, jb.address_1, jb.address_2, jb.apartment_number, jb.city, jb.state, jb.zipcode, jb.job_status_id,jb.working_employee_id, jb.job_status_id, jb.start_date,jb.end_date, cmp.name')
+                    ->join('companies as cmp', 'cmp.company_id', 'jb.company_id')
+                    ->where('jb.is_active', 0)->where('jb.is_deleted', 0)->orderBy('jb.updated_at', 'DESC')
+                    ->get();
+
+        if (sizeof($getJobDetails) > 0) {
+            foreach ($getJobDetails as $jobValue) {
+                $employeeNames = "";
+                $employeeIds = explode(',', $jobValue->working_employee_id);
+                $getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
+                $jobValue->employee_name = $getEmployeeName->employee_name;
+
+                /* Address */
+                $delimiter = ',' . ' ';
+                $job_address = $jobValue->address_1 . $delimiter;
+                $job_address .= (!empty($jobValue->apartment_number)) ? 'Apartment no: ' . $jobValue->apartment_number . $delimiter : '';
+                $job_address .= (!empty($jobValue->address_2)) ? $jobValue->address_2 . $delimiter : '';
+                $job_address .= (!empty($jobValue->city)) ? $jobValue->city . $delimiter : '';
+                $job_address .= (!empty($jobValue->state)) ? $jobValue->state . $delimiter : '';
+                $job_address .= (!empty($jobValue->zipcode)) ? $jobValue->zipcode : '';
+                $jobValue->address = $job_address;
+            }
+        }
 
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+        $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
 
-        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->get();
-        return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
+        $getJobType = JobType::selectRaw('job_status_name,job_status_id')->orderBy('display_order')->get();
+        if(Session::get('login_type_id') == 1  || Session::get('login_type_id') == 2 ) {
+            return view('admin.deactivatedjobs')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobType)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('deliveryEmployeeList', $deliveryEmployeeList);
+        }else {
+            return redirect(route('dashboard'));
+        }
     }
 
     public function create()
     {
-        $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0");
+        $getJobDetails = Job::all();
+        $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id != 9 AND id != 'ZIY30547'");
+
         $comapnyList = Company::selectRaw('company_id,name')->where('is_deleted', 0)->get();
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+        $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
+        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->orderBy('display_order')->get();
 
-        return view('admin.addjob')->with('jobDetails', Job::all())->with('employeeList', $employeeList)->with('comapnyList', $comapnyList)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList);
+        $salesEmployeelist = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 10");
+
+        $getJobDetails->sales_employee_id = !empty($getJobDetails->sales_employee_id) ? explode(",", $getJobDetails->sales_employee_id) : [];
+
+        return view('admin.addjob')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobTypeDetail)->with('employeeList', $employeeList)->with('comapnyList', $comapnyList)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('salesemployeelist', $salesEmployeelist)->with('deliveryEmployeeList', $deliveryEmployeeList);
     }
 
     public function edit($job_id)
     {
         $getJobDetails = Job::where('job_id', $job_id)->first();
         $comapnyList = Company::selectRaw('company_id,name')->where('is_deleted', 0)->get();
+        $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND id != 'ZIY30547'");
+        $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
+        $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+        $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
+        $getCompanyClients = DB::select("SELECT UPPER(CONCAT(au.first_name,' ',au.last_name)) AS client_name,au.id FROM clients AS cl JOIN admin_users AS au ON au.id = cl.client_id WHERE cl.company_id = '{$getJobDetails->company_id}'");
+        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->orderBy('display_order')->get();
+
+        $salesEmployeelist = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 10");
+
+        $getJobDetails->start_date = date('m/d/Y', strtotime($getJobDetails->start_date));
+        $getJobDetails->end_date = date('m/d/Y', strtotime($getJobDetails->end_date));
+        if (empty($getJobDetails->plumbing_installation_date)) {
+            $getJobDetails->plumbing_installation_date = null;
+        }else {
+            $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
+        }
+        if (empty($getJobDetails->delivery_datetime)) {
+            $getJobDetails->delivery_date = null;
+            //$getJobDetails->delivery_time = null;
+        }else {
+            $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
+            //$getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
+        }
+        if (empty($getJobDetails->installation_datetime)) {
+            $getJobDetails->installation_date = null;
+            //$getJobDetails->installation_time = null;
+        } else {
+            $getJobDetails->installation_date = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
+            //$getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
+        }
+
+        if (empty($getJobDetails->stone_installation_datetime)) {
+            $getJobDetails->stone_installation_date = null;
+            //$getJobDetails->stone_installation_time = null;
+        } else {
+            $getJobDetails->stone_installation_date = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
+            //$getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
+        }
+
+        if (empty($getJobDetails->delivery_installation_datetime)) {
+            $getJobDetails->delivery_installation_date = null;
+            //$getJobDetails->delivery_installation_time = null;
+        } else {
+            $getJobDetails->delivery_installation_date = date('m/d/Y', strtotime($getJobDetails->delivery_installation_datetime));
+            //$getJobDetails->delivery_installation_time = date('h:iA', strtotime($getJobDetails->delivery_installation_datetime));
+        }
+
+        if (!empty($getJobDetails->company_clients_id)) {
+            $getJobDetails->company_clients_id = explode(",", $getJobDetails->company_clients_id);
+        }
+        if (!empty($getJobDetails->working_employee_id)) {
+            $getJobDetails->working_employee_id = explode(",", $getJobDetails->working_employee_id);
+        }
+
+        if (!empty($getJobDetails->service_employee_id)) {
+            $getJobDetails->service_employee_id = explode(",", $getJobDetails->service_employee_id);
+        }
+
+        $getJobDetails->sales_employee_id = !empty($getJobDetails->sales_employee_id) ? explode(",", $getJobDetails->sales_employee_id) : [];
+
+        if (!empty($getJobDetails->installation_employee_id)) {
+            $getJobDetails->installation_employee_id = explode(",", $getJobDetails->installation_employee_id);
+        }
+        if (!empty($getJobDetails->stone_installation_employee_id)) {
+            $getJobDetails->stone_installation_employee_id = explode(",", $getJobDetails->stone_installation_employee_id);
+        }
+        $getJobDetails->delivery_installation_employee_id = !empty($getJobDetails->delivery_installation_employee_id) ? explode(",", $getJobDetails->delivery_installation_employee_id) : [];
+
+        return view('admin.addjob')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobTypeDetail)->with('comapnyList', $comapnyList)->with('employeeList', $employeeList)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('companyClientList', $getCompanyClients)->with('salesemployeelist', $salesEmployeelist)->with('deliveryEmployeeList', $deliveryEmployeeList);
+    }
+
+    public function clone ($job_id) {
+        $getJobDetails = Job::where('job_id', $job_id)->first();
+        $comapnyList = Company::selectRaw('company_id,name')->where('is_deleted', 0)->get();
         $employeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0");
         $stoneEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 6");
         $installEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 5");
+        $deliveryEmployeeList = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 4");
         $getCompanyClients = DB::select("SELECT UPPER(CONCAT(au.first_name,' ',au.last_name)) AS client_name,au.id FROM clients AS cl JOIN admin_users AS au ON au.id = cl.client_id WHERE cl.company_id = '{$getJobDetails->company_id}'");
+        $getJobTypeDetail = JobType::selectRaw('job_status_id,job_status_name')->get();
+
+        $salesEmployeelist = DB::select("SELECT id,UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE is_deleted = 0 AND login_type_id = 10");
 
         $getJobDetails->start_date = date('m/d/Y', strtotime($getJobDetails->start_date));
         $getJobDetails->end_date = date('m/d/Y', strtotime($getJobDetails->end_date));
         $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
         $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
         $getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
-        if(empty($getJobDetails->installation_datetime))
-        {
+        if (empty($getJobDetails->installation_datetime)) {
             $getJobDetails->installation_date = null;
             $getJobDetails->installation_time = null;
-        }
-        else
-        {
+        } else {
             $getJobDetails->installation_date = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
             $getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
         }
 
-        if(empty($getJobDetails->stone_installation_datetime))
-        {
+        if (empty($getJobDetails->stone_installation_datetime)) {
             $getJobDetails->stone_installation_date = null;
             $getJobDetails->stone_installation_time = null;
-        }
-        else
-        {
+        } else {
             $getJobDetails->stone_installation_date = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
             $getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
         }
@@ -96,25 +236,56 @@ class JobsController extends Controller
         if (!empty($getJobDetails->working_employee_id)) {
             $getJobDetails->working_employee_id = explode(",", $getJobDetails->working_employee_id);
         }
+
+        $getJobDetails->service_employee_id = !empty($getJobDetails->service_employee_id) ? explode(",", $getJobDetails->service_employee_id) : [];
+
+        $getJobDetails->sales_employee_id = !empty($getJobDetails->sales_employee_id) ? explode(",", $getJobDetails->sales_employee_id) : [];
+
         if (!empty($getJobDetails->installation_employee_id)) {
             $getJobDetails->installation_employee_id = explode(",", $getJobDetails->installation_employee_id);
         }
         if (!empty($getJobDetails->stone_installation_employee_id)) {
             $getJobDetails->stone_installation_employee_id = explode(",", $getJobDetails->stone_installation_employee_id);
         }
+        $getJobDetails->delivery_installation_employee_id = !empty($getJobDetails->delivery_installation_employee_id) ? explode(",", $getJobDetails->delivery_installation_employee_id) : [];
 
-        return view('admin.addjob')->with('jobDetails', $getJobDetails)->with('comapnyList', $comapnyList)->with('employeeList', $employeeList)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('companyClientList', $getCompanyClients);
+        return view('admin.addjob')->with('jobDetails', $getJobDetails)->with('jobTypeDetails', $getJobTypeDetail)->with('comapnyList', $comapnyList)->with('employeeList', $employeeList)->with('stoneEmployeeList', $stoneEmployeeList)->with('installEmployeeList', $installEmployeeList)->with('companyClientList', $getCompanyClients)->with('cloneflag', '1')->with('salesemployeelist', $salesEmployeelist)->with('deliveryEmployeeList', $deliveryEmployeeList);
     }
 
     public function store(Request $request)
     {
-        $hidden_job_id = $request->get('hidden_job_id');
-        $working_employee_ids = $request->get('working_employee_id');
+        $hidden_job_id = $request->get('hiddenJobId');
+        $hiddenisclone = $request->get('hiddenisclone');
+        $working_employee_ids = $request->get('workingEmployee');
         $working_employees = implode(',', $working_employee_ids);
-        $comapny_clients = implode(',', $request->get('comapny_clients_id'));
-        $is_installation = $request->get('installation_select');
-        $is_stone_installation = $request->get('stone_installation_select');
-        if (!empty($hidden_job_id)) {
+        $comapny_clients = implode(',', $request->get('comapnyClients'));
+        if (!empty($request->get('salesEmployee'))) {
+            $sales_employee_id = $request->get('salesEmployee');
+        } else {
+            $sales_employee_id = null;
+        }
+        if($request->get('serviceEmployee') && sizeof($request->get('serviceEmployee'))  > 0) {
+            $service_employee_id = implode(',', $request->get('serviceEmployee'));
+        }else {
+            $service_employee_id = null;
+        }
+        if(!empty($request->get('plumbingInstallationDate'))) {
+            $plumbingInstallationDate = date('Y-m-d', strtotime($request->get('plumbingInstallationDate')));
+        }else {
+            $plumbingInstallationDate = null;
+        }
+        if(!empty($request->get('deliveryDate'))) {
+            $deliveryDateTime = date('Y-m-d', strtotime($request->get('deliveryDate')));
+        }else {
+            $deliveryDateTime = null;
+        }
+
+        $is_installation = $request->get('installationSelect');
+        $is_stone_installation = $request->get('stoneInstallationSelect');
+        $is_delivery_installation = $request->get('deliveryInstallationSelect');
+
+        if (!empty($hidden_job_id) && empty($hiddenisclone)) {
+            /* Edit */
             $objJob = Job::where('job_id', $hidden_job_id)->first();
             /*Audit Trail start*/
             $oldValueArray = [];
@@ -122,46 +293,130 @@ class JobsController extends Controller
             $oldValueArray[] = $objJob->toArray();
             $oldValueArray = call_user_func_array('array_merge', $oldValueArray);
             /*Audit Trail end*/
-            $objJob->company_id = $request->get('job_company_id');
-            $objJob->job_title = $request->get('job_title');
-            $objJob->address_1 = $request->get('address_1');
-            $objJob->address_2 = $request->get('address_2');
+            $objJob->company_id = $request->get('jobCompanyName');
+            $objJob->job_title = $request->get('jobTitle');
+            $objJob->address_1 = $request->get('locationAddress');
+            $objJob->address_2 = $request->get('subAddress');
             $objJob->city = $request->get('city');
             $objJob->state = $request->get('state');
             $objJob->zipcode = $request->get('zipcode');
-            $objJob->apartment_number = $request->get('apartment_no');
-            $objJob->super_name = $request->get('job_super_name');
-            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('super_phone_number'));
-            $objJob->contractor_name = $request->get('job_contractor_name');
-            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractor_phone_number'));
-            $objJob->contractor_email = $request->get('contractor_email');
+            $objJob->apartment_number = $request->get('apartmentNo');
+            $objJob->super_name = $request->get('jobSuperName');
+            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('superPhoneNumber'));
+            $objJob->contractor_name = $request->get('jobContractorName');
+            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractorPhoneNumber'));
+            $objJob->contractor_email = $request->get('contractorEmail');
+            $objJob->service_employee_id = $service_employee_id;
             $objJob->working_employee_id = $working_employees;
             $objJob->company_clients_id = $comapny_clients;
+            $objJob->sales_employee_id = $sales_employee_id;
 
-            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbing_installation_date')));
-            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_date') . ' ' . $request->get('delivery_time')));
+            $objJob->plumbing_installation_date = $plumbingInstallationDate;
+            $objJob->delivery_datetime = $deliveryDateTime;
 
             $objJob->is_select_installation = $is_installation;
-            if ($is_installation == 1) {
-                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));
-                $objJob->installation_employee_id = implode(',', $request->get('installation_employees_id'));
+            if ($is_installation == 3) {
+                $objJob->installation_datetime = date('Y-m-d', strtotime($request->get('installationDate')));
+                $objJob->installation_employee_id = implode(',', $request->get('installationEmployees'));
             } else {
                 $objJob->installation_datetime = null;
                 $objJob->installation_employee_id = null;
             }
 
             $objJob->is_select_stone_installation = $is_stone_installation;
-            if ($is_stone_installation == 1) {
-                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $request->get('stone_installation_time')));
-                $objJob->stone_installation_employee_id = implode(',', $request->get('stone_installation_employees_id'));
+            if ($is_stone_installation == 2) {
+                $objJob->stone_installation_datetime = date('Y-m-d', strtotime($request->get('stoneInstallationDate')));
+                $objJob->stone_installation_employee_id = implode(',', $request->get('stoneInstallationEmployees'));
             } else {
                 $objJob->stone_installation_datetime = null;
                 $objJob->stone_installation_employee_id = null;
             }
 
-            $objJob->is_active = $request->get('job_status');
-            $objJob->start_date = date('Y-m-d', strtotime($request->get('job_start_date')));
-            $objJob->end_date = date('Y-m-d', strtotime($request->get('job_end_date')));
+            $objJob->is_select_delivery_installation = $is_delivery_installation;
+            if ($is_delivery_installation == 4) {
+                $objJob->delivery_installation_datetime = date('Y-m-d', strtotime($request->get('deliveryInstallationDate')));
+                $objJob->delivery_installation_employee_id = implode(',', $request->get('deliveryInstallationEmployees'));
+            } else {
+                $objJob->delivery_installation_datetime = null;
+                $objJob->delivery_installation_employee_id = null;
+            }
+
+            $objJob->job_status_id = $request->get('jobType');
+
+            $objJob->is_active = $request->get('jobStatus');
+            $objJob->start_date = date('Y-m-d', strtotime($request->get('jobStartDate')));
+            $objJob->end_date = date('Y-m-d', strtotime($request->get('jobEndDate')));
+
+            /* uploade files */
+            $job_pics = $request->file('addAttachment');
+            /* S3 bucket */
+            if (isset($job_pics) && sizeof($job_pics) > 0) {
+                $imageURL = [];
+                $thumbImageURL = [];
+                $fileUrl = [];
+                foreach ($job_pics as $image) {
+                    $originalName = $image->getClientOriginalName();
+                    $checkExtension = pathinfo($originalName, PATHINFO_EXTENSION);
+                    switch ($checkExtension) {
+                        case 'jpg':
+                        case 'jpeg':
+                        case 'png':
+                        $flag = 1;
+                        break;
+                        case 'doc':
+                        case 'docx':
+                        case 'xls':
+                        case 'xlsx':
+                        case 'csv':
+                        case 'pdf':
+                        $flag = 2;
+                        break;
+                    }
+
+                    $imageFileName = uniqid(time()) . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+                    $thumbImageFileName = uniqid(time()) . '_thumb' . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+                    $s3 = Storage::disk('s3');
+                    $filePath = ($flag == 1)? 'jobsite_images/'.$imageFileName : 'jobsite_files/' . $imageFileName;
+                    if($flag == 1)
+                    {
+                        $thumbFilePath = 'jobsite_images/' . $thumbImageFileName;
+                    }
+                    if ($s3->put($filePath, file_get_contents($image), 'public')) {
+                        if($flag == 1)
+                        {
+                            /* images */
+                            $thumbpath = public_path('uploads/' . $thumbImageFileName);
+                            $img = Image::make($image);
+                            $img->resize(100, 100)->save($thumbpath);
+                            $s3->put($thumbFilePath, file_get_contents($thumbpath), 'public');
+                            $thumbImageURL[] = $s3->url($thumbFilePath);
+                            unlink($thumbpath);
+                            $imageURL[] = $s3->url($filePath);
+                        }
+                        else
+                        {
+                            $fileUrl[] = $s3->url($filePath);
+                        }
+                    }
+                }
+                if(sizeof($imageURL) > 0)
+                {
+                    $imageURL = implode(',', $imageURL);
+                    $thumbImageURL = implode(',', $thumbImageURL);
+                    if (!empty($objJob->job_images_url)) {
+                        $objJob->job_images_url = $objJob->job_images_url . ',' . $imageURL;
+                        $objJob->image_thumbnails_url = $objJob->image_thumbnails_url . ',' . $thumbImageURL;
+                    } else {
+                        $objJob->job_images_url = $imageURL;
+                        $objJob->image_thumbnails_url = $thumbImageURL;
+                    }
+                }
+                if(sizeof($fileUrl) > 0)
+                {
+                    $fileUrl = implode(',', $fileUrl);
+                    $objJob->job_files_url = (!empty($objJob->job_files_url))? $objJob->job_files_url . ',' . $fileUrl : $fileUrl;
+                }
+            }
 
             /*Audit Trail start*/
             $newValueArray[] = $objJob->toArray();
@@ -187,59 +442,151 @@ class JobsController extends Controller
             $response['key'] = 2;
             return json_encode($response);
         } else {
+            /* Create */
             $newJobId = $this->getJobId();
             $objJob = new Job();
             $objJob->job_id = $newJobId;
-            $objJob->company_id = $request->get('job_company_id');
-            $objJob->job_title = $request->get('job_title');
-            $objJob->address_1 = $request->get('address_1');
-            $objJob->address_2 = $request->get('address_2');
+            $objJob->company_id = $request->get('jobCompanyName');
+            $objJob->job_title = $request->get('jobTitle');
+            $objJob->address_1 = $request->get('locationAddress');
+            $objJob->address_2 = $request->get('subAddress');
             $objJob->city = $request->get('city');
             $objJob->state = $request->get('state');
             $objJob->zipcode = $request->get('zipcode');
-            $objJob->apartment_number = $request->get('apartment_no');
-            $objJob->super_name = $request->get('job_super_name');
-            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('super_phone_number'));
-            $objJob->contractor_name = $request->get('job_contractor_name');
-            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractor_phone_number'));
-            $objJob->contractor_email = $request->get('contractor_email');
+            $objJob->apartment_number = $request->get('apartmentNo');
+            $objJob->super_name = $request->get('jobSuperName');
+            $objJob->super_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('superPhoneNumber'));
+            $objJob->contractor_name = $request->get('jobContractorName');
+            $objJob->contractor_phone_number = (new AdminHomeController)->replacePhoneNumber($request->get('contractorPhoneNumber'));
+            $objJob->contractor_email = $request->get('contractorEmail');
+            $objJob->service_employee_id = $service_employee_id;
             $objJob->working_employee_id = $working_employees;
             $objJob->company_clients_id = $comapny_clients;
+            $objJob->sales_employee_id = $sales_employee_id;
 
-            $objJob->plumbing_installation_date = date('Y-m-d', strtotime($request->get('plumbing_installation_date')));
-            $objJob->delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('delivery_date') . ' ' . $request->get('delivery_time')));
+            $objJob->plumbing_installation_date = $plumbingInstallationDate;
+            $objJob->delivery_datetime = $deliveryDateTime;
 
-            $objJob->job_status_id = 1;
+            $objJob->job_status_id = $request->get('jobType');
 
             $objJob->is_select_installation = $is_installation;
-            if ($is_installation == 1) {
-                $objJob->installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('installation_date') . ' ' . $request->get('installation_time')));
-                $objJob->installation_employee_id = implode(',', $request->get('installation_employees_id'));
+            if ($is_installation == 3) {
+                $objJob->installation_datetime = date('Y-m-d', strtotime($request->get('installationDate')));
+                $objJob->installation_employee_id = implode(',', $request->get('installationEmployees'));
             } else {
                 $objJob->installation_datetime = null;
                 $objJob->installation_employee_id = null;
             }
 
             $objJob->is_select_stone_installation = $is_stone_installation;
-            if ($is_stone_installation == 1) {
-                $objJob->stone_installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('stone_installation_date') . ' ' . $request->get('stone_installation_time')));
-                $objJob->stone_installation_employee_id = implode(',', $request->get('stone_installation_employees_id'));
+            if ($is_stone_installation == 2) {
+                $objJob->stone_installation_datetime = date('Y-m-d', strtotime($request->get('stoneInstallationDate')));
+                $objJob->stone_installation_employee_id = implode(',', $request->get('stoneInstallationEmployees'));
             } else {
                 $objJob->stone_installation_datetime = null;
                 $objJob->stone_installation_employee_id = null;
             }
 
-            $objJob->is_active = $request->get('job_status');
+            $objJob->is_select_delivery_installation = $is_delivery_installation;
+            if ($is_delivery_installation == 4) {
+                $objJob->delivery_installation_datetime = date('Y-m-d', strtotime($request->get('deliveryInstallationDate')));
+                $objJob->delivery_installation_employee_id = implode(',', $request->get('deliveryInstallationEmployees'));
+            } else {
+                $objJob->delivery_installation_datetime = null;
+                $objJob->delivery_installation_employee_id = null;
+            }
+
+            $objJob->is_active = $request->get('jobStatus');
             $objJob->is_deleted = 0;
-            $objJob->start_date = date('Y-m-d', strtotime($request->get('job_start_date')));
-            $objJob->end_date = date('Y-m-d', strtotime($request->get('job_end_date')));
+            $objJob->start_date = date('Y-m-d', strtotime($request->get('jobStartDate')));
+            $objJob->end_date = date('Y-m-d', strtotime($request->get('jobEndDate')));
             $objJob->created_at = date('Y-m-d H:i:s');
+
+            /* uploade files */
+            $job_pics = $request->file('addAttachment');
+            /* S3 bucket */
+            if (isset($job_pics) && sizeof($job_pics) > 0) {
+                $imageURL = [];
+                $thumbImageURL = [];
+                $fileUrl = [];
+                foreach ($job_pics as $image) {
+                    $originalName = $image->getClientOriginalName();
+                    $checkExtension = pathinfo($originalName, PATHINFO_EXTENSION);
+                    switch ($checkExtension) {
+                        case 'jpg':
+                        case 'jpeg':
+                        case 'png':
+                        $flag = 1;
+                        break;
+                        case 'doc':
+                        case 'docx':
+                        case 'xls':
+                        case 'xlsx':
+                        case 'csv':
+                        case 'pdf':
+                        $flag = 2;
+                        break;
+                    }
+
+                    $imageFileName = uniqid(time()) . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+                    $thumbImageFileName = uniqid(time()) . '_thumb' . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+                    $s3 = Storage::disk('s3');
+                    $filePath = ($flag == 1)? 'jobsite_images/'.$imageFileName : 'jobsite_files/' . $imageFileName;
+                    if($flag == 1)
+                    {
+                        $thumbFilePath = 'jobsite_images/' . $thumbImageFileName;
+                    }
+                    if ($s3->put($filePath, file_get_contents($image), 'public')) {
+                        if($flag == 1)
+                        {
+                            /* images */
+                            $thumbpath = public_path('uploads/' . $thumbImageFileName);
+                            $img = Image::make($image);
+                            $img->resize(100, 100)->save($thumbpath);
+                            $s3->put($thumbFilePath, file_get_contents($thumbpath), 'public');
+                            $thumbImageURL[] = $s3->url($thumbFilePath);
+                            unlink($thumbpath);
+                            $imageURL[] = $s3->url($filePath);
+                        }
+                        else
+                        {
+                            $fileUrl[] = $s3->url($filePath);
+                        }
+                    }
+                }
+                if(sizeof($imageURL) > 0)
+                {
+                    $imageURL = implode(',', $imageURL);
+                    $thumbImageURL = implode(',', $thumbImageURL);
+                    $objJob->job_images_url = $imageURL;
+                    $objJob->image_thumbnails_url = $thumbImageURL;
+                }
+                if(sizeof($fileUrl) > 0)
+                {
+                    $fileUrl = implode(',', $fileUrl);
+                    $objJob->job_files_url = $fileUrl;
+                }
+            }
             $objJob->save();
+
+            $finalArray[] = array(
+                'job_id' => $newJobId,
+                'field_name' => 'added_job',
+                'old_value' => '',
+                'new_value' => '',
+                'employee_id' => Session::get('employee_id'),
+                'name' => Session::get('name'),
+                'login_type_id' => Session::get('login_type_id'),
+            );
+            if (!empty($finalArray)) {
+                AuditTrail::insert($finalArray);
+            }
+
             Session::put('successMessage', 'Job has been added Successfully');
             $response['key'] = 1;
 
             /*send Mail*/
-            $this->sendMailNew($working_employee_ids,$request->get('job_title'));
+            $this->sendMailNew($working_employee_ids, $request->get('jobTitle'));
             return json_encode($response);
         }
     }
@@ -253,7 +600,7 @@ class JobsController extends Controller
 
     public function deactivateJob($job_id)
     {
-        Job::where('job_id', $job_id)->update(['is_active' => 0,'job_status_id'=>8]);
+        Job::where('job_id', $job_id)->update(['is_active' => 0, 'job_status_id' => 9]);
         Session::flash('successMessage', 'Job has been deactivated Successfully');
         return redirect()->route('activejobs');
     }
@@ -264,8 +611,7 @@ class JobsController extends Controller
         $job_note_desc = $request->get('job_note_desc');
         $job_note_status = $request->get('job_note_status');
 
-        if($job_note_status == 1)
-        {
+        if ($job_note_status == 1) {
             $ObjJobNote = new JobNote();
             $ObjJobNote->job_id = $hidden_job_id;
             $ObjJobNote->employee_id = Session::get('employee_id');
@@ -274,14 +620,12 @@ class JobsController extends Controller
             $ObjJobNote->login_type_id = Session::get('login_type_id');
             $ObjJobNote->created_at = date('Y-m-d H:i:s');
             $ObjJobNote->save();
-        }
-        else
-        {
-            JobNote::where('id',$hidden_job_id)->update([
-                'employee_id'=>Session::get('employee_id'),
-                'name'=>Session::get('name'),
-                'login_type_id'=>Session::get('login_type_id'),
-                'job_note'=>$job_note_desc]);
+        } else {
+            JobNote::where('id', $hidden_job_id)->update([
+                'employee_id' => Session::get('employee_id'),
+                'name' => Session::get('name'),
+                'login_type_id' => Session::get('login_type_id'),
+                'job_note' => $job_note_desc]);
         }
         $response['key'] = 1;
         echo json_encode($response);
@@ -290,66 +634,83 @@ class JobsController extends Controller
     public function viewJobDetails(Request $request)
     {
         $job_id = $request->get('job_id');
-        $getJobDetails = DB::select("SELECT j.job_id,j.company_id,j.job_title,j.address_1,j.address_2,j.city,j.state,j.zipcode,j.apartment_number,j.super_name,j.super_phone_number,j.contractor_name,j.contractor_phone_number,j.contractor_email,j.working_employee_id,j.company_clients_id,j.plumbing_installation_date,j.delivery_datetime,j.job_status_id,j.is_select_installation,j.installation_datetime,j.installation_employee_id,j.is_select_stone_installation,j.stone_installation_datetime,j.stone_installation_employee_id,j.is_active,j.start_date,j.end_date,j.created_at,cmp.name AS company_name,jbt.job_status_name
+        $getJobDetails = DB::select("SELECT j.job_id,j.company_id,j.job_title,j.address_1,j.address_2,j.city,j.state,j.zipcode,j.apartment_number,j.super_name,j.super_phone_number,j.contractor_name,j.contractor_phone_number,j.contractor_email, j.service_employee_id, j.working_employee_id,j.sales_employee_id,j.company_clients_id,j.plumbing_installation_date,j.delivery_datetime,j.job_status_id,j.is_select_installation,j.installation_datetime,j.installation_employee_id,j.is_select_stone_installation,j.stone_installation_datetime,j.stone_installation_employee_id,j.is_select_delivery_installation,j.delivery_installation_datetime,j.delivery_installation_employee_id,j.is_active,j.start_date,j.end_date,j.created_at,cmp.name AS company_name,jbt.job_status_name
             FROM jobs AS j
             JOIN companies AS cmp ON cmp.company_id = j.company_id
             JOIN job_types AS jbt ON jbt.job_status_id = j.job_status_id
             WHERE j.job_id = '{$job_id}'");
         if (sizeof($getJobDetails) > 0) {
             $getJobDetails = $getJobDetails[0];
-            $getJobDetails->is_active = ($getJobDetails->is_active == 1) ? 'Active':'Inactive' ;
+            $getJobDetails->is_active = ($getJobDetails->is_active == 1) ? 'Active' : 'Inactive';
             $getJobDetails->super_phone_number = (!empty($getJobDetails->super_phone_number)) ? (new AdminHomeController)->formatPhoneNumber($getJobDetails->super_phone_number) : '--';
             $getJobDetails->contractor_phone_number = (!empty($getJobDetails->contractor_phone_number)) ? (new AdminHomeController)->formatPhoneNumber($getJobDetails->contractor_phone_number) : '--';
 
             $getJobDetails->start_date = date('m/d/Y', strtotime($getJobDetails->start_date));
             $getJobDetails->end_date = date('m/d/Y', strtotime($getJobDetails->end_date));
             $getJobDetails->plumbing_installation_date = date('m/d/Y', strtotime($getJobDetails->plumbing_installation_date));
-            $getJobDetails->delivery_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->delivery_datetime));
+            $getJobDetails->delivery_datetime = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
 
-            $getJobDetails->installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->installation_datetime));
+            $getJobDetails->delivery_installation_datetime = date('m/d/Y', strtotime($getJobDetails->delivery_installation_datetime));
 
-            $getJobDetails->stone_installation_datetime = date('m/d/Y h:iA', strtotime($getJobDetails->stone_installation_datetime));
+            $getJobDetails->installation_datetime = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
+
+            $getJobDetails->stone_installation_datetime = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
+
+            if (!empty($getJobDetails->service_employee_id)) {
+                $getJobDetails->service_employee_name = $this->commonViewJobDetails($getJobDetails->service_employee_id);
+            } else {
+                $getJobDetails->service_employee_name = '--';
+            }
+
             if (!empty($getJobDetails->working_employee_id)) {
                 $getJobDetails->working_employee_name = $this->commonViewJobDetails($getJobDetails->working_employee_id);
             }
+
+            if (!empty($getJobDetails->sales_employee_id)) {
+                $getJobDetails->sales_employee_name = $this->commonViewJobDetails($getJobDetails->sales_employee_id);
+            } else {
+                $getJobDetails->sales_employee_name = '--';
+            }
+
             if (!empty($getJobDetails->company_clients_id)) {
-                $getJobDetails->company_clients_name  = $this->commonViewJobDetails($getJobDetails->company_clients_id);
+                $getJobDetails->company_clients_name = $this->commonViewJobDetails($getJobDetails->company_clients_id);
+            }
+            if (!empty($getJobDetails->delivery_installation_employee_id)) {
+                $getJobDetails->delivery_installation_employee_name = $this->commonViewJobDetails($getJobDetails->delivery_installation_employee_id);
             }
             if (!empty($getJobDetails->installation_employee_id)) {
-                $getJobDetails->installation_employee_name  = $this->commonViewJobDetails($getJobDetails->installation_employee_id);
+                $getJobDetails->installation_employee_name = $this->commonViewJobDetails($getJobDetails->installation_employee_id);
             }
             if (!empty($getJobDetails->stone_installation_employee_id)) {
-                $getJobDetails->stone_installation_employee_name  = $this->commonViewJobDetails($getJobDetails->stone_installation_employee_id);
+                $getJobDetails->stone_installation_employee_name = $this->commonViewJobDetails($getJobDetails->stone_installation_employee_id);
             }
         }
-        $getJobNotes = DB::select("SELECT id,name,job_note,updated_at FROM job_notes WHERE is_deleted = 0 AND job_id = '{$job_id}'");
+        $getJobNotes = DB::select("SELECT id,job_id,name,job_note,updated_at FROM job_notes WHERE is_deleted = 0 AND job_id = '{$job_id}'");
         $html = '';
-        if (sizeof($getJobNotes) > 0)
-        {
-            foreach($getJobNotes as $single_note)
-            {
-                $html .= '<div class="row" id="row_'. $single_note->id .'">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" class="word-wrap">
-                <span id="note">'. $single_note->job_note .'</span>
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                <span id="updated_by">'. $single_note->name .'</span>
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                <span id="updated_date">'. date('m/d/Y', strtotime($single_note->updated_at)) .'</span>
-                </div>';
-                if(Session::get('login_type_id') != 9) {
+        if (sizeof($getJobNotes) > 0) {
+            foreach ($getJobNotes as $single_note) {
+                $html .= '<div class="row" id="row_' . $single_note->id . '">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" class="word-wrap">
+                <span id="note">' . $single_note->job_note . '</span>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                <span id="updated_by">' . $single_note->name . '</span>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                <span id="updated_date">' . date('m/d/Y', strtotime($single_note->updated_at)) . '</span>
+            </div>';
+                if (Session::get('login_type_id') != 9) {
                     $html .= '<div class="col-xs-2">
-                    <a data-toggle="tooltip" data-placement="top" class="edit-note" title="Edit" data-id ="'. $single_note->id .'">
+                <a data-toggle="tooltip" data-placement="top" class="edit-note" title="Edit" data-id ="' . $single_note->id . '">
                     <i class="ti-pencil-alt"></i>
-                    </a>
-                    </div>
-                    <div class="col-xs-2">
-                    <a data-toggle="tooltip" data-placement="top" class="delete-note" title="Remove" data-id ="'. $single_note->id .'">
-                    <i class="ti-trash"></i>
-                    </a>
-                    </div>';
-                }else {
+                </a>
+            </div>
+            <div class="col-xs-2">
+                <a data-toggle="tooltip" data-placement="top" class="view-note-images" title="View Images" data-id ="' . $single_note->job_id . '">
+                    <i class="ti-image"></i>
+                </a>
+            </div>';
+                } else {
                     $html .= '<div class="col-xs-2">--</div><div class="col-xs-2">--</div>';
                 }
 
@@ -366,8 +727,7 @@ class JobsController extends Controller
     {
         $job_id = $request->get('job_id');
         $getJobNote = DB::select("SELECT id,name,job_note FROM job_notes WHERE is_deleted = 0 AND id = '{$job_id}'");
-        if (sizeof($getJobNote) > 0)
-        {
+        if (sizeof($getJobNote) > 0) {
             $getJobNote = $getJobNote[0];
             $response['key'] = 1;
             $response['job_note_detail'] = $getJobNote;
@@ -378,7 +738,7 @@ class JobsController extends Controller
     public function destroyNote(Request $request)
     {
         $job_id = $request->get('job_id');
-        JobNote::where('id',$job_id)->update(['is_deleted'=>1]);
+        JobNote::where('id', $job_id)->update(['is_deleted' => 1]);
         $response['key'] = 1;
         return json_encode($response);
     }
@@ -387,67 +747,65 @@ class JobsController extends Controller
     {
         $job_id = $request->get('job_id');
         $html = '';
-        $auditList = AuditTrail::where('job_id',$job_id)->get();
+        $auditList = AuditTrail::where('job_id', $job_id)->get();
         $html .= '<table id="auditList" class="display nowrap" cellspacing="0" width="100%">
         <thead>
-        <tr>
-        <th>Name Of Field</th>
-        <th>Old Value</th>
-        <th>New Value</th>
-        <th>Date Of Edit</th>
-        <th>User</th>
-        </tr>
+            <tr>
+                <th>Name Of Field</th>
+                <th>Old Value</th>
+                <th>New Value</th>
+                <th>Date Of Edit</th>
+                <th>User</th>
+            </tr>
         </thead><tbody>';
-        foreach ($auditList as $audit) {
-            $html .= '<tr>
+            foreach ($auditList as $audit) {
+                $html .= '<tr>
             <td>' . $audit->field_name . '</td>';
-            if (empty($audit->old_value)) {
-                $html .= '<td>--</td>';
-            }elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
-                $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->old_value)) . '</td>';
-            }elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {
-                $html .= '<td>' . substr_replace(substr_replace(substr_replace($audit->old_value, '(', 0,0), ') ', 4,0), ' - ', 9,0) . '</td>';
-            }elseif ($audit->field_name == 'job_status_id') {
-                $status = JobType::selectRaw('job_status_name')->where('job_status_id',$audit->old_value)->first();
-                $html .= '<td>' . $status->job_status_name . ' </td>';
-            }elseif ($audit->field_name == 'plumbing_installation_date' || $audit->field_name == 'start_date' || $audit->field_name == 'end_date') {
-                $html .= '<td>' . date("m/d/Y", strtotime($audit->old_value)) . '</td>';
-            }elseif ($audit->field_name == 'is_select_installation' || $audit->field_name == 'is_select_stone_installation') {
-                $is_select = $audit->old_value == 1 ? "Yes" : "No";
-                $html .= '<td>' . $is_select . '</td>';
-            }elseif ($audit->field_name == 'is_active') {
-                $is_active = $audit->old_value == 1 ? "Active" : "Inactive";
-                $html .= '<td>' . $is_active . '</td>';
-            }
-            else {
-                $html .= '<td>' . $audit->old_value . ' </td>';
-            }
+                if (empty($audit->old_value)) {
+                    $html .= '<td>--</td>';
+                } elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
+                    $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->old_value)) . '</td>';
+                } elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {
+                    $html .= '<td>' . substr_replace(substr_replace(substr_replace($audit->old_value, '(', 0, 0), ') ', 4, 0), ' - ', 9, 0) . '</td>';
+                } elseif ($audit->field_name == 'job_status_id') {
+                    $status = JobType::selectRaw('job_status_name')->where('job_status_id', $audit->old_value)->first();
+                    $html .= '<td>' . $status->job_status_name . ' </td>';
+                } elseif ($audit->field_name == 'plumbing_installation_date' || $audit->field_name == 'start_date' || $audit->field_name == 'end_date') {
+                    $html .= '<td>' . date("m/d/Y", strtotime($audit->old_value)) . '</td>';
+                } elseif ($audit->field_name == 'is_select_installation' || $audit->field_name == 'is_select_stone_installation') {
+                    $is_select = $audit->old_value == 1 ? "Yes" : "No";
+                    $html .= '<td>' . $is_select . '</td>';
+                } elseif ($audit->field_name == 'is_active') {
+                    $is_active = $audit->old_value == 1 ? "Active" : "Inactive";
+                    $html .= '<td>' . $is_active . '</td>';
+                } else {
+                    $html .= '<td>' . $audit->old_value . ' </td>';
+                }
 
-            if (empty($audit->new_value)) {
-                $html .= '<td>--</td>';
-            }elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
-                $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->new_value)) . '</td>';
-            }elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {
-                $html .= '<td>' . substr_replace(substr_replace(substr_replace($audit->new_value, '(', 0,0), ') ', 4,0), ' - ', 9,0) . '</td>';
-            }elseif ($audit->field_name == 'job_status_id') {
-                $status = JobType::selectRaw('job_status_name')->where('job_status_id',$audit->new_value)->first();
-                $html .= '<td>' . $status->job_status_name . ' </td>';
-            }elseif ($audit->field_name == 'plumbing_installation_date' || $audit->field_name == 'start_date' || $audit->field_name == 'end_date') {
-                $html .= '<td>' . date("m/d/Y", strtotime($audit->new_value)) . '</td>';
-            }elseif ($audit->field_name == 'is_select_installation' || $audit->field_name == 'is_select_stone_installation') {
-                $is_select = $audit->new_value == 1 ? "Yes" : "No";
-                $html .= '<td>' . $is_select . '</td>';
-            }elseif ($audit->field_name == 'is_active') {
-                $is_active = $audit->new_value == 1 ? "Active" : "Inactive";
-                $html .= '<td>' . $is_active . '</td>';
-            }
-            else {
-                $html .= '<td>' . $audit->new_value . '</td>';
-            }
+                if (empty($audit->new_value)) {
+                    $html .= '<td>--</td>';
+                } elseif ($audit->field_name == 'delivery_datetime' || $audit->field_name == 'installation_datetime' || $audit->field_name == 'stone_installation_datetime') {
+                    $html .= '<td>' . date("m/d/Y h:iA", strtotime($audit->new_value)) . '</td>';
+                } elseif ($audit->field_name == 'super_phone_number' || $audit->field_name == 'contractor_phone_number') {
+                    $html .= '<td>' . substr_replace(substr_replace(substr_replace($audit->new_value, '(', 0, 0), ') ', 4, 0), ' - ', 9, 0) . '</td>';
+                } elseif ($audit->field_name == 'job_status_id') {
+                    $status = JobType::selectRaw('job_status_name')->where('job_status_id', $audit->new_value)->first();
+                    $html .= '<td>' . $status->job_status_name . ' </td>';
+                } elseif ($audit->field_name == 'plumbing_installation_date' || $audit->field_name == 'start_date' || $audit->field_name == 'end_date') {
+                    $html .= '<td>' . date("m/d/Y", strtotime($audit->new_value)) . '</td>';
+                } elseif ($audit->field_name == 'is_select_installation' || $audit->field_name == 'is_select_stone_installation') {
+                    $is_select = $audit->new_value == 1 ? "Yes" : "No";
+                    $html .= '<td>' . $is_select . '</td>';
+                } elseif ($audit->field_name == 'is_active') {
+                    $is_active = $audit->new_value == 1 ? "Active" : "Inactive";
+                    $html .= '<td>' . $is_active . '</td>';
+                } else {
+                    $html .= '<td>' . $audit->new_value . '</td>';
+                }
 
-            $html .= '<td>' . date("m/d/Y", strtotime($audit->created_at)) . '</td>
+                $html .= '<td>' . date("m/d/Y", strtotime($audit->created_at)) . '</td>
             <td>' . $audit->name . '</td>
-            </tr>';
+        </tr>';
         }
         $html .= '</tbody></table>';
         $response['audit_data'] = $html;
@@ -455,23 +813,24 @@ class JobsController extends Controller
         return json_encode($response);
     }
 
-    public function editJobDateTimeModel(Request $request) {
+    public function editJobDateTimeModel(Request $request)
+    {
         $jobId = $request->get('jobId');
-        $getJobDetails = Job::selectRaw('delivery_datetime,installation_datetime,installation_employee_id,stone_installation_datetime,stone_installation_employee_id,job_status_id')->where('job_id',$jobId)->first();
+        $getJobDetails = Job::selectRaw('delivery_datetime,installation_datetime,installation_employee_id,stone_installation_datetime,stone_installation_employee_id,job_status_id')->where('job_id', $jobId)->first();
         $getJobDetails->delivery_date = date('m/d/Y', strtotime($getJobDetails->delivery_datetime));
         $getJobDetails->delivery_time = date('h:iA', strtotime($getJobDetails->delivery_datetime));
-        if(empty($getJobDetails->installation_datetime)) {
+        if (empty($getJobDetails->installation_datetime)) {
             $getJobDetails->installation_date = null;
             $getJobDetails->installation_time = null;
-        }else {
+        } else {
             $getJobDetails->installation_date = date('m/d/Y', strtotime($getJobDetails->installation_datetime));
             $getJobDetails->installation_time = date('h:iA', strtotime($getJobDetails->installation_datetime));
         }
 
-        if(empty($getJobDetails->stone_installation_datetime)) {
+        if (empty($getJobDetails->stone_installation_datetime)) {
             $getJobDetails->stone_installation_date = null;
             $getJobDetails->stone_installation_time = null;
-        }else {
+        } else {
             $getJobDetails->stone_installation_date = date('m/d/Y', strtotime($getJobDetails->stone_installation_datetime));
             $getJobDetails->stone_installation_time = date('h:iA', strtotime($getJobDetails->stone_installation_datetime));
         }
@@ -488,95 +847,112 @@ class JobsController extends Controller
         return json_encode($response);
     }
 
-    public function showFilterwiseJob(Request $request) {
+    public function showFilterwiseJob(Request $request)
+    {
         $getSessionEmail = Session::get('email');
-		$job_statusId = $request->get('jobStatusId');
-		if($job_statusId == 0) {
-			$jobStatusCond = '';
-		}else {
-			$jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
-		}
+        $job_statusId = $request->get('jobStatusId');
+        if ($job_statusId == 0) {
+            $jobStatusCond = "AND jb.job_status_id != 9";
+        }elseif($job_statusId == 5) {
+			$jobStatusCond = "AND jb.job_status_id = 5 OR jb.job_status_id = 10 ";
+		}elseif($job_statusId == 6) {
+			$jobStatusCond = "AND jb.job_status_id = 6 OR jb.job_status_id = 11 ";
+		}elseif($job_statusId == 7) {
+			$jobStatusCond = "AND jb.job_status_id = 7 OR jb.job_status_id = 12 ";
+		} else {
+            $jobStatusCond = "AND jb.job_status_id = {$job_statusId}";
+        }
 
-		$getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
+        $getJobDetails = DB::select("SELECT jb.job_title,jb.super_name,jb.working_employee_id,jb.start_date,jb.end_date,jb.company_clients_id,jb.job_id,jb.job_status_id,jb.address_1,jb.address_2,jb.apartment_number,jb.city,jb.state,jb.zipcode,cmp.name FROM jobs AS jb JOIN companies AS cmp ON cmp.company_id = jb.company_id WHERE jb.is_deleted = 0  {$jobStatusCond} ORDER BY jb.created_at DESC");
 
-		$getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->get();
+        $getJobTypeDetails = JobType::selectRaw('job_status_name,job_status_id')->orderBy('display_order')->get();
 
-		$html = '';
-		$html .= '<table id="jobList" class="display nowrap" cellspacing="0" width="100%">
-		<thead>
-		<tr>
-		<th class="text-center">Actions</th>
-		<th>Job Name</th>
-		<th>Job Id</th>
-		<th>Job Status</th>
-		<th>Start Date</th>
-		<th>Expected Completion Date</th>
-		</tr>
-		</thead>
-		<tbody>';
-		if(!empty($getJobDetails)) {
-            foreach($getJobDetails as $jobDetail) {
-                $html .='<tr class="changestatus_'.$jobDetail->job_id.'">
-                <td class="text-center">
-                    <span data-toggle="" data-target="#jobDetailModel">
-                        <a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="'.$jobDetail->job_id.'">
-                            <i class="ti-eye"></i>
+        $html = '';
+        if (!empty($getJobDetails)) {
+            foreach ($getJobDetails as $jobDetail) {
+
+                $employeeNames = "";
+                $employeeIds = explode(',', $jobDetail->working_employee_id);
+                $getEmployeeName = Admin::selectRaw(" GROUP_CONCAT(UPPER(CONCAT(first_name,' ',last_name))) AS employee_name")->where('is_deleted', 0)->whereIn('id', $employeeIds)->first();
+                $jobDetail->employee_name = $getEmployeeName->employee_name;
+
+                /* Address */
+                $delimiter = ',' . ' ';
+                $job_address = $jobDetail->address_1 . $delimiter;
+                $job_address .= (!empty($jobDetail->apartment_number)) ? 'Apartment no: ' . $jobDetail->apartment_number . $delimiter : '';
+                $job_address .= (!empty($jobDetail->address_2)) ? $jobDetail->address_2 . $delimiter : '';
+                $job_address .= (!empty($jobDetail->city)) ? $jobDetail->city . $delimiter : '';
+                $job_address .= (!empty($jobDetail->state)) ? $jobDetail->state . $delimiter : '';
+                $job_address .= (!empty($jobDetail->zipcode)) ? $jobDetail->zipcode : '';
+                $jobDetail->address = $job_address;
+
+                $html .= '<tr class="changestatus_' . $jobDetail->job_id . '">
+                    <td class="text-center">
+                        <span data-toggle="" data-target="#jobDetailModel">
+                            <a data-toggle="tooltip" data-placement="top" title="View Job" class="btn btn-success btn-circle view-job" data-id="' . $jobDetail->job_id . '">
+                                <i class="ti-eye"></i>
+                            </a>
+                        </span>
+                        <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="' . route("editjob", ["job_id" => $jobDetail->job_id]) . '">
+                            <i class="ti-pencil-alt"></i>
                         </a>
-                    </span>
-                    <a data-toggle="tooltip" data-placement="top" title="Edit Job" class="btn btn-info btn-circle" href="'.route("editjob",["job_id" => $jobDetail->job_id]).'">
-                        <i class="ti-pencil-alt"></i>
-                    </a>
-                    <span data-toggle="modal" data-target="#jobNotesModel">
-                        <a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="'.$jobDetail->job_id.'">
-                            <i class="ti-plus"></i>
-                        </a>
-                    </span>
-                    <span data-toggle="" data-target="#Auditmodel">
-                        <a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-primary btn-circle view-audit" data-id="'.$jobDetail->job_id.'">
-                            <i class="ti-receipt"></i>
-                        </a>
-                    </span>
-                    <span data-toggle="" data-target="#jobImageModel">
-                        <a data-toggle="tooltip" data-placement="top" title="View Image" class="btn btn-dribbble btn-circle view-images" data-id="'.$jobDetail->job_id.'"><i class="ti-image"></i></a>
-                    </span>
-                    <a class="btn btn-danger btn-circle" onclick="return confirm(\'Are you sure you want to deactivate this job?\');" href="'.route("deactivatejob",["job_id" => $jobDetail->job_id]).'" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
-                </td>
-                <td>'.$jobDetail->job_title.'</td>
-                <td>'.$jobDetail->job_id.'</td>
-                <td>
-                    <select class="form-control select2 jobType" name="jobType" id="jobType_'.$jobDetail->job_id.'" placeholder="Select your job type" data-id="'.$jobDetail->job_id.'">';
 
-                        foreach($getJobTypeDetails as $jobType) {
+                        <a data-toggle="tooltip" data-placement="top" title="Clone Job" class="btn btn-dribbble btn-circle" href="' . route('clonejob',["job_id" => $jobDetail->job_id]) . '">
+                            <i class="ti-layers"></i>
+                        </a>
+
+                        <span data-toggle="modal" data-target="#jobNotesModel">
+                            <a data-toggle="tooltip" data-placement="top" title="Add Job Notes" class="btn btn-warning btn-circle add-job-note" data-id="' . $jobDetail->job_id . '">
+                                <i class="ti-plus"></i>
+                            </a>
+                        </span>
+                        <span data-toggle="" data-target="#Auditmodel">
+                            <a data-toggle="tooltip" data-placement="top" title="View Audit" class="btn btn-primary btn-circle view-audit" data-id="' . $jobDetail->job_id . '">
+                                <i class="ti-receipt"></i>
+                            </a>
+                        </span>
+                        <span data-toggle="" data-target="#jobImageModel">
+                            <a data-toggle="tooltip" data-placement="top" title="View Image" class="btn btn-dribbble btn-circle view-images" data-id="' . $jobDetail->job_id . '"><i class="ti-image"></i></a>
+                        </span>
+                        <a class="btn btn-danger btn-circle" onclick="return confirm(\'Are you sure you want to deactivate this job?\');" href="' . route("deactivatejob", ["job_id" => $jobDetail->job_id]) . '" data-toggle="tooltip" data-placement="top" title="Deactivate Job"><i class="ti-lock"></i> </a>
+                    </td>
+                    <td>' . $jobDetail->job_title . '</td>
+                    <td>' . $jobDetail->name . '</td>
+                    <td><div class="word-wrap">'.$jobDetail->employee_name.'</div></td>
+                    <td>
+                    <div style="width:300px;">
+                        <select class="form-control select2 jobType" name="jobType" id="jobType_' . $jobDetail->job_id . '" placeholder="Select your job type" data-id="' . $jobDetail->job_id . '">';
+
+                        foreach ($getJobTypeDetails as $jobType) {
                             $selectJobStatus = (isset($jobDetail->job_status_id) && $jobDetail->job_status_id == $jobType->job_status_id) ? "selected='selected'" : "";
-                            $html .='<option value="'.$jobType->job_status_id.'" ' .$selectJobStatus.'>'.$jobType->job_status_name.'</option>';
+                            $html .= '<option value="' . $jobType->job_status_id . '" ' . $selectJobStatus . '>' . $jobType->job_status_name . '</option>';
                         }
 
-                    $html .='</select>
-                </td>
-                <td>'.date('m/d/Y',strtotime($jobDetail->start_date)).'</td>
-                <td>'.date('m/d/Y',strtotime($jobDetail->end_date)).'</td>
-                </tr>';
+                        $html .= '</select>
+                        </td>
+                        <td><div class="word-wrap">'.$jobDetail->address.'</div></td>
+                        <td>' . date('m/d/Y', strtotime($jobDetail->start_date)) . '</td>
+                        <td>' . date('m/d/Y', strtotime($jobDetail->end_date)) . '</td>
+                    </div></tr>';
             }
-		}
-		$html .='</tbody>
-		</table>';
+        }
 
-		$response['html'] = $html;
-		echo json_encode($response);
-	}
+        $response['html'] = $html;
+        echo json_encode($response);
+    }
 
     public function changeJobStatus(Request $request)
     {
         $jobId = $request->get('jobId');
         $jobStatusId = $request->get('jobStatusId');
 
-        $is_active = ($jobStatusId == 8) ? 0 : 1;
-        $key1 = ($jobStatusId == 8) ? 1 : 2;
+        $is_active = ($jobStatusId == 9) ? 0 : 1;
+        $key1 = ($jobStatusId == 9) ? 1 : 2;
         $oldValueArray = [];
         $newValueArray = [];
 
-        if($jobStatusId == 5) {
-            $delivery_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+        if ($jobStatusId == 5) {
+            $delivery_datetime = date('Y-m-d', strtotime($request->get('date')));
 
             /*Audit Trail start*/
             $jobDetail = DB::select("SELECT job_status_id,is_active,delivery_datetime FROM jobs WHERE job_id = '{$jobId}'");
@@ -585,7 +961,7 @@ class JobsController extends Controller
             $newValueArray = array(
                 'job_status_id' => $jobStatusId,
                 'is_active' => $is_active,
-                'delivery_datetime'=>$delivery_datetime
+                'delivery_datetime' => $delivery_datetime,
             );
             foreach ($oldValueArray as $key => $old) {
                 if ($newValueArray[$key] != $oldValueArray[$key]) {
@@ -605,10 +981,10 @@ class JobsController extends Controller
             }
             /*Audit Trail end*/
 
-            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'delivery_datetime'=>$delivery_datetime]);
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active, 'delivery_datetime' => $delivery_datetime]);
 
-        }elseif($jobStatusId == 6) {
-            $installation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+        } elseif ($jobStatusId == 6) {
+            $installation_datetime = date('Y-m-d', strtotime($request->get('date')));
             $installation_employee_id = implode(',', $request->get('employee'));
 
             /*Audit Trail start*/
@@ -618,9 +994,9 @@ class JobsController extends Controller
             $newValueArray = array(
                 'job_status_id' => $jobStatusId,
                 'is_active' => $is_active,
-                'installation_datetime'=>$installation_datetime,
-                'installation_employee_id'=>$installation_employee_id,
-                'is_select_installation'=>1
+                'installation_datetime' => $installation_datetime,
+                'installation_employee_id' => $installation_employee_id,
+                'is_select_installation' => 1,
             );
             foreach ($oldValueArray as $key => $old) {
                 if ($newValueArray[$key] != $oldValueArray[$key]) {
@@ -639,10 +1015,10 @@ class JobsController extends Controller
                 AuditTrail::insert($finalArray);
             }
             /*Audit Trail end*/
-            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'installation_datetime'=>$installation_datetime,'installation_employee_id'=>$installation_employee_id,'is_select_installation'=>1]);
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active, 'installation_datetime' => $installation_datetime, 'installation_employee_id' => $installation_employee_id, 'is_select_installation' => 1]);
 
-        }elseif($jobStatusId == 7) {
-            $stoneInstallation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date') . ' ' . $request->get('time')));
+        } elseif ($jobStatusId == 7) {
+            $stoneInstallation_datetime = date('Y-m-d H:i:s', strtotime($request->get('date')));
             $stoneInstallation_employee_id = implode(',', $request->get('employee'));
 
             /*Audit Trail start*/
@@ -652,9 +1028,9 @@ class JobsController extends Controller
             $newValueArray = array(
                 'job_status_id' => $jobStatusId,
                 'is_active' => $is_active,
-                'stone_installation_datetime'=>$stoneInstallation_datetime,
-                'stone_installation_employee_id'=>$stoneInstallation_employee_id,
-                'is_select_stone_installation'=>1
+                'stone_installation_datetime' => $stoneInstallation_datetime,
+                'stone_installation_employee_id' => $stoneInstallation_employee_id,
+                'is_select_stone_installation' => 1,
             );
             foreach ($oldValueArray as $key => $old) {
                 if ($newValueArray[$key] != $oldValueArray[$key]) {
@@ -674,9 +1050,9 @@ class JobsController extends Controller
             }
             /*Audit Trail end*/
 
-            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active,'stone_installation_datetime'=>$stoneInstallation_datetime,'stone_installation_employee_id'=>$stoneInstallation_employee_id,'is_select_stone_installation'=>1]);
+            $jobUpdate = Job::where('job_id', $jobId)->update(['job_status_id' => $jobStatusId, 'is_active' => $is_active, 'stone_installation_datetime' => $stoneInstallation_datetime, 'stone_installation_employee_id' => $stoneInstallation_employee_id, 'is_select_stone_installation' => 1]);
 
-        }else {
+        } else {
 
             /*Audit Trail start*/
             $jobDetail = DB::select("SELECT job_status_id,is_active FROM jobs WHERE job_id = '{$jobId}'");
@@ -684,7 +1060,7 @@ class JobsController extends Controller
             $oldValueArray = call_user_func_array('array_merge', $oldValueArray);
             $newValueArray = array(
                 'job_status_id' => $jobStatusId,
-                'is_active' => $is_active
+                'is_active' => $is_active,
             );
             foreach ($oldValueArray as $key => $old) {
                 if ($newValueArray[$key] != $oldValueArray[$key]) {
@@ -710,204 +1086,232 @@ class JobsController extends Controller
         $response['key'] = $key1;
 
         /*send Mail*/
-        $getDetail = Job::where('job_id',$jobId)->where('is_deleted',0)->first();
+        $getDetail = Job::where('job_id', $jobId)->where('is_deleted', 0)->first();
         $working_employee_ids = explode(',', $getDetail->working_employee_id);
         $company_client_ids = explode(',', $getDetail->company_clients_id);
         switch ($jobStatusId) {
             case 1:
-            $this->sendMailNew($working_employee_ids, $getDetail->job_title);
-            /*send notification as client */
-            if(sizeof($company_client_ids) > 0)
-            {
-                $title = 'Change Job Status';
-                $badge = '1';
-                $sound = 'default';
+                $this->sendMailNew($working_employee_ids, $getDetail->job_title);
+                /*send notification as client */
+                if (sizeof($company_client_ids) > 0) {
+                    $title = 'Change Job Status';
+                    $badge = '1';
+                    $sound = 'default';
 
-                foreach ($company_client_ids as $client_id) {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
-                    if(!empty($device_detail->device_token)) {
-                        $messageBody = 'NEW '.$getDetail->job_title .' CREATED.';
-                        $deviceid = $device_detail->device_token;
-                        $device_type = $device_detail->device_type;
-                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    foreach ($company_client_ids as $client_id) {
+                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $client_id)->first();
+                        if (!empty($device_detail->device_token)) {
+                            $messageBody = 'NEW ' . $getDetail->job_title . ' CREATED.';
+                            $deviceid = $device_detail->device_token;
+                            $device_type = $device_detail->device_type;
+                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                        }
                     }
                 }
-            }
-            break;
+                break;
             case 2:
-            $this->sendMailMeasuring($getDetail);
-            /*send notification as measurer */
-            if(sizeof($working_employee_ids) > 0)
-            {
-                $title = 'Change Job Status';
-                $badge = '1';
-                $sound = 'default';
+                $this->sendMailMeasuring($getDetail);
+                /*send notification as measurer */
+                if (sizeof($working_employee_ids) > 0) {
+                    $title = 'Change Job Status';
+                    $badge = '1';
+                    $sound = 'default';
 
-                foreach($working_employee_ids as $id)
-                {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$id)->where('login_type_id',3)->where('is_deleted',0)->first();
-                    if(!empty($device_detail) && (!empty($device_detail->device_token))) {
-                        $messageBody = 'NEW JOB TO MEASURE: '.$getDetail->job_title;
-                        $deviceid = $device_detail->device_token;
-                        $device_type = $device_detail->device_type;
-                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    foreach ($working_employee_ids as $id) {
+                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $id)->where('login_type_id', 3)->where('is_deleted', 0)->first();
+                        if (!empty($device_detail) && (!empty($device_detail->device_token))) {
+                            $messageBody = 'NEW JOB TO MEASURE: ' . $getDetail->job_title;
+                            $deviceid = $device_detail->device_token;
+                            $device_type = $device_detail->device_type;
+                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                        }
                     }
                 }
-            }
-            break;
+                break;
             case 3:
-            $this->sendMailDesign($working_employee_ids, $getDetail->job_title);
-            break;
+                $this->sendMailDesign($working_employee_ids, $getDetail->job_title);
+                break;
             case 5:
-            $this->sendMailDelivery($getDetail);
-            $delivery_date = date('m/d/Y', strtotime($getDetail->delivery_datetime));
-            /*send notification as delivery */
-            if(sizeof($working_employee_ids) > 0) {
-                $title = 'Change Job Status';
-                $badge = '1';
-                $sound = 'default';
+                $this->sendMailDelivery($getDetail);
+                $delivery_date = date('m/d/Y', strtotime($getDetail->delivery_datetime));
+                /*send notification as delivery */
+                if (sizeof($working_employee_ids) > 0) {
+                    $title = 'Change Job Status';
+                    $badge = '1';
+                    $sound = 'default';
 
-                foreach($working_employee_ids as $id)
-                {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$id)->where('login_type_id',4)->where('is_deleted',0)->first();
-                    if(!empty($device_detail) && (!empty($device_detail->device_token))) {
-                        $messageBody = $getDetail->job_title.' Scheduled for Deliver '.$delivery_date;
-                        $deviceid = $device_detail->device_token;
-                        $device_type = $device_detail->device_type;
-                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    foreach ($working_employee_ids as $id) {
+                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $id)->where('login_type_id', 4)->where('is_deleted', 0)->first();
+                        if (!empty($device_detail) && (!empty($device_detail->device_token))) {
+                            $messageBody = $getDetail->job_title . ' Scheduled for Deliver ' . $delivery_date;
+                            $deviceid = $device_detail->device_token;
+                            $device_type = $device_detail->device_type;
+                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                        }
                     }
                 }
-            }
-            if(sizeof($company_client_ids) > 0) {
-                $title = 'Change Job Status';
-                $badge = '1';
-                $sound = 'default';
+                if (sizeof($company_client_ids) > 0) {
+                    $title = 'Change Job Status';
+                    $badge = '1';
+                    $sound = 'default';
 
-                foreach ($company_client_ids as $client_id) {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
-                    if(!empty($device_detail->device_token)) {
-                        $messageBody = $getDetail->job_title.' Scheduled for Deliver '.$delivery_date;
-                        $deviceid = $device_detail->device_token;
-                        $device_type = $device_detail->device_type;
-                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    foreach ($company_client_ids as $client_id) {
+                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $client_id)->first();
+                        if (!empty($device_detail->device_token)) {
+                            $messageBody = $getDetail->job_title . ' Scheduled for Deliver ' . $delivery_date;
+                            $deviceid = $device_detail->device_token;
+                            $device_type = $device_detail->device_type;
+                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                        }
                     }
                 }
-            }
-            break;
+                break;
             case 6:
-            $this->sendMailInstallation($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);
-            $installation_date = date('m/d/Y', strtotime($getDetail->installation_datetime));
-            /*send notification as installer */
-            if(sizeof($working_employee_ids) > 0) {
-                $title = 'Change Job Status';
-                $badge = '1';
-                $sound = 'default';
+                $this->sendMailInstallation($getDetail->job_title, $getDetail->delivery_datetime, $getDetail->contractor_email);
+                $installation_date = date('m/d/Y', strtotime($getDetail->installation_datetime));
+                /*send notification as installer */
+                if (sizeof($working_employee_ids) > 0) {
+                    $title = 'Change Job Status';
+                    $badge = '1';
+                    $sound = 'default';
 
-                foreach($working_employee_ids as $id)
-                {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$id)->where('login_type_id',5)->where('is_deleted',0)->first();
-                    if(!empty($device_detail) && (!empty($device_detail->device_token))) {
-                        $messageBody = $getDetail->job_title.' Scheduled for INSTALLATION '.$installation_date;
-                        $deviceid = $device_detail->device_token;
-                        $device_type = $device_detail->device_type;
-                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    foreach ($working_employee_ids as $id) {
+                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $id)->where('login_type_id', 5)->where('is_deleted', 0)->first();
+                        if (!empty($device_detail) && (!empty($device_detail->device_token))) {
+                            $messageBody = $getDetail->job_title . ' Scheduled for INSTALLATION ' . $installation_date;
+                            $deviceid = $device_detail->device_token;
+                            $device_type = $device_detail->device_type;
+                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                        }
                     }
                 }
-            }
-            if(sizeof($company_client_ids) > 0) {
-                $title = 'Change Job Status';
-                $badge = '1';
-                $sound = 'default';
+                if (sizeof($company_client_ids) > 0) {
+                    $title = 'Change Job Status';
+                    $badge = '1';
+                    $sound = 'default';
 
-                foreach ($company_client_ids as $client_id) {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
-                    if(!empty($device_detail->device_token)) {
-                        $messageBody = $getDetail->job_title.' Scheduled for INSTALLATION '.$installation_date;
-                        $deviceid = $device_detail->device_token;
-                        $device_type = $device_detail->device_type;
-                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    foreach ($company_client_ids as $client_id) {
+                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $client_id)->first();
+                        if (!empty($device_detail->device_token)) {
+                            $messageBody = $getDetail->job_title . ' Scheduled for INSTALLATION ' . $installation_date;
+                            $deviceid = $device_detail->device_token;
+                            $device_type = $device_detail->device_type;
+                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                        }
                     }
                 }
-            }
-            break;
+                break;
             case 7:
-            $this->sendMailStoneInstallation($getDetail->job_title,$getDetail->delivery_datetime,$getDetail->contractor_email);
-            $stone_installation_date = date('m/d/Y', strtotime($getDetail->stone_installation_datetime));
-            /*send notification as stone installer */
-            if(sizeof($working_employee_ids) > 0) {
-                $title = 'Change Job Status';
-                $badge = '1';
-                $sound = 'default';
+                $this->sendMailStoneInstallation($getDetail->job_title, $getDetail->delivery_datetime, $getDetail->contractor_email);
+                $stone_installation_date = date('m/d/Y', strtotime($getDetail->stone_installation_datetime));
+                /*send notification as stone installer */
+                if (sizeof($working_employee_ids) > 0) {
+                    $title = 'Change Job Status';
+                    $badge = '1';
+                    $sound = 'default';
 
-                foreach($working_employee_ids as $id)
-                {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$id)->where('login_type_id',6)->where('is_deleted',0)->first();
-                    if(!empty($device_detail) && (!empty($device_detail->device_token))) {
-                        $messageBody = $getDetail->job_title.' Scheduled for STONE INSTALLATION '.$stone_installation_date;
-                        $deviceid = $device_detail->device_token;
-                        $device_type = $device_detail->device_type;
-                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    foreach ($working_employee_ids as $id) {
+                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $id)->where('login_type_id', 6)->where('is_deleted', 0)->first();
+                        if (!empty($device_detail) && (!empty($device_detail->device_token))) {
+                            $messageBody = $getDetail->job_title . ' Scheduled for STONE INSTALLATION ' . $stone_installation_date;
+                            $deviceid = $device_detail->device_token;
+                            $device_type = $device_detail->device_type;
+                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                        }
                     }
                 }
-            }
 
-            if(sizeof($company_client_ids) > 0) {
-                $title = 'Change Job Status';
-                $badge = '1';
-                $sound = 'default';
+                if (sizeof($company_client_ids) > 0) {
+                    $title = 'Change Job Status';
+                    $badge = '1';
+                    $sound = 'default';
 
-                foreach ($company_client_ids as $client_id) {
-                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id',$client_id)->first();
-                    if(!empty($device_detail->device_token)) {
-                        $messageBody = $getDetail->job_title.' Scheduled for STONE INSTALLATION '.$stone_installation_date;
-                        $deviceid = $device_detail->device_token;
-                        $device_type = $device_detail->device_type;
-                        $this->pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound);
+                    foreach ($company_client_ids as $client_id) {
+                        $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $client_id)->first();
+                        if (!empty($device_detail->device_token)) {
+                            $messageBody = $getDetail->job_title . ' Scheduled for STONE INSTALLATION ' . $stone_installation_date;
+                            $deviceid = $device_detail->device_token;
+                            $device_type = $device_detail->device_type;
+                            $this->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                        }
                     }
                 }
-            }
-            break;
+                break;
         }
         echo json_encode($response);
     }
 
-    function commonViewJobDetails($ids)
+    public function removeFiles(Request $request)
+    {
+        $job_id = $request->get('job_id');
+        $image_link = $request->get('image_link');
+        $image_thumb_link = $request->get('image_thumb_link');
+
+        $getJobDetail = Job::where('job_id', $job_id)->first();
+
+        $imageArray = explode(',', $getJobDetail->job_images_url);
+        $thumbImageArray = explode(',', $getJobDetail->image_thumbnails_url);
+        $fileArray = explode(',', $getJobDetail->job_files_url);
+        $newImageArray = [];
+        $newImageThumbArray = [];
+        $newFileArray = [];
+        foreach ($imageArray as $image) {
+            if (!stristr($image, $image_link)) {
+                $newImageArray[] = $image;
+            }
+        }
+        foreach ($thumbImageArray as $image) {
+            if (!stristr($image, $image_thumb_link)) {
+                $newImageThumbArray[] = $image;
+            }
+        }
+        foreach ($fileArray as $image) {
+            if (!stristr($image, $image_link)) {
+                $newFileArray[] = $image;
+            }
+        }
+        $final_image_link = implode(',', $newImageArray);
+        $final_thumb_image_link = implode(',', $newImageThumbArray);
+        $final_file_link = implode(',', $newFileArray);
+
+        $getJobDetail->job_images_url = (!empty($final_image_link)) ? $final_image_link : null;
+        $getJobDetail->image_thumbnails_url = (!empty($final_thumb_image_link)) ? $final_thumb_image_link : null;
+        $getJobDetail->job_files_url = (!empty($final_file_link)) ? $final_file_link : null;
+        $getJobDetail->save();
+        return 1;
+    }
+
+    public function commonViewJobDetails($ids)
     {
         $allEmployeeId = explode(",", $ids);
         $employeeNames = [];
-        foreach($allEmployeeId as $employeeId)
-        {
+        foreach ($allEmployeeId as $employeeId) {
             $getEmployeeName = DB::select("SELECT UPPER(CONCAT(first_name,' ',last_name)) AS employee_name FROM admin_users WHERE id = '{$employeeId}'");
-            if(sizeof($getEmployeeName) > 0)
-            {
+            if (sizeof($getEmployeeName) > 0) {
                 $employeeNames[] = $getEmployeeName[0]->employee_name;
             }
         }
-        if(sizeof($employeeNames) > 0)
-        {
+        if (sizeof($employeeNames) > 0) {
             return implode(", ", $employeeNames);
         }
     }
 
     /* New Status */
-    function sendMailNew($working_employee_ids,$job_title)
+    public function sendMailNew($working_employee_ids, $job_title)
     {
         $email_ids = [];
-        foreach($working_employee_ids as $id)
-        {
-            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',1)->where('is_deleted',0)->first();
-            if(!empty($email_id))
-            {
+        foreach ($working_employee_ids as $id) {
+            $email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 1)->where('is_deleted', 0)->first();
+            if (!empty($email_id)) {
                 $email_ids[] = $email_id->email;
             }
         }
-        if(sizeof($email_ids) > 0)
-        {
+        if (sizeof($email_ids) > 0) {
             /*send Mail*/
-            Mail::send('emails.AdminPanel_JobNew',array(
-                'job_title' =>  $job_title,
-            ), function($message)use($email_ids){
-                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+            Mail::send('emails.AdminPanel_JobNew', array(
+                'job_title' => $job_title,
+            ), function ($message) use ($email_ids) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
                 $message->bcc($email_ids)->subject('A&S KITCHEN | New Job Created');
             });
         }
@@ -915,59 +1319,53 @@ class JobsController extends Controller
     }
 
     /* Measuring Status */
-    function sendMailMeasuring($job_Detail)
+    public function sendMailMeasuring($job_Detail)
     {
         $working_employee_ids = explode(',', $job_Detail->working_employee_id);
         $job_title = $job_Detail->job_title;
 
-        $delimiter = ','.' ';
-        $job_address = $job_Detail->address_1.$delimiter;
-        $job_address .= (!empty($job_Detail->apartment_number)) ? 'Apartment no: '.$job_Detail->apartment_number.$delimiter : '';
-        $job_address .= (!empty($job_Detail->address_2)) ? $job_Detail->address_2.$delimiter : '';
-        $job_address .= (!empty($job_Detail->city)) ? $job_Detail->city.$delimiter : '';
-        $job_address .= (!empty($job_Detail->state)) ? $job_Detail->state.$delimiter : '';
+        $delimiter = ',' . ' ';
+        $job_address = $job_Detail->address_1 . $delimiter;
+        $job_address .= (!empty($job_Detail->apartment_number)) ? 'Apartment no: ' . $job_Detail->apartment_number . $delimiter : '';
+        $job_address .= (!empty($job_Detail->address_2)) ? $job_Detail->address_2 . $delimiter : '';
+        $job_address .= (!empty($job_Detail->city)) ? $job_Detail->city . $delimiter : '';
+        $job_address .= (!empty($job_Detail->state)) ? $job_Detail->state . $delimiter : '';
         $job_address .= (!empty($job_Detail->zipcode)) ? $job_Detail->zipcode : '';
         $super_name = $job_Detail->super_name;
 
         $email_ids = [];
-        foreach($working_employee_ids as $id)
-        {
-            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',3)->where('is_deleted',0)->first();
-            if(!empty($email_id)) {
+        foreach ($working_employee_ids as $id) {
+            $email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 3)->where('is_deleted', 0)->first();
+            if (!empty($email_id)) {
                 $email_ids[] = $email_id->email;
             }
         }
-        if(sizeof($email_ids) > 0)
-        {
+        if (sizeof($email_ids) > 0) {
             /*send Mail*/
-            Mail::send('emails.AdminPanel_JobMeasuring',array(
-                'job_title' =>  $job_title,
-                'job_address' =>  $job_address,
-                'super_name' =>  $super_name,
+            Mail::send('emails.AdminPanel_JobMeasuring', array(
+                'job_title' => $job_title,
+                'job_address' => $job_address,
+                'super_name' => $super_name,
                 'is_admin' => 0,
-            ), function($message)use($email_ids, $job_title){
-                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($email_ids)->subject('A&S KITCHEN | '.$job_title);
+            ), function ($message) use ($email_ids, $job_title) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | ' . $job_title);
             });
-        }
-        else
-        {
-            foreach($working_employee_ids as $id)
-            {
-                $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',1)->where('is_deleted',0)->first();
-                if(!empty($email_id)) {
+        } else {
+            foreach ($working_employee_ids as $id) {
+                $email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 1)->where('is_deleted', 0)->first();
+                if (!empty($email_id)) {
                     $email_ids[] = $email_id->email;
                 }
             }
-            if(sizeof($email_ids) > 0)
-            {
+            if (sizeof($email_ids) > 0) {
                 /*send Mail*/
-                Mail::send('emails.AdminPanel_JobMeasuring',array(
-                    'job_title' =>  $job_title,
+                Mail::send('emails.AdminPanel_JobMeasuring', array(
+                    'job_title' => $job_title,
                     'is_admin' => 1,
-                ), function($message)use($email_ids, $job_title){
-                    $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                    $message->bcc($email_ids)->subject('A&S KITCHEN | '.$job_title);
+                ), function ($message) use ($email_ids, $job_title) {
+                    $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                    $message->bcc($email_ids)->subject('A&S KITCHEN | ' . $job_title);
                 });
             }
         }
@@ -975,32 +1373,29 @@ class JobsController extends Controller
     }
 
     /* Design Status */
-    function sendMailDesign($working_employee_ids,$job_title)
+    public function sendMailDesign($working_employee_ids, $job_title)
     {
         $email_ids = [];
-        foreach($working_employee_ids as $id)
-        {
-            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',3)->where('is_deleted',0)->first();
-            if(!empty($email_id))
-            {
+        foreach ($working_employee_ids as $id) {
+            $email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 3)->where('is_deleted', 0)->first();
+            if (!empty($email_id)) {
                 $email_ids[] = $email_id->email;
             }
         }
-        if(sizeof($email_ids) > 0)
-        {
+        if (sizeof($email_ids) > 0) {
             /*send Mail*/
-            Mail::send('emails.AdminPanel_JobDesign',array(
-                'job_title' =>  $job_title,
-                ), function($message)use($email_ids, $job_title){
-                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($email_ids)->subject('A&S KITCHEN | '.$job_title);
+            Mail::send('emails.AdminPanel_JobDesign', array(
+                'job_title' => $job_title,
+            ), function ($message) use ($email_ids, $job_title) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | ' . $job_title);
             });
         }
         return;
     }
 
     /* Delivery Status */
-    function sendMailDelivery($job_Detail)
+    public function sendMailDelivery($job_Detail)
     {
         $working_employee_ids = explode(',', $job_Detail->working_employee_id);
         $job_title = $job_Detail->job_title;
@@ -1008,36 +1403,32 @@ class JobsController extends Controller
 
         /*Contractor*/
         $contractor_email = $job_Detail->contractor_email;
-        if(!empty($contractor_email))
-        {
+        if (!empty($contractor_email)) {
             /*send Mail*/
-            Mail::send('emails.AdminPanel_JobDeliveryContractor',array(
-                'job_title' =>  $job_title,
-                'delivery_date' =>  $delivery_date,
-                ), function($message)use($contractor_email, $job_title){
-                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($contractor_email)->subject('A&S KITCHEN | '.$job_title);
+            Mail::send('emails.AdminPanel_JobDeliveryContractor', array(
+                'job_title' => $job_title,
+                'delivery_date' => $delivery_date,
+            ), function ($message) use ($contractor_email, $job_title) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                $message->bcc($contractor_email)->subject('A&S KITCHEN | ' . $job_title);
             });
         }
 
         /*Delivery Employee*/
         $email_ids = [];
-        foreach($working_employee_ids as $id)
-        {
-            $email_id = Admin::selectRaw('email')->where('id',$id)->where('login_type_id',4)->where('is_deleted',0)->first();
-            if(!empty($email_id))
-            {
+        foreach ($working_employee_ids as $id) {
+            $email_id = Admin::selectRaw('email')->where('id', $id)->where('login_type_id', 4)->where('is_deleted', 0)->first();
+            if (!empty($email_id)) {
                 $email_ids[] = $email_id->email;
             }
         }
-        if(sizeof($email_ids) > 0)
-        {
-            $delimiter = ','.' ';
-            $job_address = $job_Detail->address_1.$delimiter;
-            $job_address .= (!empty($job_Detail->apartment_number)) ? 'Apartment no: '.$job_Detail->apartment_number.$delimiter : '';
-            $job_address .= (!empty($job_Detail->address_2)) ? $job_Detail->address_2.$delimiter : '';
-            $job_address .= (!empty($job_Detail->city)) ? $job_Detail->city.$delimiter : '';
-            $job_address .= (!empty($job_Detail->state)) ? $job_Detail->state.$delimiter : '';
+        if (sizeof($email_ids) > 0) {
+            $delimiter = ',' . ' ';
+            $job_address = $job_Detail->address_1 . $delimiter;
+            $job_address .= (!empty($job_Detail->apartment_number)) ? 'Apartment no: ' . $job_Detail->apartment_number . $delimiter : '';
+            $job_address .= (!empty($job_Detail->address_2)) ? $job_Detail->address_2 . $delimiter : '';
+            $job_address .= (!empty($job_Detail->city)) ? $job_Detail->city . $delimiter : '';
+            $job_address .= (!empty($job_Detail->state)) ? $job_Detail->state . $delimiter : '';
             $job_address .= (!empty($job_Detail->zipcode)) ? $job_Detail->zipcode : '';
 
             $super_name = $job_Detail->super_name;
@@ -1046,76 +1437,73 @@ class JobsController extends Controller
             $contractor_contact_number = (new AdminHomeController)->formatPhoneNumber($job_Detail->contractor_phone_number);
 
             /*send Mail*/
-            Mail::send('emails.AdminPanel_JobDeliveryEmployee',array(
-                'job_title' =>  $job_title,
-                'delivery_date' =>  $delivery_date,
-                'job_address' =>  $job_address,
-                'super_name' =>  $super_name,
-                'super_contact_number' =>  $super_contact_number,
-                'contractor_name' =>  $contractor_name,
-                'contractor_contact_number' =>  $contractor_contact_number,
-                ), function($message)use($email_ids, $job_title){
-                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($email_ids)->subject('A&S KITCHEN | '.$job_title);
+            Mail::send('emails.AdminPanel_JobDeliveryEmployee', array(
+                'job_title' => $job_title,
+                'delivery_date' => $delivery_date,
+                'job_address' => $job_address,
+                'super_name' => $super_name,
+                'super_contact_number' => $super_contact_number,
+                'contractor_name' => $contractor_name,
+                'contractor_contact_number' => $contractor_contact_number,
+            ), function ($message) use ($email_ids, $job_title) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                $message->bcc($email_ids)->subject('A&S KITCHEN | ' . $job_title);
             });
         }
         return;
     }
 
     /* Installation Status */
-    function sendMailInstallation($job_title,$delivery_datetime,$contractor_email)
+    public function sendMailInstallation($job_title, $delivery_datetime, $contractor_email)
     {
         $delivery_date = date('m/d/Y', strtotime($delivery_datetime));
         /*Contractor*/
-        if(!empty($contractor_email))
-        {
+        if (!empty($contractor_email)) {
             /*send Mail*/
-            Mail::send('emails.AdminPanel_JobInstalling',array(
-                'job_title' =>  $job_title,
-                'delivery_date' =>  $delivery_date,
-                ), function($message)use($contractor_email, $job_title){
-                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($contractor_email)->subject('A&S KITCHEN | '.$job_title);
+            Mail::send('emails.AdminPanel_JobInstalling', array(
+                'job_title' => $job_title,
+                'delivery_date' => $delivery_date,
+            ), function ($message) use ($contractor_email, $job_title) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                $message->bcc($contractor_email)->subject('A&S KITCHEN | ' . $job_title);
             });
         }
         return;
     }
 
     /* Stone installation Status */
-    function sendMailStoneInstallation($job_title,$delivery_datetime,$contractor_email)
+    public function sendMailStoneInstallation($job_title, $delivery_datetime, $contractor_email)
     {
         $delivery_date = date('m/d/Y', strtotime($delivery_datetime));
         /*Contractor*/
-        if(!empty($contractor_email))
-        {
+        if (!empty($contractor_email)) {
             /*send Mail*/
-            Mail::send('emails.AdminPanel_JobStoneInstalling',array(
-                'job_title' =>  $job_title,
-                'delivery_date' =>  $delivery_date,
-                ), function($message)use($contractor_email, $job_title){
-                $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
-                $message->bcc($contractor_email)->subject('A&S KITCHEN | '.$job_title);
+            Mail::send('emails.AdminPanel_JobStoneInstalling', array(
+                'job_title' => $job_title,
+                'delivery_date' => $delivery_date,
+            ), function ($message) use ($contractor_email, $job_title) {
+                $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
+                $message->bcc($contractor_email)->subject('A&S KITCHEN | ' . $job_title);
             });
         }
         return;
     }
 
     /*pushNotification */
-    public function pushNotification($deviceid,$device_type,$messageBody,$title,$badge,$sound='dafault')
+    public function pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound = 'dafault')
     {
-        if(strtolower($device_type) == 'ios') {
+        if (strtolower($device_type) == 'ios') {
 
-            $message = PushNotification::message($messageBody,array(
+            $message = PushNotification::message($messageBody, array(
                 'title' => $title,
                 //'badge' => $badge,
                 'sound' => $sound,
             ));
             $push = PushNotification::app('KITCHENIOS')->to($deviceid)->send($message);
-        }
-        elseif (strtolower($device_type) == 'android') {
+        } elseif (strtolower($device_type) == 'android') {
 
             $optionBuiler = new OptionsBuilder();
-            $optionBuiler->setTimeToLive(60*20);
+            $optionBuiler->setTimeToLive(60 * 20);
 
             $notificationBuilder = new PayloadNotificationBuilder($title);
             $notificationBuilder->setBody($messageBody)->setSound($sound)->setBadge($badge);
@@ -1132,26 +1520,22 @@ class JobsController extends Controller
     public function getJobImages(Request $request)
     {
         $job_id = $request->get('jobId');
-        $getImages = Job::selectRaw('job_images_url')->where('job_id',$job_id)->first();
-        if(!empty($getImages->job_images_url))
-        {
+        $getImages = Job::selectRaw('job_images_url')->where('job_id', $job_id)->first();
+        if (!empty($getImages->job_images_url)) {
             $imageArray = explode(',', $getImages->job_images_url);
             $html1 = $html2 = "";
-            foreach($imageArray as $key=>$image)
-            {
-                $active_class = ($key == 0)? 'active': '';
-                $html1 .= '<li data-target="#slide-id" data-slide-to="'.$key.'" class="'.$active_class.'"></li>';
+            foreach ($imageArray as $key => $image) {
+                $active_class = ($key == 0) ? 'active' : '';
+                $html1 .= '<li data-target="#slide-id" data-slide-to="' . $key . '" class="' . $active_class . '"></li>';
 
-                $html2 .= '<div class="carousel-item '.$active_class.'"> <img height="500" width="500" src="'.$image.'">
-                </div>';
+                $html2 .= '<div class="carousel-item ' . $active_class . '"> <img height="500" width="500" src="' . $image . '">
+        </div>';
             }
             $response['html1'] = $html1;
             $response['html2'] = $html2;
             $response['key'] = 1;
             // print_r($response);die;
-        }
-        else
-        {
+        } else {
             $response['key'] = 2;
         }
         return json_encode($response);

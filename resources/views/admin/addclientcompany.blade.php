@@ -4,18 +4,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
-<style type="text/css">
-.nav-link.active {
-	background: #4c5667 !important;
-}
-.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
-	background: #4c5667 !important;
-	color: #ffffff !important;
-}
-.disabled-color{
-	color: #90989c !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/addclientcompany.css')}}" />
 @stop
 @section('content')
 <div class="container-fluid">
@@ -54,7 +43,7 @@
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>NAME</b></label>
+													<label class="control-label"><b>NAME *</b></label>
 													<input style="text-transform:uppercase;" type="text" name="companyName" id="companyName" value="{{$companyDetail->name or ''}}" class="form-control" placeholder="COMPANY NAME">
 												</div>
 											</div>
@@ -74,13 +63,27 @@
 										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>PHONE NUMBER</b></label>
+													<label class="control-label"><b>PHONE NUMBER *</b></label>
 													<input type="text" placeholder="(xxx) xxx-xxxx" name="companyPhoneNo" id="companyPhoneNo" value="{{$companyDetail->phone_number or ''}}" class="form-control">
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group">
-													<label class="control-label"><b>ADDRESS 1</b></label><br>
+													<label class="control-label"><b>SECONDARY PHONE NUMBER</b></label>
+													<input type="text" placeholder="(xxx) xxx-xxxx" name="companySecondaryPhoneNo" id="companySecondaryPhoneNo" value="{{$companyDetail->secondary_phone_number or ''}}" class="form-control">
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>SECONDARY EMAIL ADDRESS</b></label>
+													<input style="text-transform: lowercase;" type="email" name="companySecondaryEmail" id="companySecondaryEmail" value="{{$companyDetail->secondary_email or ''}}" class="form-control"  placeholder="Enter your email">
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>ADDRESS 1 *</b></label><br>
 													<input type="text" name="locationAddress" id="locationAddress" value="{{$companyDetail->address_1 or ''}}" class="form-control" placeholder="Address line 1">
 												</div>
 											</div>
@@ -90,14 +93,14 @@
 													<input type="text" name="subAddress" id="subAddress" value="{{$companyDetail->address_2 or ''}}" class="form-control" placeholder="Address line 2">
 												</div>
 											</div>
-										</div>
-										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>CITY</b></label>
 													<input type="text" name="city" id="city" value="{{$companyDetail->city or ''}}" class="form-control" placeholder="Enter city">
 												</div>
 											</div>
+										</div>
+										<div class="row">
 											<div class="col-md-4">
 												<div class="form-group">
 													<label class="control-label"><b>STATE</b></label>
@@ -179,6 +182,8 @@
 		var city = $('#city').val();
 		var state = $('#state').val();
 		var zipcode = $('#zipcode').val();
+		var company_secondaryPhone = $('#companySecondaryPhoneNo').val();
+		var company_secondaryEmail = $('#companySecondaryEmail').val();
 		$.ajax({
 			url:'{{ route('storeclientcompany') }}',
 			data:{
@@ -190,7 +195,9 @@
 				company_address_2:company_address_2,
 				city:city,
 				state:state,
-				zipcode:zipcode
+				zipcode:zipcode,
+				company_secondaryPhone:company_secondaryPhone,
+				company_secondaryEmail:company_secondaryEmail
 			},
 			type:'post',
 			dataType:'json',
@@ -224,6 +231,7 @@
 
 	/*Mask phone Number Digits*/
 	$("#companyPhoneNo").mask("(999) 999 - 9999");
+	$("#companySecondaryPhoneNo").mask("(999) 999 - 9999");
 
 	@if(Session::has('successMessage'))
     notify('{{  Session::get('successMessage') }}','blackgloss');

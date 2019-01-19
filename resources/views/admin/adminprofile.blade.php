@@ -4,18 +4,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
-<style type="text/css">
-.nav-link.active {
-	background: #4c5667 !important;
-}
-.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
-	background: #4c5667 !important;
-	color: #ffffff !important;
-}
-.disabled-color{
-	color: #90989c !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/adminprofile.css')}}" />
 @stop
 @section('content')
 <div class="container-fluid">
@@ -161,7 +150,7 @@
 		var admin_lastName = $('#adminLastName').val();
 		var admin_contactNo = $('#adminPhoneNo').val();
 		var admin_email = $('#adminEmail').val();
-		
+
 		$.ajax({
 			url:'{{ route('storeadmin') }}',
 			data:{

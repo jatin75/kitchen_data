@@ -13,12 +13,17 @@ use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use File;
+use Session;
 
 class ReportsController extends Controller
 {
   public function index()
   {
-    return view('admin.reports')->with('jobStatusList', JobType::all());
+    if(Session::get('login_type_id') == 1  || Session::get('login_type_id') == 2 ) {
+      return view('admin.reports')->with('jobStatusList', JobType::all());
+    }else {
+      return redirect(route('dashboard'));
+    }
   }
 
   public function downloadJobExcel(Request $request)

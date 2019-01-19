@@ -4,18 +4,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
 {{-- <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css')}}" /> --}}
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
-<style type="text/css">
-.nav-link.active {
-	background: #4c5667 !important;
-}
-.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
-	background: #4c5667 !important;
-	color: #ffffff !important;
-}
-.disabled-color{
-	color: #90989c !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/addemployee.css')}}" />
 @stop
 @section('content')
 <div class="container-fluid">
@@ -117,6 +106,28 @@
 											</div>
 											@endif
 										</div>
+										<div class="row">
+											@if(!isset($employeeDetail->id))
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>PASSWORD</b></label>
+													<input autocomplete="new-password" type="password" name="employeePassword" id="employeePassword" class="form-control"  placeholder="Enter password">
+												</div>
+											</div>
+											@endif
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>SECONDARY PHONE NUMBER</b></label>
+													<input type="text" placeholder="(xxx) xxx-xxxx" name="employeeSecondaryPhoneNo" id="employeeSecondaryPhoneNo" value="{{$employeeDetail->secondary_phone_number or ''}}" class="form-control">
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="form-group">
+													<label class="control-label"><b>SECONDARY EMAIL ADDRESS</b></label>
+													<input style="text-transform: lowercase;" type="email" name="employeeSecondaryEmail" id="employeeSecondaryEmail" value="{{$employeeDetail->secondary_email or ''}}" class="form-control"  placeholder="Enter your email">
+												</div>
+											</div>
+										</div>
 										<div class="form-group text-left p-t-md">
 											@if(!isset($employeeDetail->id))
 											<button type="submit" class="btn btn-success">Add</button>
@@ -192,6 +203,7 @@
 		$('#resetPermission').click(function(){
 			location.reload();
 		});
+		$('#employeePassword').val('');
 	});
 
 	/* For select 2*/
@@ -207,6 +219,9 @@
 		var employee_contactNo = $('#employeePhoneNo').val();
 		var employee_email = $('#employeeEmail').val();
 		var employee_type = $('#employeeType').val();
+		var employee_password = $('#employeePassword').val();
+		var employee_secondPhone = $('#employeeSecondaryPhoneNo').val();
+		var employee_secondEmail = $('#employeeSecondaryEmail').val();
 
 		$.ajax({
 			url:'{{ route('storeemployee') }}',
@@ -218,6 +233,9 @@
 				employee_contactNo:employee_contactNo,
 				employee_email:employee_email,
 				employee_type:employee_type,
+				employee_password:employee_password,
+				employee_secondPhone:employee_secondPhone,
+				employee_secondEmail:employee_secondEmail
 			},
 			type:'post',
 			dataType:'json',
@@ -299,8 +317,9 @@
 	});
 
 	/*Mask phone Number Digits*/
-	/*$("#leagueContactNo").mask("999-999-999-9?999999");*/
 	$("#employeePhoneNo").mask("(999) 999 - 9999");
+
+	$("#employeeSecondaryPhoneNo").mask("(999) 999 - 9999");
 
 	@if(Session::has('successMessage'))
 	notify('{{  Session::get('successMessage') }}','blackgloss');

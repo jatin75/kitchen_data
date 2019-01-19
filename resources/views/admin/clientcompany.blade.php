@@ -3,15 +3,7 @@
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/jquery.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/datatables/buttons.dataTables.min.css')}}" />
 <link type="text/css" rel="stylesheet" href="{{asset('plugins/bower_components/custom-select/custom-select.min.css')}}" />
-<style type="text/css">
-.modal-footer {
-    padding-bottom: 0px !important;
-    margin-bottom: 0px !important;
-}
-tr th{
-  padding-left: 10px !important;
-}
-</style>
+<link type="text/css" rel="stylesheet" href="{{asset('assets/css/pages/clientcompany.css')}}" />
 @stop
 @section('content')
 <div class="container-fluid">
@@ -37,6 +29,8 @@ tr th{
                             <th>Phone Number</th>
                             <th>Address</th>
                             <th>Email Address</th>
+                            <th>Secondary Phone Number</th>
+                            <th>Secondary Email Address</th>
                             <th>Created Date</th>
                         </tr>
                     </thead>
@@ -58,6 +52,16 @@ tr th{
                             @endif
                             <td>{{$comapnyList->address_1}}</td>
                             <td>{{$comapnyList->email}}</td>
+                            @if(empty($comapnyList->secondary_phone_number) || $comapnyList->secondary_phone_number == "")
+                            <td>{{'--'}}</td>
+                            @else
+                            <td>{{substr_replace(substr_replace(substr_replace($comapnyList->secondary_phone_number, '(', 0,0), ') ', 4,0), ' - ', 9,0) }}</td>
+                            @endif
+                            @if(empty($comapnyList->secondary_email) || $comapnyList->secondary_email == "")
+                            <td>{{'--'}}</td>
+                            @else
+                            <td>{{$comapnyList->secondary_email}}</td>
+                            @endif
                             <td>{{ date('m/d/Y',strtotime($comapnyList->created_at))}}</td>
                         </tr>
                         @endforeach
@@ -89,25 +93,28 @@ tr th{
             {
                 extend: 'csv',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8 ]},
             },
             {
                 extend: 'excel',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8 ]},
             },
             {
                 extend: 'pdf',
                 pageSize: 'LEGAL',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8 ]},
             },
             {
                 extend: 'print',
                 title: value,
-                exportOptions: {columns: [ 1,2,3,4,5,6 ]},
+                exportOptions: {columns: [ 1,2,3,4,5,6,7,8 ]},
             },
             ],
+            "fnDrawCallback": function () {
+				$('[data-toggle="tooltip"]').tooltip();
+			}
         });
     });
 

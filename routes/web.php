@@ -19,11 +19,14 @@ Route::post('sendemail', 'admin\AdminHomeController@sendForgotPasswordEmail')->n
 Route::get('resetpassword/{token}', 'admin\AdminHomeController@showResetPassword');
 Route::post('doresetpassword', 'admin\AdminHomeController@doResetPassword');
 Route::get('logout', 'admin\AdminHomeController@logout')->name('logout');
+/* Send Temp password*/
+Route::get('sendtemppassword', 'admin\AdminHomeController@sendTemporaryPasswordEmail')->name('sendtemppassword');
 
 Route::group(array('middleware' => 'CheckUser'), function () {
     /*Dashboard*/
     Route::get('dashboard', 'admin\AdminHomeController@showDashboard')->name('dashboard');
     Route::post('showjobdetailstatus', 'admin\AdminHomeController@showJobDetails')->name('showjobdetailstatus');
+    Route::get('setnotesbadge', 'admin\AdminHomeController@setNotesBadge');
 
     /*My Profile*/
     //Route::get('profile/{email}','admin\AdminHomeController@editMyProfile')->name('adminprofile');
@@ -34,6 +37,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('jobs/activejobs', 'admin\JobsController@index')->name('activejobs');
     Route::get('jobs/deactivatedjobs', 'admin\JobsController@showDeactivated')->name('deactivatedjobs');
     Route::get('jobs/editjob/{job_id}', 'admin\JobsController@edit')->name('editjob');
+    Route::get('jobs/clonejob/{job_id}', 'admin\JobsController@clone')->name('clonejob');
     Route::get('jobs/addjob', 'admin\JobsController@create')->name('addjob');
     Route::post('jobs/storejob', 'admin\JobsController@store')->name('storejob');
     Route::get('jobs/deletejob/{job_id}', 'admin\JobsController@destroy')->name('deletejob');
@@ -48,6 +52,7 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::post('jobs/editjobmodel', 'admin\JobsController@editJobDateTimeModel')->name('editjobdatetimemodel');
     Route::post('jobs/showfilterwisejob', 'admin\JobsController@showFilterwiseJob')->name('showfilterwisejob');
     Route::post('getjobimages', 'admin\JobsController@getJobImages')->name('getjobimages');
+    Route::post('removefiles', 'admin\JobsController@removeFiles');
 
     /*Employees*/
     Route::get('employees/showemployees', 'admin\EmployeesController@index')->name('showemployees');
@@ -72,9 +77,12 @@ Route::group(array('middleware' => 'CheckUser'), function () {
     Route::get('clients/deleteclient/{client_id}', 'admin\ClientsController@destroy')->name('deleteclient');
     Route::get('myprofile/{id}', 'admin\ClientsController@editMyProfile')->name('clientprofile');
     Route::post('clients/getcompanyclients', 'admin\ClientsController@getCompanyClients')->name('getcompanyclients');
+    Route::post('clients/changeclientnotestatus', 'admin\ClientsController@change_client_noteStatus')->name('changeclientnotestatus');
 
     /*Reports*/
     Route::get('reports/showreports', 'admin\ReportsController@index')->name('showreports');
     Route::post('downloadjobexcel', 'admin\ReportsController@downloadJobExcel')->name('downloadjobexcel');
 
+    /*Notes */
+    Route::get('notes/shownotes', 'admin\NotesController@index')->name('shownotes');
 });

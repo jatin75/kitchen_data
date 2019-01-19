@@ -152,6 +152,7 @@ return [
          */
         LaravelFCM\FCMServiceProvider::class,
         'Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider',
+        'Intervention\Image\ImageServiceProvider',
 
         /*
          * Application Service Providers...
@@ -161,10 +162,10 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        
+
         Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
-        
+
     ],
 
     /*
@@ -210,10 +211,11 @@ return [
         'Schema' => Illuminate\Support\Facades\Schema::class,
         'Session' => Illuminate\Support\Facades\Session::class,
         'Storage' => Illuminate\Support\Facades\Storage::class,
+        'Image' => 'Intervention\Image\Facades\Image',
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        
+
         'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'FCM'      => LaravelFCM\Facades\FCM::class,

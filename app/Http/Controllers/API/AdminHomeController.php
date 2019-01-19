@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\API;
 
 date_default_timezone_set('UTC');
+use App\Admin;
 use App\ApiAdmin;
+use App\Chat;
+use App\Http\Controllers\admin\JobsController;
 use App\Http\Controllers\Controller;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Validator;
 use Mail;
+use DB;
+use Validator;
+use App\Client;
 
 class AdminHomeController extends Controller
 {
@@ -41,8 +46,14 @@ class AdminHomeController extends Controller
                     $success['user_id'] = $user->id;
                     $success['user_name'] = $user->first_name . ' ' . $user->last_name;
                     $success['email'] = $user->email;
-                    $success['phone_number'] = (!empty($user->phone_number))? $this->formatPhoneNumber($user->phone_number) : null;
+                    $success['phone_number'] = (!empty($user->phone_number)) ? $this->formatPhoneNumber($user->phone_number) : null;
                     $success['login_type_id'] = $user->login_type_id;
+                    if($user->login_type_id == 9){
+                        $clientDetail = Client::selectRaw('note_status')->where('client_id', $user->id)->first();
+                        $success['job_notes_status'] =  $clientDetail->note_status;
+                    }else{
+                        $success['job_notes_status'] =  1;
+                    }
                     $user->device_token = $device_token;
                     $user->device_type = $device_type;
                     $user->save();
@@ -79,12 +90,13 @@ class AdminHomeController extends Controller
     }
 
     /*forget password*/
-    public function forgotPassword(Request $request) {
+    public function forgotPassword(Request $request)
+    {
         try {
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
             ]);
-            
+
             if ($validator->fails()) {
                 $messages = $validator->errors()->all();
                 $msg = $messages[0];
@@ -92,30 +104,31 @@ class AdminHomeController extends Controller
             }
 
             $email = $request->input('email');
-            $checkEmail = ApiAdmin::where('email',$email)->first();
-            if(!empty($checkEmail)){
+            $checkEmail = ApiAdmin::where('email', $email)->first();
+            if (!empty($checkEmail)) {
                 $temporaryPwd = str_random(8);
-                ApiAdmin::where('email',$email)->update(['password'=>Hash::make($temporaryPwd)]);
+                ApiAdmin::where('email', $email)->update(['password' => Hash::make($temporaryPwd)]);
 
-                try{
-                    Mail::send('emails.AdminPanel_ForgotPassword',array(
-                        'temp_password' => $temporaryPwd
-                    ), function($message)use($email){
-                        $message->from(env('FromMail','askitchen18@gmail.com'),'A&S KITCHEN');
+                try {
+                    Mail::send('emails.AdminPanel_ForgotPassword', array(
+                        'temp_password' => $temporaryPwd,
+                    ), function ($message) use ($email) {
+                        $message->from(env('FromMail', 'askitchen18@gmail.com'), 'A&S KITCHEN');
                         $message->to($email)->subject('A&S KITCHEN | Forgot Password');
                     });
-                } catch (\Exception $e){
+                } catch (\Exception $e) {
                     return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Something went wrong. Please try again."]);
                 }
                 return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "An email containing your temporary login password has been sent to your verified email address. You can change your password from your profile."]);
-            }else {
+            } else {
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Email is incorrect. Please try again."]);
             }
-        }catch (\Exception $e) {}
+        } catch (\Exception $e) {}
     }
 
     /*change password*/
-    public function changeAccountSetting(Request $request) {
+    public function changeAccountSetting(Request $request)
+    {
         try {
             $validator = Validator::make($request->all(), [
                 'current_password' => 'required',
@@ -134,27 +147,28 @@ class AdminHomeController extends Controller
             $retype_password = $request->get('retype_Password');
             $user_id = $request->get('user_id');
 
-            if($new_password != $retype_password) {
+            if ($new_password != $retype_password) {
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "New password and  Retype password is not match. Please try again."]);
             }
 
-            $checkPassword = ApiAdmin::where('id',$user_id)->first();
-            if(!empty($checkPassword)) {
-                if(Hash::check($current_password,$checkPassword->password)) {
+            $checkPassword = ApiAdmin::where('id', $user_id)->first();
+            if (!empty($checkPassword)) {
+                if (Hash::check($current_password, $checkPassword->password)) {
                     $checkPassword->password = Hash::make($new_password);
                     $checkPassword->save();
                     return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Your password has been changed successfully."]);
-                }else {
+                } else {
                     return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Current password is invalid. Please try again."]);
                 }
             } else {
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Something went wrong. Please try again."]);
             }
-        }catch (\Exception $e) {}    
+        } catch (\Exception $e) {}
     }
 
     /*change myprofile*/
-    public function changeMyProfile(Request $request) {
+    public function changeMyProfile(Request $request)
+    {
         try {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required',
@@ -179,11 +193,11 @@ class AdminHomeController extends Controller
             $login_type_id = $request->get('login_type_id');
 
             $checkEmailExist = ApiAdmin::selectRaw('email')->where('email', $email)->where('id', '<>', $user_id)->first();
-            if(isset($checkEmailExist->email)) {
+            if (isset($checkEmailExist->email)) {
                 return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => "Entered email address already exists."]);
             }
 
-            $getDetail = ApiAdmin::where('id',$user_id)->first();
+            $getDetail = ApiAdmin::where('id', $user_id)->first();
             $getDetail->first_name = $firstName;
             $getDetail->last_name = $lastName;
             $getDetail->phone_number = $this->replacePhoneNumber($contactNo);
@@ -194,11 +208,126 @@ class AdminHomeController extends Controller
             $success['user_id'] = $user_id;
             $success['user_name'] = $firstName . ' ' . $lastName;
             $success['email'] = $email;
-            $success['phone_number'] = (!empty($contactNo))? $this->formatPhoneNumber($contactNo) : null;
+            $success['phone_number'] = (!empty($contactNo)) ? $this->formatPhoneNumber($contactNo) : null;
             $success['login_type_id'] = $login_type_id;
-
+            if($login_type_id == 9){
+                $clientDetail = Client::selectRaw('note_status')->where('client_id', $user_id)->first();
+                $success['job_notes_status'] =  $clientDetail->note_status;
+            }else{
+                $success['job_notes_status'] =  1;
+            }
+            
             return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Profile has been updated successfully.", 'response_data' => $success]);
-        }catch (\Exception $e) {}
+        } catch (\Exception $e) {}
+    }
+
+    /* Chat module */
+    public function chatPost(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'sender_id' => 'required',
+                'receiver_id' => 'required',
+                'message' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $messages = $validator->errors()->all();
+                $msg = $messages[0];
+                return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
+            }
+            $sender_id = $request->get('sender_id');
+            $receiver_id = $request->get('receiver_id');
+            $message = $request->get('message');
+
+            if (!empty($message)) {
+                $objChat = new Chat;
+                $objChat->sender_id = $sender_id;
+                $objChat->receiver_id = $receiver_id;
+                $objChat->message = $message;
+                $objChat->is_deleted = 0;
+                $objChat->created_at = $created_at = date('Y-m-d H:i:s');
+                $objChat->save();
+
+                /*send notification to receiver */
+                /* if (!empty($receiver_id)) {
+                    $title = 'New Message Received';
+                    $badge = '1';
+                    $sound = 'default';
+                    $device_detail = Admin::selectRaw('device_token,device_type')->where('id', $receiver_id)->first();
+                    if (!empty($device_detail->device_token)) {
+                        $messageBody = $message;
+                        $deviceid = $device_detail->device_token;
+                        $device_type = $device_detail->device_type;
+                        (new JobsController)->pushNotification($deviceid, $device_type, $messageBody, $title, $badge, $sound);
+                    }
+                } */
+                $success['sender_id'] = $sender_id;
+                $success['receiver_id'] = $receiver_id;
+                $success['message'] = $message;
+                $success['created_at'] = $created_at;
+                return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Chat meassage has been added successfully.", 'response' => $success]);
+            }
+        } catch (\Exception $e) {}
+    }
+     //Get Chat user for chat listing
+    public function getChatUser(Request $request)
+    {
+        try {
+          $validator = Validator::make($request->all(), [
+                  'login_type_id' => 'required',
+              ]);
+
+              if ($validator->fails()) {
+                  $messages = $validator->errors()->all();
+                  $msg = $messages[0];
+                  return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
+              }
+              $login_type_id = $request->get('login_type_id');
+            $getUser = DB::select("SELECT id,CONCAT(first_name,' ',last_name) AS name FROM admin_users WHERE login_type_id = '{$login_type_id}' AND is_deleted = 0 ORDER BY name ASC");
+          if(sizeof($getUser) > 0)
+          {
+              $success['chat_users'] = $getUser;
+              return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Get Chat Users successfully.", 'response' => $success]);
+          }
+          else
+          {
+            return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => 'User not found']);
+          }
+      } catch (\Exception $e) {}
+    }
+
+    /*get chat history*/
+    public function getChatHistory (request $request)
+    {
+      try {
+          $validator = Validator::make($request->all(), [
+              'sender_id' => 'required',
+              'receiver_id' => 'required',
+          ]);
+
+          if ($validator->fails()) {
+              $messages = $validator->errors()->all();
+              $msg = $messages[0];
+              return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => $msg]);
+          }
+          $sender_id = $request->get('sender_id');
+          $receiver_id = $request->get('receiver_id');
+
+          if (!empty($sender_id) && !empty($receiver_id))
+          {
+            $getAllChat = DB::select("SELECT sender_id,receiver_id,message,created_at FROM chat_history WHERE (sender_id = '{$sender_id}' OR sender_id = '{$receiver_id}') AND (receiver_id= '{$receiver_id}' OR receiver_id= '{$sender_id}') AND is_deleted = 0 ORDER BY created_at ASC");
+            if(sizeof($getAllChat) > 0)
+            {
+              $success['chat_history'] = $getAllChat;
+              return response()->json(['success_code' => 200, 'response_code' => 0, 'response_message' => "Get conversation list successfully.", 'response' => $success]);
+            }
+            else
+            {
+              return response()->json(['success_code' => 200, 'response_code' => 1, 'response_message' => 'Message not found']);
+            }
+          }
+      } catch (\Exception $e) {}
     }
 
     public function replacePhoneNumber($phone_number)

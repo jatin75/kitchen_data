@@ -16,7 +16,7 @@
         <a id="sessionName" style="text-transform: uppercase;" href="#" class="font-normal dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Session::get('name')}}<span class="caret"></span></a>
         <ul class="dropdown-menu animated flipInY">
 
-            @if(Session::get('login_type_id') == 1 || Session::get('login_type_id') == 2)
+            @if(Session::get('login_type_id') == 1 || Session::get('login_type_id') == 2 || Session::get('login_type_id') == 10)
             <li><a href="{{ route('employeeprofile',['email'=>Session::get('employee_id')]) }}"><i class="ti-user"></i> My Profile &amp; Setting</a></li>
             @endif
             @if(Session::get('login_type_id') == 9)

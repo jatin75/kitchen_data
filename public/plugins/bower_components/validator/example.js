@@ -112,9 +112,9 @@ $(document).ready(function () {
 			companyEmail: {
 				trigger: 'blur',
 				validators: {
-					notEmpty: {
-						message: 'Email address is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Email address is required and can\'t be empty'
+					// },
 					emailAddress: {
 						message: 'Please enter valid email address.'
 					}
@@ -418,6 +418,17 @@ $(document).ready(function () {
 					}
 				}
 			},
+			employeePassword: {
+				validators: {
+					notEmpty: {
+						message: 'Password is required and can\'t be empty'
+					},
+					/*stringLength: {
+						min: 6,
+						message: 'Ppassword should be of 6 digits.'
+					},*/
+				}
+			},
 		}
 	});
 
@@ -610,23 +621,28 @@ $(document).ready(function () {
 	$('#formAddJob').bootstrapValidator({
 		excluded: ':disabled',
 		fields: {
-			jobTitle: {
-				trigger: 'blur',
+			jobCompanyName: {
+				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Job title is required and can\'t be empty.'
+						message: 'Job company name is required and can\'t be empty'
 					},
-					regexp: {
-						regexp: /^[a-zA-Z0-9\s]+$/i,
-						message: 'Job title can only consist of alphanumeric.'
-					}
 				}
 			},
-			jobStatus: {
+			"comapnyClients[]": {
+				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Job status is required and can\'t be empty.'
-					}
+						message: 'Company client is required and can\'t be empty'
+					},
+				}
+			},
+			jobType: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Job status is required and can\'t be empty'
+					},
 				}
 			},
 			locationAddress: {
@@ -638,6 +654,13 @@ $(document).ready(function () {
 				}
 			},
 			subAddress: {
+				validators: {
+					stringLength: {
+						min: 0,
+					}
+				}
+			},
+			apartmentNo: {
 				validators: {
 					stringLength: {
 						min: 0,
@@ -666,11 +689,40 @@ $(document).ready(function () {
 					}
 				}
 			},
-			apartmentNo: {
+			"workingEmployee[]": {
+				trigger: 'change',
 				validators: {
-					stringLength: {
-						min: 0,
+					notEmpty: {
+						message: 'Working employee is required and can\'t be empty'
+					},
+				}
+			},
+			jobTitle: {
+				trigger: 'blur',
+				validators: {
+					notEmpty: {
+						message: 'Job title is required and can\'t be empty.'
+					},
+					// regexp: {
+					// 	regexp: /^[a-zA-Z0-9\s]+$/i,
+					// 	message: 'Job title can only consist of alphanumeric.'
+					// }
+				}
+			},
+			jobStatus: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Job status is required and can\'t be empty.'
 					}
+				}
+			},
+			salesEmployee: {
+				trigger: 'change',
+				validators: {
+					regexp: {
+						enabled: false,
+					},
 				}
 			},
 			jobStartDate: {
@@ -700,9 +752,9 @@ $(document).ready(function () {
 			plumbingInstallationDate: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Plumbing installation date is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Plumbing installation date is required and can\'t be empty'
+					// },
 					date: {
 						format: 'MM/DD/YYYY',
 						message: 'The date is not a valid'
@@ -712,9 +764,9 @@ $(document).ready(function () {
 			deliveryDate: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Delivery date is required.'
-					},
+					// notEmpty: {
+					// 	message: 'Delivery date is required.'
+					// },
 					date: {
 						format: 'MM/DD/YYYY',
 						message: 'The date is not a valid'
@@ -724,9 +776,9 @@ $(document).ready(function () {
 			deliveryTime: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Delivery time is required.'
-					},
+					// notEmpty: {
+					// 	message: 'Delivery time is required.'
+					// },
 					callback: {
 						callback: function (value, validator, $deliveryTime) {
 							if (value.indexOf("A") == 5) {
@@ -757,7 +809,7 @@ $(document).ready(function () {
 				}
 			},
 			jobSuperName: {
-				//trigger: 'blur',
+				trigger: 'blur',
 				validators: {
 					notEmpty: {
 						message: 'Job super name is required and can\'t be empty'
@@ -788,9 +840,9 @@ $(document).ready(function () {
 			jobContractorName: {
 				trigger: 'blur',
 				validators: {
-					notEmpty: {
-						message: 'Job contractor name is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Job contractor name is required and can\'t be empty'
+					// },
 					regexp: {
 						regexp: /^[a-zA-Z0-9\s]+$/i,
 						message: 'Job contractor name can only consist of alphanumeric.'
@@ -800,9 +852,9 @@ $(document).ready(function () {
 			contractorEmail: {
 				trigger: 'blur',
 				validators: {
-					notEmpty: {
-						message: 'Contractor email address is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Contractor email address is required and can\'t be empty'
+					// },
 					emailAddress: {
 						message: 'Please enter valid email address.'
 					}
@@ -811,9 +863,9 @@ $(document).ready(function () {
 			contractorPhoneNumber: {
 				trigger: 'keyup',
 				validators: {
-					notEmpty: {
-						message: 'Contractor phone number is required and can\'t be empty'
-					},
+					// notEmpty: {
+					// 	message: 'Contractor phone number is required and can\'t be empty'
+					// },
 					stringLength: {
 						min: 16,
 						max: 16,
@@ -825,32 +877,16 @@ $(document).ready(function () {
 					}
 				}
 			},
-			jobCompanyName: {
-				//trigger: 'blur',
+			deliveryInstallationSelect: {
+				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Job company name is required and can\'t be empty'
-					},
-				}
-			},
-			comapnyClients: {
-				//trigger: 'keyup',
-				validators: {
-					notEmpty: {
-						message: 'Company client is required and can\'t be empty'
-					},
-				}
-			},
-			workingEmployee: {
-				//trigger: 'blur',
-				validators: {
-					notEmpty: {
-						message: 'Working employee is required and can\'t be empty'
+						message: 'Delivery installation status is required and can\'t be empty'
 					},
 				}
 			},
 			installationSelect: {
-				/*trigger: 'blur',*/
+				trigger: 'change',
 				validators: {
 					notEmpty: {
 						message: 'Installation status is required and can\'t be empty'
@@ -858,10 +894,68 @@ $(document).ready(function () {
 				}
 			},
 			stoneInstallationSelect: {
-				/*trigger: 'blur',*/
+				trigger: 'change',
+				validators: {
+					// notEmpty: {
+					// 	message: 'Stone installation status is required and can\'t be empty'
+					// },
+					regexp: {
+						enabled: false,
+					},
+				}
+			},
+			deliveryInstallationDate: {
+				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Stone installation status is required and can\'t be empty'
+						message: 'Date is required.'
+					},
+					date: {
+						format: 'MM/DD/YYYY',
+						message: 'The date is not a valid'
+					},
+				}
+			},
+			deliveryInstallationTime: {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Time is required.'
+					},
+					callback: {
+						callback: function (value, validator, $deliveryTime) {
+							if (value.indexOf("A") == 5) {
+								if (value < '09:00AM' || value > '11:59AM') {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else if (value.indexOf("P") == 5) {
+								if ((value == '12:00PM') || ((value > '12:00PM') && (value <= '12:59PM'))) {
+									return true;
+								} else if ((value > '02:00PM')) {
+									return {
+										valid: false,
+										message: 'Select between 09:00AM to 02:00PM'
+									};
+								} else {
+									return true;
+								}
+							} else {
+								return true;
+							}
+						}
+					},
+				}
+			},
+			"deliveryInstallationEmployees[]": {
+				trigger: 'change',
+				validators: {
+					notEmpty: {
+						message: 'Delivery Installation Employee is required and can\'t be empty'
 					},
 				}
 			},
@@ -869,7 +963,7 @@ $(document).ready(function () {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Installation Date is required.'
+						message: 'Date is required.'
 					},
 					date: {
 						format: 'MM/DD/YYYY',
@@ -881,7 +975,7 @@ $(document).ready(function () {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
-						message: 'Installation Time is required.'
+						message: 'Time is required.'
 					},
 					callback: {
 						callback: function (value, validator, $deliveryTime) {
@@ -912,8 +1006,7 @@ $(document).ready(function () {
 					},
 				}
 			},
-
-			installationEmployees: {
+			"installationEmployees[]": {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
@@ -924,9 +1017,9 @@ $(document).ready(function () {
 			stoneInstallationDate: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Stone Installation Date is required.'
-					},
+					// notEmpty: {
+					// 	message: 'Date is required.'
+					// },
 					date: {
 						format: 'MM/DD/YYYY',
 						message: 'The date is not a valid'
@@ -936,9 +1029,9 @@ $(document).ready(function () {
 			stoneInstallationTime: {
 				trigger: 'change',
 				validators: {
-					notEmpty: {
-						message: 'Stone Installation Time is required.'
-					},
+					// notEmpty: {
+					// 	message: 'Time is required.'
+					// },
 					callback: {
 						callback: function (value, validator, $deliveryTime) {
 							if (value.indexOf("A") == 5) {
@@ -968,7 +1061,7 @@ $(document).ready(function () {
 					},
 				}
 			},
-			stoneInstallationEmployees: {
+			"stoneInstallationEmployees[]": {
 				trigger: 'change',
 				validators: {
 					notEmpty: {
@@ -976,10 +1069,18 @@ $(document).ready(function () {
 					},
 				}
 			},
+			"addAttachment[]": {
+                validators: {
+                    file: {
+                        extension: 'jpeg,jpg,png,doc,docx,xls,xlsx,csv,pdf',
+                        message: 'The selected file is not valid. It should be in jpeg or jpg or png or doc or docx or xls or xlsx or csv or pdf format.'
+                    }
+                }
+            },
 		}
 	});
 
-$('#adminPhoneNo').on('keyup', function () {
-	$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
-});
+	$('#adminPhoneNo').on('keyup', function () {
+		$('#formAddAdmin').bootstrapValidator('revalidateField', 'adminPhoneNo');
+	});
 });
